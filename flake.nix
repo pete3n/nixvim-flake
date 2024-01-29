@@ -2,7 +2,7 @@
   description = "A nixvim configuration";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-23.11";
     nixvim.url = "github:nix-community/nixvim/nixos-23.11";
     flake-parts.url = "github:hercules-ci/flake-parts";
   };
