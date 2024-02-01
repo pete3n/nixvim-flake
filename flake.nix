@@ -7,13 +7,23 @@
     flake-parts.url = "github:hercules-ci/flake-parts";
   };
 
-  outputs = {
-    nixvim,
-    flake-parts,
-    ...
-  } @ inputs: let
+  outputs = { self, nixpkgs, nixvim, flake-parts, ... } @ inputs: let
     config = import ./config; # import the module directly
-  in
+
+    # Define the custom Neovim wrapper
+    customNeovimWrapper = { pkgs, ... }: let
+      neovimDeps = with pkgs; [
+        alejandra asmfmt astyle black cmake-format gofumpt golines gotools isort 
+        nodePackages.prettier prettierd shfmt stylua commitlint eslint_d hadolint 
+        html-tidy luajitPackages.luacheck nodePackages.jsonlint pylint ruff 
+        shellcheck vale yamllint tmux-sessionizer asm-lsp cargo clang-tools go rustc
+      ];
+    depsPath = builtins.concatStringsSep ":" (map (dep: "${dep}/bin") neovimDeps);
+    in pkgs.writeShellScriptBin "neovim-with-deps" ''
+        export PATH=${depsPath}:"$PATH"
+        exec ${pkgs.neovim}/bin/nvim "$@"
+    '';
+    in
     flake-parts.lib.mkFlake {inherit inputs;} {
       systems = [
         "x86_64-linux"
@@ -22,20 +32,14 @@
         "aarch64-darwin"
       ];
 
-      perSystem = {
-        pkgs,
-        system,
-        ...
-      }: let
+      perSystem = { pkgs, system, ... }: let
         nixvimLib = nixvim.lib.${system};
         nixvim' = nixvim.legacyPackages.${system};
+
+        # Use the custom Neovim wrapper
         nvim = nixvim'.makeNixvimWithModule {
           inherit pkgs;
           module = config;
-          # You can use `extraSpecialArgs` to pass additional arguments to your module files
-          extraSpecialArgs = {
-            # inherit (inputs) foo;
-          };
         };
       in {
         checks = {
@@ -47,9 +51,10 @@
         };
 
         packages = {
-          # Lets you run `nix run .` to start nixvim
-          default = nvim;
+          # Provide the custom Neovim wrapper as a package
+          default = customNeovimWrapper { pkgs = pkgs; };
         };
       };
     };
 }
+
