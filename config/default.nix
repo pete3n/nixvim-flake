@@ -10,6 +10,7 @@
     ./completion.nix
     ./format.nix
     ./lint.nix
+    ./debug.nix
   ];
 
   config = {
@@ -43,5 +44,51 @@
       fugitive.enable = true;
       nvim-tree.enable = true;
     };
+    extraPackages = with pkgs; [
+      # Formatters
+      alejandra
+      asmfmt
+      astyle
+      black
+      cmake-format
+      gofumpt
+      golines
+      gotools
+      isort
+      nodePackages.prettier
+      prettierd
+      rustfmt
+      shfmt
+      stylua
+      # Linters
+      commitlint
+      eslint_d
+      golangci-lint
+      hadolint
+      html-tidy
+      luajitPackages.luacheck
+      markdownlint-cli
+      nodePackages.jsonlint
+      pylint
+      ruff
+      shellcheck
+      vale
+      yamllint
+      # Debuggers / misc deps
+      asm-lsp
+      bashdb
+      clang-tools
+      delve
+      fd
+      go
+      lldb_17
+      llvmPackages_17.bintools-unwrapped
+      marksman
+      gdb
+      ripgrep
+      rr
+      tmux-sessionizer
+      zig
+    ];
   };
 }

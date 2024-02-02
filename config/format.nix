@@ -16,6 +16,7 @@
       markdown = ["prettier"];
       nix = ["alejandra"];
       python = ["isort" "black"];
+      rust = ["rustfmt"];
       sh = ["shfmt"];
       typescript = ["prettierd" "prettier"];
       typescriptreact = ["prettier"];
@@ -32,6 +33,7 @@
       timeoutMs = 2000;
     };
   };
+
   extraConfigLuaPre = ''
     -- Formatting function for conform
     _G.format_with_conform = function()

@@ -14,7 +14,7 @@
     flake-parts,
     ...
   } @ inputs: let
-    config = import ./config; # import the module directly
+    config = import ./config;
   in
     flake-parts.lib.mkFlake {inherit inputs;} {
       systems = [
@@ -48,43 +48,11 @@
 
         devShells.default = pkgs.mkShellNoCC {
           shellHook = ''
-            echo Entering Nixvim dev environment
+            echo Welcome to a Neovim dev environment powered by Nixvim -- https://github.com/nix-community/nixvim
             PS1="Nixvim: \\w \$ "
           '';
           packages = with pkgs; [
             nvim
-            alejandra
-            asmfmt
-            astyle
-            black
-            cmake-format
-            gofumpt
-            golines
-            gotools
-            isort
-            nodePackages.prettier
-            prettierd
-            shfmt
-            stylua
-            commitlint
-            eslint_d
-            hadolint
-            html-tidy
-            luajitPackages.luacheck
-            nodePackages.jsonlint
-            pylint
-            ruff
-            shellcheck
-            vale
-            yamllint
-            tmux-sessionizer
-            asm-lsp
-            cargo
-            clang-tools
-            fd
-            ripgrep
-            go
-            rustc
           ];
         };
       };
