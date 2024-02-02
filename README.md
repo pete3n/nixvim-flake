@@ -1,6 +1,14 @@
-# Nixvim dev-shell environment
+# Nixvim Dev-shell Environment
 
-# Language Support
+This is a Nix flake configuration built with the [Nixvim project](https://github.com/nix-community/nixvim)
+It is fully configured with LSPs, linters, formatters, debuggers, styling, and
+popular navigation plugins. See
+
+## Setup
+
+## Language Support
+
+```
 ____________________________________________
 | Language   | LSP | Lint | Format | Debug |
 |------------|:---:|:----:|:------:|:-----:|
@@ -23,4 +31,10 @@ ____________________________________________
 | YAML       |  ✔  |  ✔   |   ✔    |       |
 | Zig        |  ✔  |      |   ✔    |  ✔    |
 --------------------------------------------
+```
 
+## Plugins
+
+## Styling
+
+## Resources
