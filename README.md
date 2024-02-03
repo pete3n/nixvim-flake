@@ -1,6 +1,6 @@
 # Nixvim Dev-shell Environment
 
-This is a Nix flake configuration built with the [Nixvim project](https://github.com/nix-community/nixvim)
+This is a Nix flake configuration for Neovim built with the [Nixvim project](https://github.com/nix-community/nixvim)
 It is fully configured with LSPs, linters, formatters, debuggers, styling, and
 popular navigation plugins. 
 
