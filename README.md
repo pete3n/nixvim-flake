@@ -6,7 +6,7 @@ popular navigation plugins.
 
 ## Setup
 This flake can be built with the Nix package manager or with a NixOS system
-configured with flake support. [Follow these instrutions](https://nixos.org/download#download-nix)
+configured with flake support. [Follow these instructions](https://nixos.org/download#download-nix)
  to download and install the Nix package manager for your system. 
 
 Once you have the package manager installed, enable flak support by adding 
