@@ -21,7 +21,7 @@ Clone this repo:
 git clone https://github.com/pete3n/nixvim-flake.git
 ```
 
-Enter the dev-shell environment with:
+cd to the repo and enter the dev-shell environment with:
 ```
 nix develop
 ```
@@ -29,6 +29,17 @@ or run neovim directly with:
 ```
 nix run .
 ```
+
+You can create a persistent profile to store the development environment to 
+re-enter it without needing to fetch/rebuild with:
+```
+nix develop --profile ./nixvim 
+```
+"nixvim" is an arbitrary name. You can then open that profile with:
+```
+nix develop ./nixvim 
+```
+
 ## Styling
 - Theme is [Tokyo Night](https://github.com/folke/tokyonight.nvim) with 
 [noice](https://github.com/folke/noice.nvim) UI from [@folke](https://github.com/folke)
