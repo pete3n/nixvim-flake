@@ -50,6 +50,7 @@
           shellHook = ''
             echo Welcome to a Neovim dev environment powered by Nixvim -- https://github.com/nix-community/nixvim
             PS1="Nixvim: \\w \$ "
+            alias vim='nvim'
           '';
           packages = with pkgs; [
             nvim
