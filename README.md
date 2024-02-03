@@ -25,10 +25,6 @@ cd to the repo and enter the dev-shell environment with:
 ```
 nix develop
 ```
-or run neovim directly with:
-```
-nix run .
-```
 
 You can create a persistent profile to store the development environment to 
 re-enter it without needing to fetch/rebuild with:
