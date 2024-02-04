@@ -2,74 +2,96 @@
 
 This is a Nix flake configuration for Neovim built with the [Nixvim project](https://github.com/nix-community/nixvim)
 It is fully configured with LSPs, linters, formatters, debuggers, styling, and
-popular navigation plugins. 
+popular navigation plugins.
 
 ## Setup
+
 This flake can be built with the Nix package manager or with a NixOS system
 configured with flake support. [Follow these instructions](https://nixos.org/download#download-nix)
- to download and install the Nix package manager for your system. 
+to download and install the Nix package manager for your system.
 
-Once you have the package manager installed, enable flak support by adding 
-the following line to ~/.config/nix/nix.conf or /etc/nix/nix.conf: 
+Once you have the package manager installed, enable flak support by adding
+the following line to ~/.config/nix/nix.conf or /etc/nix/nix.conf:
+
 ```
 experimental-features = nix-command flakes
 ```
+
 You will need to restart your shell or terminal session for the setting to take effect.
 
-Clone this repo:
+### Dev-shell
+
+To use Neovim from the dev-shell, clone this repo with:
+
 ```
 git clone https://github.com/pete3n/nixvim-flake.git
 ```
 
 cd to the repo and enter the dev-shell environment with:
+
 ```
 nix develop
 ```
 
-You can create a persistent profile to store the development environment to 
-re-enter it without needing to fetch/rebuild with:
+or run it directly from Github with:
+
 ```
-nix develop --profile ./nixvim 
+nix develop github:pete3n/nixvim-flake
 ```
-"nixvim" is an arbitrary name. You can then open that profile with:
+
+You can create a persistent profile link for the development environment with:
+
 ```
-nix develop ./nixvim 
+nix develop --profile ./nixvim
+```
+
+"nixvim" is an arbitrary name. Use whatever name you like. This will create a
+symlink to the Nix store environment derivation. You can re-open the profile with:
+
+```
+nix develop ./nixvim
 ```
 
 ## Styling
-- Theme is [Tokyo Night](https://github.com/folke/tokyonight.nvim) with 
-[noice](https://github.com/folke/noice.nvim) UI from [@folke](https://github.com/folke)
+
+- Theme is [Tokyo Night](https://github.com/folke/tokyonight.nvim) with
+  [noice](https://github.com/folke/noice.nvim) UI from [@folke](https://github.com/folke)
 - [lualine](https://github.com/nvim-lualine/lualine.nvim) with onedark theme
 
 ![NixVim Demo](nixvim.gif)
 
 ## Language Support
-____________________________________________
+
+---
+
 | Language   | LSP | Lint | Format | Debug |
-|------------|:---:|:----:|:------:|:-----:|
-| ASM        |  ✔  |      |   ✔    |  ✔*   |
-| C          |  ✔  |  ✔   |   ✔    |  ✔*   |
-| Cmake      |  ✔  |      |   ✔    |       |
-| C++        |  ✔  |  ✔   |   ✔    |  ✔*   |
-| CSS        |  ✔  |  ✔   |   ✔    |       |
-| Go         |  ✔  |  ✔   |   ✔    |  ✔    |
-| HTML       |  ✔  |  ✔   |   ✔    |       |
-| Lua        |  ✔  |  ✔   |   ✔    |       |
-| JSON       |  ✔  |  ✔   |   ✔    |       |
-| Markdown   |  ✔  |  ✔   |   ✔    |       |
-| Nix        |  ✔  |  ✔   |   ✔    |       |
-| Prisma     |  ✔  |      |   ✔    |       |
-| Python     |  ✔  |  ✔   |   ✔    |  ✔    |
-| Rust       |  ✔  |  ✔   |   ✔    |  ✔    |
-| Shell      |  ✔  |  ✔   |   ✔    |  ✔*   |
-| TypeScript |  ✔  |  ✔   |   ✔    |       |
-| YAML       |  ✔  |  ✔   |   ✔    |       |
-| Zig        |  ✔  |      |   ✔    |  ✔    |
---------------------------------------------
-*Debugging is with a GDB/LLDB/BASHDB wrapper through [nvim-gdb](https://github.com/sakhnik/nvim-gdb)
+| ---------- | :-: | :--: | :----: | :---: |
+| ASM        | ✔  |      |   ✔   | ✔\*  |
+| C          | ✔  |  ✔  |   ✔   | ✔\*  |
+| Cmake      | ✔  |      |   ✔   |       |
+| C++        | ✔  |  ✔  |   ✔   | ✔\*  |
+| CSS        | ✔  |  ✔  |   ✔   |       |
+| Go         | ✔  |  ✔  |   ✔   |  ✔   |
+| HTML       | ✔  |  ✔  |   ✔   |       |
+| Lua        | ✔  |  ✔  |   ✔   |       |
+| JSON       | ✔  |  ✔  |   ✔   |       |
+| Markdown   | ✔  |  ✔  |   ✔   |       |
+| Nix        | ✔  |  ✔  |   ✔   |       |
+| Prisma     | ✔  |      |   ✔   |       |
+| Python     | ✔  |  ✔  |   ✔   |  ✔   |
+| Rust       | ✔  |  ✔  |   ✔   |  ✔   |
+| Shell      | ✔  |  ✔  |   ✔   | ✔\*  |
+| TypeScript | ✔  |  ✔  |   ✔   |       |
+| YAML       | ✔  |  ✔  |   ✔   |       |
+| Zig        | ✔  |      |   ✔   |  ✔   |
+
+---
+
+\*Debugging is with a GDB/LLDB/BASHDB wrapper through [nvim-gdb](https://github.com/sakhnik/nvim-gdb)
 I have been unable to get DAP working correctly for these languages.
 
 ## Plugins
+
 - [cmp-buffer](https://github.com/hrsh7th/cmp-buffer) - nvim-cmp source for buffer words
 - [cmp-cmdline](https://github.com/hrsh7th/cmp-cmdline) - nvim-cmp source for cmdline
 - [cmp-nvim-lsp](https://github.com/hrsh7th/cmp-nvim-lsp) - nvim-cmp source for LSP client
@@ -102,6 +124,7 @@ I have been unable to get DAP working correctly for these languages.
 - [undotree](https://github.com/mbbill/undotree) - Undo history visualizer
 
 ## Resources
+
 Much of the configuration for this flake was gleaned from numerous instructional
 videos and howto guides for Neovim including:
 
@@ -114,8 +137,9 @@ videos and howto guides for Neovim including:
 - Debugging with DAP with [TJ and Bashbunni](https://youtu.be/0moS8UHupGc)
 
 ## Thanks
+
 Big shout out to the Nix and Neovim community for all the awesome plugins, documentation,
 videos, and support. There are too many people to thank, but for this project in
-particular, I'd like to thank [@vimjoyer](https://github.com/vimjoyer) for piquing 
-my interest in Nixvim with [his video](https://youtu.be/b641h63lqy0) and [@GaetanLepage](https://github.com/GaetanLepage) 
-for maintining the Nixvim project. 
+particular, I'd like to thank [@vimjoyer](https://github.com/vimjoyer) for piquing
+my interest in Nixvim with [his video](https://youtu.be/b641h63lqy0) and [@GaetanLepage](https://github.com/GaetanLepage)
+for maintining the Nixvim project.
