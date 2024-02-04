@@ -80,11 +80,12 @@
       clang-tools
       delve
       fd
+      gdb
       go
       lldb_17
       llvmPackages_17.bintools-unwrapped
       marksman
-      gdb
+      python3
       ripgrep
       rr
       tmux-sessionizer
