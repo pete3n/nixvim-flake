@@ -85,6 +85,15 @@
       lldb_17
       llvmPackages_17.bintools-unwrapped
       marksman
+      nerdfonts.override
+      {
+        fonts = [
+          "JetBrainsMono"
+          "RobotoMono"
+          "Terminess"
+          "Symbols"
+        ];
+      }
       python3
       ripgrep
       rr
