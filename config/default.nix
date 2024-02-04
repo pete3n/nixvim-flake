@@ -1,4 +1,4 @@
-{pkgs, ...}: {
+{pkgs, lib, ...}: {
   imports = [
     ./keymaps.nix
     ./style.nix
@@ -85,15 +85,14 @@
       lldb_17
       llvmPackages_17.bintools-unwrapped
       marksman
-      nerdfonts.override
-      {
-        fonts = [
-          "JetBrainsMono"
-          "RobotoMono"
-          "Terminess"
-          "Symbols"
-        ];
-      }
+
+    (nerdfonts.override {
+      fonts = [
+        "JetBrainsMono"
+        "RobotoMono"
+      ];
+    })
+
       python3
       ripgrep
       rr
