@@ -5,20 +5,42 @@
     transparent = true;
   };
   plugins = {
+    notify.enable = true;
     lualine = {
       enable = true;
       iconsEnabled = false;
       globalstatus = true;
       theme = "onedark";
     };
-
     noice = {
       enable = true;
       presets = {
         bottom_search = true;
       };
+      cmdline.format = {
+        cmdline = {icon = ">";};
+        search_down = {icon = "🔍⌄";};
+        search_up = {icon = "🔍⌃";};
+        filter = {icon = "$";};
+        lua = {icon = "☾";};
+        help = {icon = "?";};
+      };
+      format = {
+        level = {
+          icons = {
+            error = "✖";
+            warn = "▼";
+            info = "●";
+          };
+        };
+      };
+      popupmenu = {
+        kindIcons = false;
+      };
+      extraOptions = {
+        inc_rename.cmdline.format.IncRename = {icon = "⟳";};
+      };
     };
-    notify.enable = true;
   };
   extraConfigLua = ''
     -- Noice recommended config
