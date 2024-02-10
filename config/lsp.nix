@@ -49,11 +49,11 @@
       			},
       		},
       		{
-      			key = "gt",
+      			key = "gy",
       			action = vim.lsp.buf.type_definition,
       			options = {
       				buffer = 0,
-      				desc = "[g]o to [t]ype definition with LSP",
+      				desc = "[g]o to t[y]pe definition with LSP",
       			},
       		},
       		{
