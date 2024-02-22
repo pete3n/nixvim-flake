@@ -142,4 +142,4 @@ Big shout out to the Nix and Neovim community for all the awesome plugins, docum
 videos, and support. There are too many people to thank, but for this project in
 particular, I'd like to thank [@vimjoyer](https://github.com/vimjoyer) for piquing
 my interest in Nixvim with [his video](https://youtu.be/b641h63lqy0) and [@GaetanLepage](https://github.com/GaetanLepage)
-for maintining the Nixvim project.
+for maintaining the Nixvim project.
