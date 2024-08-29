@@ -49,8 +49,6 @@
       nvim-tree.enable = true;
     };
     extraPackages = with pkgs; [
-      # Test package
-      hello
       # Formatters
       alejandra
       asmfmt
