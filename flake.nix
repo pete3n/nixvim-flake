@@ -54,7 +54,6 @@
           '';
           packages = with pkgs; [
             nvim
-            typescript
           ];
         };
       };
