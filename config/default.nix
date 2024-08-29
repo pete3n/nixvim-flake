@@ -1,4 +1,8 @@
-{pkgs, lib, ...}: {
+{
+  pkgs,
+  lib,
+  ...
+}: {
   imports = [
     ./keymaps.nix
     ./style.nix
@@ -18,7 +22,7 @@
       mapleader = " ";
     };
 
-    options = {
+    opts = {
       number = true;
       colorcolumn = "80";
       relativenumber = true;
@@ -55,6 +59,7 @@
       golines
       gotools
       isort
+      nixfmt-rfc-style
       nodePackages.prettier
       prettierd
       rustfmt
@@ -86,12 +91,12 @@
       llvmPackages_17.bintools-unwrapped
       marksman
 
-    (nerdfonts.override {
-      fonts = [
-        "JetBrainsMono"
-        "RobotoMono"
-      ];
-    })
+      (nerdfonts.override {
+        fonts = [
+          "JetBrainsMono"
+          "RobotoMono"
+        ];
+      })
 
       python3
       ripgrep
