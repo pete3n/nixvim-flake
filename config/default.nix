@@ -102,6 +102,7 @@
       ripgrep
       rr
       tmux-sessionizer
+      typescript
       zig
     ];
   };
