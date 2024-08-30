@@ -3,13 +3,14 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-24.05";
+    nixpkgs-unstable.url = "github:/nixos/nixpkgs/nixos-unstable";
     nixvim.url = "github:nix-community/nixvim/nixos-24.05";
     flake-parts.url = "github:hercules-ci/flake-parts";
   };
 
   outputs = {
-    self,
     nixpkgs,
+    nixpkgs-unstable,
     nixvim,
     flake-parts,
     ...
@@ -29,8 +30,12 @@
           inherit system;
         };
 
+        pkgs-unstable = import nixpkgs-unstable {
+          inherit system;
+        };
+
         asm-lsp-darwin_overlay = final: prev: {
-          asm-lsp = prev.asm-lsp.overrideAttrs (oldAttrs: {
+          asm-lsp = pkgs-unstable.asm-lsp.overrideAttrs (oldAttrs: {
             buildInputs =
               oldAttrs.buildInputs
               ++ final.lib.optionals final.stdenv.isDarwin [
@@ -38,6 +43,11 @@
                 final.darwin.apple_sdk.frameworks.CoreServices
                 final.darwin.apple_sdk.frameworks.SystemConfiguration
               ];
+
+            # tests expect ~/.cache/asm-lsp to be writable
+            preCheck = ''
+              export HOME=$(mktemp -d)
+            '';
 
             meta =
               oldAttrs.meta
