@@ -34,6 +34,25 @@
           inherit pkgs;
           module = config;
         };
+
+        asmLspOverlay = final: prev: {
+          asm-lsp = prev.asm-lsp.overrideAttrs (oldAttrs: rec {
+            nativeBuildInputs =
+              oldAttrs.nativeBuildInputs
+              ++ final.lib.optionals final.stdenv.isDarwin [
+                final.darwin.apple.sdk.frameworks.CoreFoundation
+                final.darwin.apple.sdk.frameworks.CoreServices
+                final.darwin.apple.sdk.frameworks.SystemConfiguration
+              ];
+
+            platforms = final.lib.platforms.linux ++ final.lib.platforms.darwin;
+          });
+        };
+
+        pkgsWithOverlay = import nixpkgs {
+          inherit system;
+          overlays = [asmLspOverlay];
+        };
       in {
         checks = {
           default = nixvimLib.check.mkTestDerivationFromNvim {
@@ -42,7 +61,7 @@
           };
         };
 
-        packages = {
+        packages = with pkgsWithOverlay; {
           default = nvim;
         };
 
@@ -52,7 +71,7 @@
             PS1="Nixvim: \\w \$ "
             alias vim='nvim'
           '';
-          packages = with pkgs; [
+          packages = with pkgsWithOverlay; [
             nvim
           ];
         };
