@@ -34,9 +34,9 @@
             nativeBuildInputs =
               oldAttrs.nativeBuildInputs
               ++ final.lib.optionals final.stdenv.isDarwin [
-                final.darwin.apple.sdk.frameworks.CoreFoundation
-                final.darwin.apple.sdk.frameworks.CoreServices
-                final.darwin.apple.sdk.frameworks.SystemConfiguration
+                final.darwin.apple_sdk.frameworks.CoreFoundation
+                final.darwin.apple_sdk.frameworks.CoreServices
+                final.darwin.apple_sdk.frameworks.SystemConfiguration
               ];
 
             meta =
