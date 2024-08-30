@@ -47,11 +47,23 @@
           });
         };
 
-        pkgsWithOverlay = pkgs.extend asm-lsp-darwin_overlay;
+        bashdb-darwin_overlay = final: prev: {
+          bashdb = prev.bashdb.overrideAttrs (oldAttrs: {
+            meta =
+              oldAttrs.meta
+              // {
+                platforms = final.lib.platforms.linux ++ final.lib.platforms.darwin;
+              };
+          });
+        };
+
+        pkgsWithOverlays = pkgs.extend (final: prev:
+          asm-lsp-darwin_overlay final prev
+          // bashdb-darwin_overlay final prev);
 
         nixvimLib = nixvim.lib.${system};
         nvim = nixvim.legacyPackages.${system}.makeNixvimWithModule {
-          pkgs = pkgsWithOverlay;
+          pkgs = pkgsWithOverlays;
           module = config;
         };
       in {

@@ -85,7 +85,11 @@
       clang-tools
       delve
       fd
-      gdb
+      (
+        if stdenv.isDarwin
+        then null
+        else gdb
+      ) # Not supported on MacOS
       go
       lldb_17
       llvmPackages_17.bintools-unwrapped
@@ -100,7 +104,11 @@
 
       python3
       ripgrep
-      rr
+      (
+        if stdenv.isDarwin
+        then null
+        else rr
+      ) # Not supported on MacOS
       tmux-sessionizer
       typescript
       zig
