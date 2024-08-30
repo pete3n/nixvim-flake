@@ -31,8 +31,8 @@
 
         asm-lsp-darwin_overlay = final: prev: {
           asm-lsp = prev.asm-lsp.overrideAttrs (oldAttrs: {
-            nativeBuildInputs =
-              oldAttrs.nativeBuildInputs
+            buildInputs =
+              oldAttrs.buildInputs
               ++ final.lib.optionals final.stdenv.isDarwin [
                 final.darwin.apple_sdk.frameworks.CoreFoundation
                 final.darwin.apple_sdk.frameworks.CoreServices
