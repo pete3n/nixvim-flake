@@ -45,7 +45,11 @@
                 final.darwin.apple.sdk.frameworks.SystemConfiguration
               ];
 
-            platforms = final.lib.platforms.linux ++ final.lib.platforms.darwin;
+            meta =
+              oldAttrs.meta
+              // {
+                platforms = final.lib.platforms.linux ++ final.lib.platforms.darwin;
+              };
           });
         };
 
