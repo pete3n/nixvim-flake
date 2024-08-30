@@ -31,13 +31,33 @@
       }: let
         asm-lsp-darwin_overlay = final: prev: {
           asm-lsp = prev.asm-lsp.overrideAttrs (oldAttrs: {
-            nativeBuildInputs =
-              oldAttrs.nativeBuildInputs
+            src = final.fetchFromGitHub {
+              owner = "bergercookie";
+              repo = "asm-lsp";
+              rev = "v0.6.0";
+              hash = "sha256-vOkuTJFP2zme8S+u5j1TXt6BXnwtASRVH4Dre9g1dtk=";
+            };
+
+            nativeBuildInputs = [
+              final.pkg-config
+            ];
+
+            buildInputs =
+              [
+                final.openssl
+              ]
               ++ final.lib.optionals final.stdenv.isDarwin [
                 final.darwin.apple_sdk.frameworks.CoreFoundation
                 final.darwin.apple_sdk.frameworks.CoreServices
                 final.darwin.apple_sdk.frameworks.SystemConfiguration
               ];
+
+            cargoHash = "sha256-lmOnBcLWfTCuQcPiRmPoFD/QvagfkApFP6/h1ot7atU=";
+
+            # tests expect ~/.cache/asm-lsp to be writable
+            preCheck = ''
+              export HOME=$(mktemp -d)
+            '';
 
             meta =
               oldAttrs.meta
