@@ -29,12 +29,6 @@
         system,
         ...
       }: let
-        nixvimLib = nixvim.lib.${system};
-        nvim = nixvim.legacyPackages.${system}.makeNixvimWithModule {
-          inherit pkgs;
-          module = config;
-        };
-
         asmLspOverlay = final: prev: {
           asm-lsp = prev.asm-lsp.overrideAttrs (oldAttrs: rec {
             nativeBuildInputs =
@@ -53,9 +47,15 @@
           });
         };
 
-        pkgsWithOverlay = import nixpkgs {
+        pkgs = import nixpkgs {
           inherit system;
           overlays = [asmLspOverlay];
+        };
+
+        nixvimLib = nixvim.lib.${system};
+        nvim = nixvim.legacyPackages.${system}.makeNixvimWithModule {
+          inherit pkgs;
+          module = config;
         };
       in {
         checks = {
@@ -65,7 +65,7 @@
           };
         };
 
-        packages = with pkgsWithOverlay; {
+        packages = {
           default = nvim;
         };
 
@@ -75,7 +75,7 @@
             PS1="Nixvim: \\w \$ "
             alias vim='nvim'
           '';
-          packages = with pkgsWithOverlay; [
+          packages = [
             nvim
           ];
         };
