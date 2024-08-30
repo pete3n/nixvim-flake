@@ -29,8 +29,8 @@
         system,
         ...
       }: let
-        asmLspOverlay = final: prev: {
-          asm-lsp = prev.asm-lsp.overrideAttrs (oldAttrs: rec {
+        asm-lsp-darwin_overlay = final: prev: {
+          asm-lsp = prev.asm-lsp.overrideAttrs (oldAttrs: {
             nativeBuildInputs =
               oldAttrs.nativeBuildInputs
               ++ final.lib.optionals final.stdenv.isDarwin [
@@ -47,14 +47,11 @@
           });
         };
 
-        pkgs = import nixpkgs {
-          inherit system;
-          overlays = [asmLspOverlay];
-        };
+        pkgsWithOverlay = pkgs.extend asm-lsp-darwin_overlay;
 
         nixvimLib = nixvim.lib.${system};
         nvim = nixvim.legacyPackages.${system}.makeNixvimWithModule {
-          inherit pkgs;
+          pkgs = pkgsWithOverlay;
           module = config;
         };
       in {
