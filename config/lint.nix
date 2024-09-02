@@ -5,7 +5,7 @@
       c = ["clangtidy"];
       cpp = ["clangtidy"];
       css = ["eslint_d"];
-      gitcommit = ["commitlint"];
+      gitcommit = ["gitlint"];
       go = ["golangcilint"];
       javascript = ["eslint_d"];
       javascriptreact = ["eslint_d"];

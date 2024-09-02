@@ -66,8 +66,8 @@
       shfmt
       stylua
       # Linters
-      commitlint
       eslint_d
+      gitlint
       golangci-lint
       hadolint
       html-tidy
