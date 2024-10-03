@@ -1,4 +1,4 @@
-{pkgs, ...}: {
+{...}: {
   plugins = {
     cmp = {
       enable = true;
@@ -28,7 +28,6 @@
         sources = [
           {name = "nvim_lua";}
           {name = "nvim_lsp";}
-          {name = "cmdline";}
           {name = "path";}
           {name = "luasnip";}
           {name = "buffer";}
@@ -48,7 +47,6 @@
     cmp-buffer.enable = true;
     cmp-nvim-lsp.enable = true;
     cmp-nvim-lua.enable = true;
-    cmp-cmdline.enable = true;
     cmp-path.enable = true;
     luasnip.enable = true;
   };
