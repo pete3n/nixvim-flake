@@ -1,8 +1,5 @@
+{ pkgs, lib, ... }:
 {
-  pkgs,
-  lib,
-  ...
-}: {
   imports = [
     ./keymaps.nix
     ./style.nix
@@ -29,8 +26,8 @@
       shiftwidth = 2;
       tabstop = 2;
       wrap = false;
-      swapfile = false; #Undotree
-      backup = false; #Undotree
+      swapfile = false; # Undotree
+      backup = false; # Undotree
       undofile = true;
       hlsearch = false;
       incsearch = true;
@@ -50,7 +47,6 @@
     };
     extraPackages = with pkgs; [
       # Formatters
-      alejandra
       asmfmt
       astyle
       black
@@ -85,11 +81,7 @@
       clang-tools
       delve
       fd
-      (
-        if stdenv.isDarwin
-        then null
-        else gdb
-      ) # Not supported on MacOS
+      (if stdenv.isDarwin then null else gdb) # Not supported on MacOS
       go
       lldb_17
       llvmPackages_17.bintools-unwrapped
@@ -104,11 +96,7 @@
 
       python3
       ripgrep
-      (
-        if stdenv.isDarwin
-        then null
-        else rr
-      ) # Not supported on MacOS
+      (if stdenv.isDarwin then null else rr) # Not supported on MacOS
       tmux-sessionizer
       typescript
       zig
