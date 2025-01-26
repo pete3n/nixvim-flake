@@ -1,20 +1,20 @@
 {
-  description = "A nixvim configuration";
+  description = "A minimal Neovim flake to test embedded languages";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-24.05";
-    nixpkgs-unstable.url = "github:/nixos/nixpkgs/nixos-unstable";
-    nixvim.url = "github:nix-community/nixvim/nixos-24.05";
+    nixvim.url = "github:nix-community/nixvim/nixos-24.11";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-24.11";
+    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     flake-parts.url = "github:hercules-ci/flake-parts";
   };
 
   outputs =
     {
+      self,
       nixpkgs,
       nixpkgs-unstable,
       nixvim,
       flake-parts,
-      ...
     }@inputs:
     let
       config = import ./config;

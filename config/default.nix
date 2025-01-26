@@ -1,105 +1,100 @@
-{ pkgs, lib, ... }:
+{ pkgs, ... }:
 {
-  imports = [
-    ./keymaps.nix
-    ./style.nix
-    ./telescope.nix
-    ./treesitter.nix
-    ./harpoon.nix
-    ./folds.nix
-    ./lsp.nix
-    ./completion.nix
-    ./format.nix
-    ./lint.nix
-    ./debug.nix
+  extraPackages = with pkgs; [
+    # Formatters
+    nixfmt-rfc-style
+    shfmt
+    stylua
   ];
 
-  config = {
-    globals = {
-      mapleader = " ";
+  colorschemes.gruvbox.enable = true;
+
+  # Enable Treesitter for syntax highlighting
+  plugins = {
+
+    conform-nvim = {
+      enable = true;
+      settings = {
+        formatters_by_ft = {
+          lua = [ "stylua" ];
+          nix = [ "nixfmt" ];
+          bash = [ "shfmt" ];
+        };
+      };
+      luaConfig.pre =
+        # lua
+        ''
+          -- Formatting function for conform
+          _G.format_with_conform = function()
+          	local conform = require("conform")
+          	conform.format({
+          		lsp_fallback = true,
+          		async = false,
+          		timeout_ms = 2000,
+          	})
+          end
+        '';
     };
 
-    opts = {
-      number = true;
-      colorcolumn = "80";
-      relativenumber = true;
-      shiftwidth = 2;
-      tabstop = 2;
-      wrap = false;
-      swapfile = false; # Undotree
-      backup = false; # Undotree
-      undofile = true;
-      hlsearch = false;
-      incsearch = true;
-      termguicolors = true;
-      scrolloff = 8;
-      signcolumn = "yes";
-      updatetime = 50;
-      foldlevelstart = 99;
-    };
+    treesitter = {
+      enable = true;
 
-    plugins = {
-      gitsigns.enable = true;
-      oil.enable = true;
-      undotree.enable = true;
-      fugitive.enable = true;
-      nvim-tree.enable = true;
-    };
-    extraPackages = with pkgs; [
-      # Formatters
-      asmfmt
-      astyle
-      black
-      cmake-format
-      gofumpt
-      golines
-      gotools
-      isort
-      nixfmt-rfc-style
-      nodePackages.prettier
-      prettierd
-      rustfmt
-      shfmt
-      stylua
-      # Linters
-      eslint_d
-      gitlint
-      golangci-lint
-      hadolint
-      html-tidy
-      luajitPackages.luacheck
-      markdownlint-cli
-      nodePackages.jsonlint
-      pylint
-      ruff
-      shellcheck
-      vale
-      yamllint
-      # Debuggers / misc deps
-      asm-lsp
-      bashdb
-      clang-tools
-      delve
-      fd
-      (if stdenv.isDarwin then null else gdb) # Not supported on MacOS
-      go
-      lldb_17
-      llvmPackages_17.bintools-unwrapped
-      marksman
+      settings = {
+        # Disable automatic grammar installation
+        auto_install = false;
 
-      (nerdfonts.override {
-        fonts = [
-          "JetBrainsMono"
-          "RobotoMono"
+        # Ensure specific parsers are installed
+        ensure_installed = [
+          "git_config"
+          "git_rebase"
+          "gitattributes"
+          "gitcommit"
+          "gitignore"
+          "nix"
+          "lua"
+          "bash"
         ];
-      })
 
-      python3
-      ripgrep
-      (if stdenv.isDarwin then null else rr) # Not supported on MacOS
-      tmux-sessionizer
-      typescript
-      zig
-    ];
+        # Enable highlighting
+        highlight = {
+          enable = true;
+        };
+
+        # Enable incremental selection
+        incremental_selection = {
+          enable = true;
+          keymaps = {
+            init_selection = "gnn";
+            node_incremental = "grn";
+            scope_incremental = "grc";
+            node_decremental = "grm";
+          };
+        };
+      };
+
+      luaConfig.post =
+        # lua
+        ''
+          do
+            local ts = require("vim.treesitter.language")
+            ts.register("bash", "nix")
+          end
+        '';
+    };
+    # Enable LSP support and configure nixd
+    lsp = {
+      enable = true;
+      servers = {
+        nixd.enable = true;
+        bashls.enable = true;
+        lua_ls.enable = true;
+      };
+    };
+  };
+
+  # Basic Neovim options
+  opts = {
+    number = true;
+    relativenumber = true;
   };
 }
