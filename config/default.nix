@@ -1,9 +1,10 @@
 { pkgs, ... }:
 {
   imports = [
+    ./completing.nix
     ./folding.nix
-    ./parsing.nix
     ./keymapping.nix
+    ./parsing.nix
     ./styling.nix
   ];
 
