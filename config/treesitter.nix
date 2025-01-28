@@ -106,92 +106,92 @@
       enable = true;
       setJumps = true;
       gotoNextStart = {
-        "]f" = {
+        "]F" = {
           query = "@call.outer";
           desc = "Next [f]unction call start";
         };
-        "]m" = {
+        "]M" = {
           query = "@function.outer";
           desc = "Next [m]ethod or function def start";
         };
-        "]c" = {
+        "]C" = {
           query = "@class.outer";
           desc = "Next [c]lass start";
         };
-        "]i" = {
+        "]I" = {
           query = "@conditional.outer";
           desc = "Next cond[i]tional start";
         };
-        "]l" = {
+        "]L" = {
           query = "@loop.outer";
           desc = "Next [l]oop start";
         };
       };
 
       gotoPreviousStart = {
-        "[f" = {
+        "[F" = {
           query = "@call.outer";
           desc = "Prev [f]unction call start";
         };
-        "[m" = {
+        "[M" = {
           query = "@function.outer";
           desc = "Prev [m]ethod or function def start";
         };
-        "[c" = {
+        "[C" = {
           query = "@class.outer";
           desc = "Prev [c]lass start";
         };
-        "[i" = {
+        "[I" = {
           query = "@conditional.outer";
           desc = "Prev cond[i]tional start";
         };
-        "[l" = {
+        "[L" = {
           query = "@loop.outer";
           desc = "Prev [l]oop start";
         };
       };
 
       gotoNextEnd = {
-        "]F" = {
+        "]f" = {
           query = "@call.outer";
           desc = "Next [f]unction call end";
         };
-        "]M" = {
+        "]m" = {
           query = "@function.outer";
           desc = "Next [m]ethod or function def end";
         };
-        "]C" = {
+        "]c" = {
           query = "@class.outer";
           desc = "Next [c]lass end";
         };
-        "]I" = {
+        "]i" = {
           query = "@conditional.outer";
           desc = "Next cond[i]tional end";
         };
-        "]L" = {
+        "]l" = {
           query = "@loop.outer";
           desc = "Next [l]oop end";
         };
       };
 
       gotoPreviousEnd = {
-        "[F" = {
+        "[f" = {
           query = "@call.outer";
           desc = "Prev [f]unction call end";
         };
-        "[M" = {
+        "[m" = {
           query = "@function.outer";
           desc = "Prev [m]ethod or function def end";
         };
-        "[C" = {
+        "[c" = {
           query = "@class.outer";
           desc = "Prev [c]lass end";
         };
-        "[I" = {
+        "[i" = {
           query = "@conditional.outer";
           desc = "Prev cond[i]tional end";
         };
-        "[L" = {
+        "[l" = {
           query = "@loop.outer";
           desc = "Prev [l]oop end";
         };
