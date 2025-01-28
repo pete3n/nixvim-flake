@@ -1,8 +1,8 @@
 { pkgs, ... }:
 {
   imports = [
-    ./treesitter.nix
-    ./keymaps.nix
+    ./parsing.nix
+    ./keymapping.nix
   ];
 
   extraPackages = with pkgs; [
