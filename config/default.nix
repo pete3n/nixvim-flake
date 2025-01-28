@@ -1,6 +1,7 @@
 { pkgs, ... }:
 {
   imports = [
+    ./folding.nix
     ./parsing.nix
     ./keymapping.nix
   ];
