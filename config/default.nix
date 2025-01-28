@@ -4,6 +4,7 @@
     ./folding.nix
     ./parsing.nix
     ./keymapping.nix
+    ./styling.nix
   ];
 
   extraPackages = with pkgs; [
