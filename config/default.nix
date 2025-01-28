@@ -1,5 +1,10 @@
 { pkgs, ... }:
 {
+  imports = [
+    ./treesitter.nix
+    ./keymaps.nix
+  ];
+
   extraPackages = with pkgs; [
     # Formatters
     nixfmt-rfc-style
@@ -7,7 +12,13 @@
     stylua
   ];
 
-  colorschemes.gruvbox.enable = true;
+  colorschemes.tokyonight = {
+    enable = true;
+    settings = {
+      style = "night";
+      transparent = true;
+    };
+  };
 
   # Enable Treesitter for syntax highlighting
   plugins = {
@@ -36,51 +47,6 @@
         '';
     };
 
-    treesitter = {
-      enable = true;
-
-      settings = {
-        # Disable automatic grammar installation
-        auto_install = false;
-
-        # Ensure specific parsers are installed
-        ensure_installed = [
-          "git_config"
-          "git_rebase"
-          "gitattributes"
-          "gitcommit"
-          "gitignore"
-          "nix"
-          "lua"
-          "bash"
-        ];
-
-        # Enable highlighting
-        highlight = {
-          enable = true;
-        };
-
-        # Enable incremental selection
-        incremental_selection = {
-          enable = true;
-          keymaps = {
-            init_selection = "gnn";
-            node_incremental = "grn";
-            scope_incremental = "grc";
-            node_decremental = "grm";
-          };
-        };
-      };
-
-      luaConfig.post =
-        # lua
-        ''
-          do
-            local ts = require("vim.treesitter.language")
-            ts.register("bash", "nix")
-          end
-        '';
-    };
     # Enable LSP support and configure nixd
     lsp = {
       enable = true;

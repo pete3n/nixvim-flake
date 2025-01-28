@@ -1,0 +1,201 @@
+{ ... }:
+{
+  plugins.treesitter = {
+    enable = true;
+    settings = {
+      highlight.enable = true;
+      auto_install = true;
+      indent.enable = true;
+      incremental_selection = {
+        enable = true;
+        keymaps = {
+          init_selection = "<C-space>";
+          node_incremental = "<C-space>";
+          node_decremental = "<bs>";
+        };
+      };
+    };
+  };
+
+  plugins.treesitter-textobjects = {
+    enable = true;
+    select = {
+      enable = true;
+      lookahead = true;
+      keymaps = {
+        "a=" = {
+          query = "@assignment.outer";
+          desc = "Select [a]round outer part of an [=] assignment";
+        };
+        "i=" = {
+          query = "@assignment.inner";
+          desc = "Select [i]nner part of an [=] assignment";
+        };
+        "l=" = {
+          query = "@assignment.lhs";
+          desc = "Select [l]eft hand side of an [=] assignment";
+        };
+        "r=" = {
+          query = "@assignment.rhs";
+          desc = "Select [r]ight hand side of an [=] assignment";
+        };
+        "aa" = {
+          query = "@parameter.outer";
+          desc = "Select [a]round the outer part of a p[a]rameter";
+        };
+        "ia" = {
+          query = "@parameter.inner";
+          desc = "Select the [i]nner part of a p[a]rameter";
+        };
+        "ai" = {
+          query = "@conditional.outer";
+          desc = "Select [a]round the outer part of a cond[i]tional";
+        };
+        "ii" = {
+          query = "@conditional.inner";
+          desc = "Select the [i]nner part of a cond[i]tional";
+        };
+        "al" = {
+          query = "@loop.outer";
+          desc = "Select [a]round the outer part of a [l]oop";
+        };
+        "il" = {
+          query = "@loop.inner";
+          desc = "Select the [i]nner part of a [l]oop";
+        };
+        "af" = {
+          query = "@call.outer";
+          desc = "Select [a]round the outer part of a function call";
+        };
+        "if" = {
+          query = "@call.inner";
+          desc = "Select the [i]nner part of a function call";
+        };
+        "am" = {
+          query = "@function.outer";
+          desc = "Select [a]round the outer part of [m]ethod or function";
+        };
+        "im" = {
+          query = "@function.inner";
+          desc = "Select the [i]nner part of a [m]ethod or function";
+        };
+        "ac" = {
+          query = "@class.outer";
+          desc = "Select [a]round the outer part of a [c]lass";
+        };
+        "ic" = {
+          query = "@class.inner";
+          desc = "Select the [i]nner part of a [c]lass";
+        };
+      };
+    };
+
+    swap = {
+      enable = true;
+      swapNext = {
+        "<leader>na" = "@parameter.inner";
+        "<leader>nm" = "@function.outer";
+      };
+      swapPrevious = {
+        "<leader>pa" = "@parameter.inner";
+        "<leader>pm" = "@parameter.outer";
+      };
+    };
+
+    move = {
+      enable = true;
+      setJumps = true;
+      gotoNextStart = {
+        "]f" = {
+          query = "@call.outer";
+          desc = "Next [f]unction call start";
+        };
+        "]m" = {
+          query = "@function.outer";
+          desc = "Next [m]ethod or function def start";
+        };
+        "]c" = {
+          query = "@class.outer";
+          desc = "Next [c]lass start";
+        };
+        "]i" = {
+          query = "@conditional.outer";
+          desc = "Next cond[i]tional start";
+        };
+        "]l" = {
+          query = "@loop.outer";
+          desc = "Next [l]oop start";
+        };
+      };
+
+      gotoPreviousStart = {
+        "[f" = {
+          query = "@call.outer";
+          desc = "Prev [f]unction call start";
+        };
+        "[m" = {
+          query = "@function.outer";
+          desc = "Prev [m]ethod or function def start";
+        };
+        "[c" = {
+          query = "@class.outer";
+          desc = "Prev [c]lass start";
+        };
+        "[i" = {
+          query = "@conditional.outer";
+          desc = "Prev cond[i]tional start";
+        };
+        "[l" = {
+          query = "@loop.outer";
+          desc = "Prev [l]oop start";
+        };
+      };
+
+      gotoNextEnd = {
+        "]F" = {
+          query = "@call.outer";
+          desc = "Next [f]unction call end";
+        };
+        "]M" = {
+          query = "@function.outer";
+          desc = "Next [m]ethod or function def end";
+        };
+        "]C" = {
+          query = "@class.outer";
+          desc = "Next [c]lass end";
+        };
+        "]I" = {
+          query = "@conditional.outer";
+          desc = "Next cond[i]tional end";
+        };
+        "]L" = {
+          query = "@loop.outer";
+          desc = "Next [l]oop end";
+        };
+      };
+
+      gotoPreviousEnd = {
+        "[F" = {
+          query = "@call.outer";
+          desc = "Prev [f]unction call end";
+        };
+        "[M" = {
+          query = "@function.outer";
+          desc = "Prev [m]ethod or function def end";
+        };
+        "[C" = {
+          query = "@class.outer";
+          desc = "Prev [c]lass end";
+        };
+        "[I" = {
+          query = "@conditional.outer";
+          desc = "Prev cond[i]tional end";
+        };
+        "[L" = {
+          query = "@loop.outer";
+          desc = "Prev [l]oop end";
+        };
+      };
+    };
+  };
+}
