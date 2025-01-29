@@ -9,7 +9,6 @@
   ];
 
   extraPackages = with pkgs; [
-    # Formatters
     nixfmt-rfc-style
     shfmt
     stylua
