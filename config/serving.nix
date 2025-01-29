@@ -11,8 +11,11 @@
       jsonls.enable = true;
       lua_ls.enable = true;
       nixd.enable = true;
-      prismals.enable = true;
-      ruff_lsp.enable = true;
+      prismals = {
+        enable = true;
+        package = pkgs.nodePackages."@prisma/language-server";
+      };
+      ruff.enable = true;
       rust_analyzer = {
         enable = true;
         installCargo = true;
@@ -201,7 +204,7 @@
       })
 
       -- Python LSP
-      require("lspconfig").ruff_lsp.setup({
+      require("lspconfig").ruff.setup({
       	on_attach = function()
       		set_cmn_lsp_keybinds()
       	end,
