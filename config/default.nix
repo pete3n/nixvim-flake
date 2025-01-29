@@ -6,6 +6,7 @@
     ./formatting.nix
     ./keymapping.nix
     ./parsing.nix
+    ./searching.nix
     ./styling.nix
   ];
 
