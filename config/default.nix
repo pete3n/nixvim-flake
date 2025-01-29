@@ -7,6 +7,7 @@
     ./keymapping.nix
     ./parsing.nix
     ./searching.nix
+    ./serving.nix
     ./styling.nix
   ];
 
