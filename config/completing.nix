@@ -1,3 +1,4 @@
+# All configuration related to completing code/text
 { ... }:
 {
   plugins = {
