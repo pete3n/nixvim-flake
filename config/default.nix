@@ -1,13 +1,18 @@
-{ pkgs, ... }:
+# Imports for all configuration files, top-level Neovim options and globals
+{ ... }:
 {
   imports = [
     ./completing.nix
+    ./debugging.nix
+    ./editing.nix
     ./folding.nix
     ./formatting.nix
     ./keymapping.nix
+    ./linting.nix
+    ./navigating.nix
     ./parsing.nix
     ./searching.nix
-    ./serving.nix
+    ./interpreting.nix
     ./styling.nix
   ];
 
@@ -32,27 +37,5 @@
     signcolumn = "yes";
     updatetime = 50;
     foldlevelstart = 99;
-  };
-
-  colorschemes.tokyonight = {
-    enable = true;
-    settings = {
-      style = "night";
-      transparent = true;
-    };
-  };
-
-  # Enable Treesitter for syntax highlighting
-  plugins = {
-
-    # Enable LSP support and configure nixd
-    lsp = {
-      enable = true;
-      servers = {
-        nixd.enable = true;
-        bashls.enable = true;
-        lua_ls.enable = true;
-      };
-    };
   };
 }
