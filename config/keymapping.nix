@@ -1,119 +1,144 @@
+/*
+  	All configuration related to top-level keymapping
+   	Function specific keymapping (completing, debugging, etc.)
+   	is found in the associated configuration files
+*/
 { ... }:
 {
+  /*
+    		which-key is used project wide to create help-menu icons and entries for
+    		keymaps. All keymap functions and commands are defined outside of which-key to
+    		allow for removal without breaking functionality. Default keymaps for
+    		normal, insert, visual, modes are also mapped into apropriate top-level menus
+    		(searching, parsing, folding, etc.) to provide easy reference. The faster
+    		existing keymaps are preserved and displayed in the description.
+  */
+  plugins = {
+    which-key = {
+      enable = true;
+      settings = {
+        delay = 500;
+      };
+      luaConfig.post = # lua
+        ''
+          					if pcall(require, "which-key") then
+          						local wk = require("which-key")
+
+          						wk.add({
+          							{ "<C-L>", icon = "󰞋 ", desc = "Help", "<cmd>help<CR>", },
+          							{ "<leader>y", icon = "", desc = "yank to system clipboard ( + register)", },
+          							{ "y",  icon = " ", desc = "yank to \" register", },
+          							{ "u",  icon = "󰕌 ", desc = "undo", },
+          							{ "U",  icon = "󰑎 ", desc = "redo", },
+          							{ "J", icon = "󱞿 ", desc = "move line down", },
+          							{ "<C-y>", icon = "", desc = "toggle verticle column", },
+          							{ "h", icon = " ", desc = "Left", },
+          							{ "j", icon = " ", desc = "Down", },
+          							{ "k", icon = " ", desc = "Up", },
+          							{ "l", icon = " ", desc = "Right", },
+          							{ "_", icon = "󰞓 ", desc = "Start of Line (whitespace, with count)", },
+          							{ "^", icon = "󰞓 ", desc = "Start of Line (whitespace, single-line)", },
+          							{ "0", icon = "󰞓 ", desc = "Start of Line (absolute, single-line)", },
+          							{ "$", icon = "󰞔 ", desc = "End of Line", },
+          							{ "<", icon = "󰞗 ", desc = "Indent Left", },
+          							{ ">", icon = "󰞘 ", desc = "Indent Right", },
+          							{ "G", icon = "󰞒 ", desc = "Last Line", },
+          							{ "~", icon = "󰬵 ", desc = "Toggle case", },
+          							{ "{", icon = "󰉸 ", desc = "Prev empty line", },
+          							{ "}", icon = "󰉸 ", desc = "Next empty line", },
+
+          							-- Tab group
+          							{ "<Tab>", group = "tabs", icon = "󰓩 ", },
+          							{ "<leader><Tab>", group = "tabs", proxy = "<Tab>", },
+          							{ "<Tab>n", icon = "󰓩 ", desc = "new tab", },
+          							{ "<Tab>q", icon = "󰱝 ", desc = "close tab", },
+          							{ "<Tab>l",  icon = " ", desc = "next tab (gt)", },
+          							{ "<Tab>h",  icon = " ", desc = "prev tab (gT)", },
+
+          							-- Windows group - built-in
+          							{ "<leader>w", group = "windows", proxy = "<C-w>", icon = "󰖲 ", },
+
+          							{ "<leader>o", group = "options", icon = " ", },
+
+          							-- Global group
+          							{ "g", group = "Global", icon = " ", },
+          							{ "gg", icon = "󰞒 ", desc = "First Line", },
+          						})
+          					end
+        '';
+    };
+    mini = {
+      enable = true;
+      modules = {
+        icons = {
+          enable = true;
+        };
+        comment = {
+          disable_default_keymaps = true;
+        };
+      };
+    };
+  };
+
   keymaps = [
     {
-      key = "<leader>pv";
+      key = "<Tab>n";
       mode = "n";
-      action = "<cmd>Oil<CR>";
+      action = ":tabnew<CR>";
       options = {
         silent = true;
-        noremap = true;
-        desc = "[p]roject [v]iew";
+        desc = "new tab";
       };
     }
     {
-      key = "<leader>u";
+      key = "<Tab>q";
       mode = "n";
-      action = "<cmd>UndotreeToggle<CR>";
+      action = ":close<CR>";
       options = {
         silent = true;
-        noremap = true;
-        desc = "[u]ndotree toggle";
+        desc = "close tab";
       };
     }
     {
-      key = "<leader>gs";
+      key = "<Tab>l";
       mode = "n";
-      action = "<cmd>Git<CR>";
+      action = ":tabnext<CR>";
       options = {
         silent = true;
-        noremap = true;
-        desc = "[g]it [s]tatus";
+        desc = "next tab";
       };
     }
     {
-      key = "<C-y>";
+      key = "<Tab>h";
       mode = "n";
-      action = ":set cursorcolumn!<CR>";
+      action = ":tabprevious<CR>";
       options = {
         silent = true;
-        noremap = true;
-        desc = "Toggle vertical column because [Y]AML sucks";
+        desc = "previous tab";
       };
     }
     {
-      key = "J";
-      mode = "v";
-      action = ":m '>+1<CR>gv=gv";
+      key = "u";
+      mode = [
+        "n"
+        "v"
+      ];
+      action = ":undo<CR>";
       options = {
         silent = true;
-        noremap = true;
-        desc = "Shift line down 1 in visual mode";
+        desc = "undo";
       };
     }
     {
-      key = "K";
-      mode = "v";
-      action = ":m '<-2<CR>gv=gv";
+      key = "U";
+      mode = [
+        "n"
+        "v"
+      ];
+      action = ":redo<CR>";
       options = {
         silent = true;
-        noremap = true;
-        desc = "Shift line up 1 in visual mode";
-      };
-    }
-    {
-      key = "J";
-      mode = "n";
-      action = "mzJ\`z"; # Keep cursor to the left
-      options = {
-        silent = true;
-        noremap = true;
-      };
-    }
-    {
-      key = "<C-d>";
-      mode = "n";
-      action = "<C-d>zz"; # Keep cursor in middle
-      options = {
-        silent = true;
-        noremap = true;
-      };
-    }
-    {
-      key = "<C-u>";
-      mode = "n";
-      action = "<C-u>zz"; # Keep cursor in middle
-      options = {
-        silent = true;
-        noremap = true;
-      };
-    }
-    {
-      key = "n";
-      mode = "n";
-      action = "nzzzv"; # Keep cursor in middle
-      options = {
-        silent = true;
-        noremap = true;
-      };
-    }
-    {
-      key = "N";
-      mode = "n";
-      action = "Nzzzv";
-      options = {
-        silent = true;
-        noremap = true;
-      };
-    }
-    {
-      key = "<leader>p";
-      mode = "x";
-      action = "\"_dP";
-      options = {
-        silent = true;
-        noremap = true;
-        desc = "[p]reserve put";
+        desc = "redo";
       };
     }
     {
@@ -124,19 +149,71 @@
       ];
       action = "\"+y";
       options = {
-        silent = true;
-        noremap = true;
-        desc = "[y]ank to system clipboard";
+        desc = "yank to system clipboard ( + register)";
       };
     }
     {
-      key = "<leader>Y";
+      key = "<C-y>";
       mode = "n";
-      action = "\"+Y";
+      action = ":set cursorcolumn!<CR>";
       options = {
         silent = true;
-        noremap = true;
-        desc = "[Y]ank line to system clipboard";
+        desc = "toggle vertical column";
+      };
+    }
+    {
+      key = "J";
+      mode = "v";
+      action = ":m '>+1<CR>gv=gv";
+      options = {
+        silent = true;
+        desc = "move line down";
+      };
+    }
+    {
+      key = "K";
+      mode = "v";
+      action = ":m '<-2<CR>gv=gv";
+      options = {
+        silent = true;
+        desc = "move line up";
+      };
+    }
+    {
+      key = "J";
+      mode = "n";
+      action = "mzJ\`z";
+      options = {
+        silent = true;
+        desc = "grab next line";
+      };
+    }
+    # Disabled because of conflict with the which-key menu scrolling
+    #{
+    #  key = "<C-d>";
+    #  mode = "n";
+    #  action = "<C-d>zz"; # Scroll down and keep cursor in middle
+    #  options = {
+    #    silent = true;
+    #    noremap = true;
+    #  };
+    #}
+    #{
+    #  key = "<C-u>";
+    #  mode = "n";
+    #  action = "<C-u>zz"; # Scroll up and keep cursor in middle
+    #  options = {
+    #    silent = true;
+    #    noremap = true;
+    #  };
+    #}
+    {
+      key = "<leader>p";
+      mode = "x";
+      action = "\"_dP";
+      options = {
+        silent = true;
+        desc = "preserve put";
       };
     }
     {
@@ -145,183 +222,7 @@
       action = "<nop>";
       options = {
         silent = true;
-        noremap = true;
-        desc = "Don't";
-      };
-    }
-    {
-      key = "<C-f>";
-      mode = "n";
-      action = "<cmd>!tmux neww tmux-sessionizer<CR>";
-      options = {
-        silent = true;
-        noremap = true;
-        desc = "[f]ind and switch tmux session";
-      };
-    }
-    {
-      key = "<C-k>";
-      mode = "n";
-      action = "<cmd>cnext<CR>zz";
-      options = {
-        silent = true;
-        noremap = true;
-        desc = "Next quickfix";
-      };
-    }
-    {
-      key = "<C-j>";
-      mode = "n";
-      action = "<cmd>cprev<CR>zz";
-      options = {
-        silent = true;
-        noremap = true;
-        desc = "Prev quickfix";
-      };
-    }
-    {
-      key = "<leader>k";
-      mode = "n";
-      action = "<cmd>lnext<CR>zz";
-      options = {
-        silent = true;
-        noremap = true;
-        desc = "Next quickfix location";
-      };
-    }
-    {
-      key = "<leader>j";
-      mode = "n";
-      action = "<cmd>lprev<CR>zz";
-      options = {
-        silent = true;
-        noremap = true;
-        desc = "Prev quickfix location";
-      };
-    }
-    {
-      key = "<leader>mp";
-      mode = [
-        "n"
-        "v"
-      ];
-      action = ":lua _G.format_with_conform()<CR>";
-      options = {
-        silent = true;
-        noremap = true;
-        desc = "[m]ake [p]retty by formatting";
-      };
-    }
-    {
-      key = "<leader>da";
-      mode = "n";
-      action = ":lua vim.lsp.buf.code_action()<CR>";
-      options = {
-        silent = true;
-        noremap = true;
-        desc = "[d]iagnostic changes [a]ccepted";
-      };
-    }
-    {
-      key = "<leader>t";
-      mode = "n";
-      action = "<cmd>NvimTreeToggle<CR>";
-      options = {
-        silent = true;
-        noremap = true;
-        desc = "Toggle nvim [t]ree";
-      };
-    }
-
-    # DAP Debugging
-    {
-      key = "<leader>b";
-      mode = "n";
-      action = ":lua require'dap'.toggle_breakpoint()<CR>";
-      options = {
-        silent = true;
-        noremap = true;
-        desc = "Toggle DAP [b]reakpoint";
-      };
-    }
-    {
-      key = "<leader>B";
-      mode = "n";
-      action = ":lua require'dap'.set_breakpoint(vim.fn.input('Breakpoint condition: '))<CR>";
-      options = {
-        silent = true;
-        noremap = true;
-        desc = "Set DAP [B]reakpoint";
-      };
-    }
-    {
-      key = "<leader>dtg";
-      mode = "n";
-      action = ":lua require'dap-go'.debug_test()<CR>";
-      options = {
-        silent = true;
-        noremap = true;
-        desc = "DAP [d]ebug [t]est for (g)o";
-      };
-    }
-    {
-      key = "<leader>de";
-      mode = "n";
-      action = ":lua require'dap'.repl.open()<CR>";
-      options = {
-        silent = true;
-        noremap = true;
-        desc = "[d]ap r[e]pl open";
-      };
-    }
-    {
-      key = "<leader>lp";
-      mode = "n";
-      action = ":lua require'dap'.set_breakpoint(nil, nil, vim.fn.input('Log point message: '))<CR>";
-      options = {
-        silent = true;
-        noremap = true;
-        desc = "[l]og DAP [p]oint message";
-      };
-    }
-    {
-      key = "<F5>";
-      mode = "n";
-      action = ":lua require'dap'.continue()<CR>";
-      options = {
-        silent = true;
-        noremap = true;
-        desc = "Continue DAP debug";
-      };
-    }
-    {
-      key = "<F10>";
-      mode = "n";
-      action = ":lua require'dap'.step_over()<CR>";
-      options = {
-        silent = true;
-        noremap = true;
-        desc = "Step over DAP debug";
-      };
-    }
-    {
-      key = "<F11>";
-      mode = "n";
-      action = ":lua require'dap'.step_into()<CR>";
-      options = {
-        silent = true;
-        noremap = true;
-        desc = "Step into DAP debug";
-      };
-    }
-    {
-      key = "<F12>";
-      mode = "n";
-      action = ":lua require'dap'.step_out()<CR>";
-      options = {
-        silent = true;
-        noremap = true;
-        desc = "Stepout of DAP debug";
+        desc = "(disabled)";
       };
     }
   ];
