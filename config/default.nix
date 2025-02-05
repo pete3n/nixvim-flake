@@ -38,4 +38,14 @@
     updatetime = 50;
     foldlevelstart = 99;
   };
+
+	# Disable formatting on-save by default. 
+  extraConfigLua = # lua
+		''
+			vim.api.nvim_create_autocmd("VimEnter", {
+				callback = function()
+					vim.cmd("FormatDisable")
+				end,
+			})
+		'';
 }
