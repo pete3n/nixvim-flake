@@ -1,3 +1,4 @@
+# All configuration related to parsing languages (Treesitter)
 { ... }:
 {
   plugins = {
@@ -11,12 +12,59 @@
         incremental_selection = {
           enable = true;
           keymaps = {
-            init_selection = "<C-space>";
-            node_incremental = "<C-space>";
-            node_decremental = "<bs>";
+            init_selection = "grm";
+            node_incremental = "grn";
+            node_decremental = "grc";
           };
         };
       };
+      luaConfig.post = # lua
+        ''
+          local function contains(tbl, value)
+            for _, v in ipairs(tbl) do
+              if v == value then
+                return true
+              end
+            end
+            return false
+          end
+
+          -- Variable to track the current InspectTree window.
+          local inspect_tree_win = nil
+
+          local function inspect_tree_toggle()
+            -- If we have a recorded window and it’s still valid, close it.
+            if inspect_tree_win and vim.api.nvim_win_is_valid(inspect_tree_win) then
+              vim.api.nvim_win_close(inspect_tree_win, true)
+              inspect_tree_win = nil
+              return
+            end
+
+            -- Otherwise, open a new inspect tree window.
+            local wins_before = vim.api.nvim_list_wins()
+            vim.cmd("InspectTree")
+            -- Schedule a function to run after the command takes effect.
+            vim.schedule(function()
+              local wins_after = vim.api.nvim_list_wins()
+              for _, win in ipairs(wins_after) do
+                if not contains(wins_before, win) then
+                  inspect_tree_win = win
+                  break
+                end
+              end
+            end)
+          end
+
+          vim.api.nvim_create_user_command("InspectTreeToggle", inspect_tree_toggle, {})
+
+          if pcall(require, "which-key") then
+          	local wk = require("which-key")
+          	wk.add({
+          	{ "<leader>pi", "<cmd>InspectTreeToggle<CR>", desc = "toggle inspect tree", 
+          		icon = "󰔡 ", },
+          	})
+          end
+        '';
     };
 
     treesitter-context = {
@@ -31,6 +79,46 @@
         trim_scope = "inner";
         zindex = 20;
       };
+      luaConfig.post = # lua
+        ''
+                    -- Function to temporarily show/hide the context window
+                    -- Returns nil context to force TS Context to close the window
+
+                    local ts_context = require("treesitter-context")
+                    local context = require("treesitter-context.context")
+                    local render = require("treesitter-context.render")
+
+                    _G.ts_context_display = true
+
+                    local original_get = context.get
+                    context.get = function(bufnr, winid)
+                    	if not _G.ts_context_display then
+                    		-- Return no context: this will trigger update_single_context to close the window.
+                    		return nil, {}
+                    	end
+                    	return original_get(bufnr, winid)
+                    end
+
+                    vim.api.nvim_create_user_command("TSContextToggleDisplay", function()
+                    	_G.ts_context_display = not _G.ts_context_display
+                    	local cur_win = vim.api.nvim_get_current_win()
+                    	if not _G.ts_context_display then
+                    		pcall(render.close, cur_win)
+                    		vim.notify("Treesitter Context hidden", vim.log.levels.INFO)
+                    	else
+                    		vim.notify("Treesitter Context enabled; move the cursor to refresh", vim.log.levels.INFO)
+                    	end
+                    end, {})
+
+
+                    if pcall(require, "which-key") then
+          						local wk = require("which-key")
+          						wk.add({
+          							{ "<leader>pc", "<cmd>TSContextToggleDisplay<CR>",
+          							desc = "toggle treesitter-context display", mode = "n", icon = "󰔡 ", },
+          						})
+          					end
+        '';
     };
 
     treesitter-textobjects = {
@@ -41,67 +129,67 @@
         keymaps = {
           "a=" = {
             query = "@assignment.outer";
-            desc = "Select [a]round outer part of an [=] assignment";
+            desc = "select around outer part of an [=] assignment";
           };
           "i=" = {
             query = "@assignment.inner";
-            desc = "Select [i]nner part of an [=] assignment";
+            desc = "select inner part of an [=] assignment";
           };
           "l=" = {
             query = "@assignment.lhs";
-            desc = "Select [l]eft hand side of an [=] assignment";
+            desc = "select left hand side of an [=] assignment";
           };
           "r=" = {
             query = "@assignment.rhs";
-            desc = "Select [r]ight hand side of an [=] assignment";
+            desc = "select [r]ight hand side of an [=] assignment";
           };
           "aa" = {
             query = "@parameter.outer";
-            desc = "Select [a]round the outer part of a p[a]rameter";
+            desc = "select around the outer part of a parameter";
           };
           "ia" = {
             query = "@parameter.inner";
-            desc = "Select the [i]nner part of a p[a]rameter";
+            desc = "select the inner part of a parameter";
           };
           "ai" = {
             query = "@conditional.outer";
-            desc = "Select [a]round the outer part of a cond[i]tional";
+            desc = "select around the outer part of a conditional";
           };
           "ii" = {
             query = "@conditional.inner";
-            desc = "Select the [i]nner part of a cond[i]tional";
+            desc = "select the inner part of a conditional";
           };
           "al" = {
             query = "@loop.outer";
-            desc = "Select [a]round the outer part of a [l]oop";
+            desc = "select around the outer part of a loop";
           };
           "il" = {
             query = "@loop.inner";
-            desc = "Select the [i]nner part of a [l]oop";
+            desc = "select the inner part of a loop";
           };
           "af" = {
             query = "@call.outer";
-            desc = "Select [a]round the outer part of a function call";
+            desc = "select around the outer part of a function call";
           };
           "if" = {
             query = "@call.inner";
-            desc = "Select the [i]nner part of a function call";
+            desc = "select the inner part of a function call";
           };
           "am" = {
             query = "@function.outer";
-            desc = "Select [a]round the outer part of [m]ethod or function";
+            desc = "select around the outer part of method or function";
           };
           "im" = {
             query = "@function.inner";
-            desc = "Select the [i]nner part of a [m]ethod or function";
+            desc = "select the inner part of a method or function";
           };
           "ac" = {
             query = "@class.outer";
-            desc = "Select [a]round the outer part of a [c]lass";
+            desc = "select around the outer part of a class";
           };
           "ic" = {
             query = "@class.inner";
-            desc = "Select the [i]nner part of a [c]lass";
+            desc = "select the inner part of a class";
           };
         };
       };
@@ -109,12 +197,16 @@
       swap = {
         enable = true;
         swapNext = {
-          "<leader>na" = "@parameter.inner";
-          "<leader>nm" = "@function.outer";
+          "<leader>ppi" = "@parameter.inner";
+          "<leader>ppo" = "@parameter.outer";
+          "<leader>pfi" = "@function.innter";
+          "<leader>pfo" = "@function.outer";
         };
         swapPrevious = {
-          "<leader>pa" = "@parameter.inner";
-          "<leader>pm" = "@parameter.outer";
+          "<leader>ppI" = "@parameter.inner";
+          "<leader>ppO" = "@parameter.outer";
+          "<leader>pfI" = "@function.innter";
+          "<leader>pfO" = "@function.outer";
         };
       };
 
@@ -124,94 +216,95 @@
         gotoNextStart = {
           "]F" = {
             query = "@call.outer";
-            desc = "Next [f]unction call start";
+            desc = "next function call start";
           };
           "]M" = {
             query = "@function.outer";
-            desc = "Next [m]ethod or function def start";
+            desc = "next method or function def start";
           };
           "]C" = {
             query = "@class.outer";
-            desc = "Next [c]lass start";
+            desc = "next class start";
           };
           "]I" = {
             query = "@conditional.outer";
-            desc = "Next cond[i]tional start";
+            desc = "next conditional start";
           };
           "]L" = {
             query = "@loop.outer";
-            desc = "Next [l]oop start";
+            desc = "next loop start";
           };
         };
 
         gotoPreviousStart = {
           "[F" = {
             query = "@call.outer";
-            desc = "Prev [f]unction call start";
+            desc = "prev function call start";
           };
           "[M" = {
             query = "@function.outer";
-            desc = "Prev [m]ethod or function def start";
+            desc = "prev method or function def start";
           };
           "[C" = {
             query = "@class.outer";
-            desc = "Prev [c]lass start";
+            desc = "prev class start";
           };
           "[I" = {
             query = "@conditional.outer";
-            desc = "Prev cond[i]tional start";
+            desc = "prev conditional start";
           };
           "[L" = {
             query = "@loop.outer";
-            desc = "Prev [l]oop start";
+            desc = "prev loop start";
           };
         };
 
         gotoNextEnd = {
           "]f" = {
             query = "@call.outer";
-            desc = "Next [f]unction call end";
+            desc = "next function call end";
           };
           "]m" = {
             query = "@function.outer";
-            desc = "Next [m]ethod or function def end";
+            desc = "next method or function def end";
           };
           "]c" = {
             query = "@class.outer";
-            desc = "Next [c]lass end";
+            desc = "next class end";
           };
           "]i" = {
             query = "@conditional.outer";
-            desc = "Next cond[i]tional end";
+            desc = "next conditional end";
           };
           "]l" = {
             query = "@loop.outer";
-            desc = "Next [l]oop end";
+            desc = "next loop end";
           };
         };
 
         gotoPreviousEnd = {
           "[f" = {
             query = "@call.outer";
-            desc = "Prev [f]unction call end";
+            desc = "prev function call end";
           };
           "[m" = {
             query = "@function.outer";
-            desc = "Prev [m]ethod or function def end";
+            desc = "prev method or function def end";
           };
           "[c" = {
             query = "@class.outer";
-            desc = "Prev [c]lass end";
+            desc = "prev class end";
           };
           "[i" = {
             query = "@conditional.outer";
-            desc = "Prev cond[i]tional end";
+            desc = "prev conditional end";
           };
           "[l" = {
             query = "@loop.outer";
-            desc = "Prev [l]oop end";
+            desc = "prev loop end";
           };
         };
+
       };
     };
 
@@ -230,4 +323,24 @@
       };
     };
   };
+
+  extraConfigLuaPost = # lua
+    ''
+            if pcall(require, "which-key") then
+      				local wk = require("which-key")
+      				wk.add({ 
+      					{ "<leader>p", group = "parsing", icon = " " },
+      					{ "<leader>pp", group = "paramater swap", icon = "󰓡 " },
+      					{ "<leader>pf", group = "function swap", icon = "󰓡 " },
+      					{ "<leader>ppi", desc = "swap next inner parameter"},
+      					{ "<leader>ppo", desc = "swap next outer parameter"},
+      					{ "<leader>ppI", desc = "swap prev inner parameter"},
+      					{ "<leader>ppO", desc = "swap prev outer parameter"},
+      					{ "<leader>pfi", desc = "swap next inner function"},
+      					{ "<leader>pfo", desc = "swap next outer function"},
+      					{ "<leader>pfI", desc = "swap prev inner function"},
+      					{ "<leader>pfO", desc = "swap prev outer function"},
+      				})
+      			end
+    '';
 }
