@@ -21,50 +21,50 @@
       };
       luaConfig.post = # lua
         ''
-          					if pcall(require, "which-key") then
-          						local wk = require("which-key")
+					if pcall(require, "which-key") then
+						local wk = require("which-key")
 
-          						wk.add({
-          							{ "<C-L>", icon = "󰞋 ", desc = "Help", "<cmd>help<CR>", },
-          							{ "<leader>y", icon = "", desc = "yank to system clipboard ( + register)", },
-          							{ "y",  icon = " ", desc = "yank to \" register", },
-          							{ "u",  icon = "󰕌 ", desc = "undo", },
-          							{ "U",  icon = "󰑎 ", desc = "redo", },
-          							{ "J", icon = "󱞿 ", desc = "move line down", },
-          							{ "<C-y>", icon = "", desc = "toggle verticle column", },
-          							{ "h", icon = " ", desc = "Left", },
-          							{ "j", icon = " ", desc = "Down", },
-          							{ "k", icon = " ", desc = "Up", },
-          							{ "l", icon = " ", desc = "Right", },
-          							{ "_", icon = "󰞓 ", desc = "Start of Line (whitespace, with count)", },
-          							{ "^", icon = "󰞓 ", desc = "Start of Line (whitespace, single-line)", },
-          							{ "0", icon = "󰞓 ", desc = "Start of Line (absolute, single-line)", },
-          							{ "$", icon = "󰞔 ", desc = "End of Line", },
-          							{ "<", icon = "󰞗 ", desc = "Indent Left", },
-          							{ ">", icon = "󰞘 ", desc = "Indent Right", },
-          							{ "G", icon = "󰞒 ", desc = "Last Line", },
-          							{ "~", icon = "󰬵 ", desc = "Toggle case", },
-          							{ "{", icon = "󰉸 ", desc = "Prev empty line", },
-          							{ "}", icon = "󰉸 ", desc = "Next empty line", },
+						wk.add({
+							{ "<C-L>", icon = "󰞋 ", desc = "Help", "<cmd>help<CR>", },
+							{ "<leader>y", icon = "", desc = "yank to system clipboard ( + register)", },
+							{ "y",  icon = " ", desc = "yank to \" register", },
+							{ "u",  icon = "󰕌 ", desc = "undo", },
+							{ "U",  icon = "󰑎 ", desc = "redo", },
+							{ "J", icon = "󱞿 ", desc = "move line down", },
+							{ "<C-y>", icon = "", desc = "toggle verticle column", },
+							{ "h", icon = " ", desc = "Left", },
+							{ "j", icon = " ", desc = "Down", },
+							{ "k", icon = " ", desc = "Up", },
+							{ "l", icon = " ", desc = "Right", },
+							{ "_", icon = "󰞓 ", desc = "Start of Line (whitespace, with count)", },
+							{ "^", icon = "󰞓 ", desc = "Start of Line (whitespace, single-line)", },
+							{ "0", icon = "󰞓 ", desc = "Start of Line (absolute, single-line)", },
+							{ "$", icon = "󰞔 ", desc = "End of Line", },
+							{ "<", icon = "󰞗 ", desc = "Indent Left", },
+							{ ">", icon = "󰞘 ", desc = "Indent Right", },
+							{ "G", icon = "󰞒 ", desc = "Last Line", },
+							{ "~", icon = "󰬵 ", desc = "Toggle case", },
+							{ "{", icon = "󰉸 ", desc = "Prev empty line", },
+							{ "}", icon = "󰉸 ", desc = "Next empty line", },
 
-          							-- Tab group
-          							{ "<Tab>", group = "tabs", icon = "󰓩 ", },
-          							{ "<leader><Tab>", group = "tabs", proxy = "<Tab>", },
-          							{ "<Tab>n", icon = "󰓩 ", desc = "new tab", },
-          							{ "<Tab>q", icon = "󰱝 ", desc = "close tab", },
-          							{ "<Tab>l",  icon = " ", desc = "next tab (gt)", },
-          							{ "<Tab>h",  icon = " ", desc = "prev tab (gT)", },
+							-- Tab group
+							{ "<Tab>", group = "tabs", icon = "󰓩 ", },
+							{ "<leader><Tab>", group = "tabs", proxy = "<Tab>", },
+							{ "<Tab>n", icon = "󰓩 ", desc = "new tab", },
+							{ "<Tab>q", icon = "󰱝 ", desc = "close tab", },
+							{ "<Tab>l",  icon = " ", desc = "next tab (gt)", },
+							{ "<Tab>h",  icon = " ", desc = "prev tab (gT)", },
 
-          							-- Windows group - built-in
-          							{ "<leader>w", group = "windows", proxy = "<C-w>", icon = "󰖲 ", },
+							-- Windows group - built-in
+							{ "<leader>w", group = "windows", proxy = "<C-w>", icon = "󰖲 ", },
 
-          							{ "<leader>o", group = "options", icon = " ", },
+							{ "<leader>o", group = "options", icon = " ", },
 
-          							-- Global group
-          							{ "g", group = "Global", icon = " ", },
-          							{ "gg", icon = "󰞒 ", desc = "First Line", },
-          						})
-          					end
+							-- Global group
+							{ "g", group = "Global", icon = " ", },
+							{ "gg", icon = "󰞒 ", desc = "First Line", },
+						})
+					end
         '';
     };
     mini = {
