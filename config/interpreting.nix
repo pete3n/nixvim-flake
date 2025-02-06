@@ -28,27 +28,6 @@
     typescript-tools-nvim
   ];
 
-  keymaps = [
-    {
-      key = "<leader>ida";
-      mode = "n";
-      action = ":lua vim.lsp.buf.code_action()<CR>";
-      options = {
-        silent = true;
-        noremap = true;
-        desc = "accept diagnostic change";
-      };
-    }
-    {
-      key = "<leader>idq";
-      mode = "n";
-      action = "<cmd>lua vim.diagnostic.setqflist()<CR>";
-      options = {
-        desc = "set quickfix list from diagnostic";
-      };
-    }
-  ];
-
   plugins.lsp = {
     servers = {
       # TODO: Fix this https://github.com/bergercookie/asm-lsp/issues/193
@@ -57,7 +36,6 @@
       clangd.enable = true;
       cmake.enable = true;
       cssls.enable = true;
-			efm.enable = true;
       eslint.enable = true;
       gopls.enable = true;
       jsonls.enable = true;
@@ -91,12 +69,60 @@
       -- Extra nvim-lspconfig configuration
       local function set_cmn_lsp_keybinds()
       	local lsp_keybinds = {
+					{
+						key = "<leader>ia",
+						action = vim.lsp.buf.code_action,
+						options = {
+							buffer = 0,
+							desc = "code action",
+						},
+					},
       		{
       			key = "<leader>ii",
       			action = vim.lsp.buf.hover,
       			options = {
       				buffer = 0,
       				desc = "hover token info <S-K>",
+      			},
+      		},
+      		{
+      			key = "<leader>ij",
+      			action = vim.diagnostic.goto_prev,
+      			options = {
+      				buffer = 0,
+      				desc = "go to previous diagnostic",
+      			},
+      		},
+					{
+						key = "<leader>ik",
+						action = vim.diagnostic.goto_next,
+						options = {
+							buffer = 0,
+							desc = "go to next diagnostic",
+						},
+					},
+					{
+						key = "<leader>iq",
+						action = vim.diagnostic.setqflist,
+						options = {
+							buffer = 0,
+							desc = "diagnostics quickfix list",
+						},
+					},
+					{
+						key = "<leader>ir",
+						action = vim.lsp.buf.rename,
+						options = {
+							buffer = 0,
+							desc = "rename variable <S-R>",
+						},
+					},
+      		{
+      			key = "<leader>r",
+      			action = vim.lsp.buf.rename,
+      			options = {
+      				buffer = 0,
+      				desc = "rename variable",
       			},
       		},
       		{
@@ -108,14 +134,6 @@
       			},
       		},
       		{
-      			key = "gy",
-      			action = vim.lsp.buf.type_definition,
-      			options = {
-      				buffer = 0,
-      				desc = "go to type definition",
-      			},
-      		},
-      		{
       			key = "gi",
       			action = vim.lsp.buf.implementation,
       			options = {
@@ -124,45 +142,13 @@
       			},
       		},
       		{
-      			key = "<leader>idh",
-      			action = vim.diagnostic.goto_next,
+      			key = "gy",
+      			action = vim.lsp.buf.type_definition,
       			options = {
       				buffer = 0,
-      				desc = "go to next diagnostic",
+      				desc = "go to type definition",
       			},
-      		},
-      		{
-      			key = "<leader>idl",
-      			action = vim.diagnostic.goto_prev,
-      			options = {
-      				buffer = 0,
-      				desc = "go to previous diagnostic",
-      			},
-      		},
-      		{
-      			key = "<leader>r",
-      			action = vim.lsp.buf.rename,
-      			options = {
-      				buffer = 0,
-      				desc = "rename variable",
-      			},
-      		},
-      		{
-      			key = "<leader>ir",
-      			action = vim.lsp.buf.rename,
-      			options = {
-      				buffer = 0,
-      				desc = "rename variable <leader>r",
-      			},
-      		},
-      		{
-      			key = "<leader>ia",
-      			action = vim.lsp.buf.code_action,
-      			options = {
-      				buffer = 0,
-      				desc = "code action",
-      			},
-      		},
+      		}
       	}
 
       	for _, bind in ipairs(lsp_keybinds) do
@@ -174,11 +160,11 @@
       	local wk = require("which-key")
       	wk.add ({
       		{"<leader>i", group = "interpreting", icon = " "},
-      		{"<leader>id", group = "diagnostics", icon = " "},
-      		{"<leader>ida", icon = " ", desc = "accept diagnostic change", },
-      		{"<leader>idl", icon = "󰮰 ", desc = "goto next diagnostic", },
-      		{"<leader>idh", icon = "󰮰 ", desc = "goto prev diagnostic", },
-      		{"<leader>idq", icon = "󰑮 ", desc = "populate quickfix list", },
+      		{"<leader>ia", icon = " ", desc = "accept code action", },
+      		{"<leader>ik", icon = "󰮰 ", desc = "goto next diagnostic", },
+      		{"<leader>ij", icon = "󰮰 ", desc = "goto prev diagnostic", },
+      		{"<leader>iq", icon = "󰑮 ", desc = "populate quickfix list", },
+      		{"<leader>ir", icon = "󰑕 ", desc = "rename variable <S-R>", },
       		{"<leader>ig", group = "goto", icon = " "},
       		{"<leader>igd", "gd", desc = "goto definition (gd)" };
       		{"<leader>igy", "gy", desc = "goto type definition (gy)" };
