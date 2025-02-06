@@ -39,41 +39,51 @@
       luaConfig.post =
         # lua
         ''
-          -- Extra options for cmp-cmdline setup
-          cmp.setup.cmdline(":", {
-          	mapping = cmp.mapping.preset.cmdline(),
-          	sources = cmp.config.sources({
-          		{ name = "path" },
-          	}, {
-          		{
-          			name = "cmdline",
-          			option = {
-          				ignore_cmds = { "Man", "!" },
-          			},
-          		},
-          	}),
-          })
+					if pcall(require, "vim-dadbod-completion") then
+						-- Setup vim-dadbod
+						cmp.setup.filetype({ "sql" }, {
+							sources = {
+								{ name = "vim-dadbod-completion" },
+								{ name = "buffer" },
+							},
+						})
+					end
 
-          if pcall(require, "which-key") then
-          	local wk = require "which-key"
+					-- Extra options for cmp-cmdline setup
+					cmp.setup.cmdline(":", {
+						mapping = cmp.mapping.preset.cmdline(),
+						sources = cmp.config.sources({
+							{ name = "path" },
+						}, {
+							{
+								name = "cmdline",
+								option = {
+									ignore_cmds = { "Man", "!" },
+								},
+							},
+						}),
+					})
 
-          	wk.add ({
-          		{"<leader>c", group = "completing", icon = "󰈼", mode = { "n", "c", "i" }, },
-          		{"<leader>ck", icon = "󰞘 ", desc = "expand or jump to next snippet (^ K)", 
-          				mode = { "n", "c", "i", }, },
-          		{"<leader>cj", icon = "󰞗 ", desc = "jump back (^ J)", mode = { "n", "c", "i" }, },
-          		{"<leader>cn", icon = " ", desc = "next completion (^ N)", mode = { "n", "c", "i" }, },
-          		{"<leader>cp", icon = " ", desc = "prev completion (^ P)", mode = { "n", "c", "i" }, },
-          		{"<leader>cy", icon = "󰿄 ", desc = "confirm completion (^ Y)", mode = { "n", "c", "i" }, },
-          		{"<leader>ce", icon = "󰜺 ", desc = "close completions (^ E)", mode = { "n", "c", "i" }, },
-          		{"<C-K>", icon = "󰞘 ", desc = "expand or jump to next snippet", mode = { "c", "i" }, },
-          		{"<C-J>", icon = "󰞗 ", desc = "jump back", mode = { "c", "i" }, },
-          		{"<C-N>", icon = " ", desc = "next completion", mode = { "c", "i" }, },
-          		{"<C-P>", icon = " ", desc = "prev completion", mode = { "c", "i" }, },
-          		{"<C-Y>", icon = "󰿄 ", desc = "confirm completion ", mode = { "c", "i" }, },
-          		{"<C-E>", icon = "󰜺 ", desc = "close completions", mode = { "c", "i" }, },
-          	})
-          end
+					if pcall(require, "which-key") then
+						local wk = require "which-key"
+
+						wk.add ({
+							{"<leader>c", group = "completing", icon = "󰈼", mode = { "n", "c", "i" }, },
+							{"<leader>ck", icon = "󰞘 ", desc = "expand or jump to next snippet (^ K)", 
+									mode = { "n", "c", "i", }, },
+							{"<leader>cj", icon = "󰞗 ", desc = "jump back (^ J)", mode = { "n", "c", "i" }, },
+							{"<leader>cn", icon = " ", desc = "next completion (^ N)", mode = { "n", "c", "i" }, },
+							{"<leader>cp", icon = " ", desc = "prev completion (^ P)", mode = { "n", "c", "i" }, },
+							{"<leader>cy", icon = "󰿄 ", desc = "confirm completion (^ Y)", mode = { "n", "c", "i" }, },
+							{"<leader>ce", icon = "󰜺 ", desc = "close completions (^ E)", mode = { "n", "c", "i" }, },
+							{"<C-K>", icon = "󰞘 ", desc = "expand or jump to next snippet", mode = { "c", "i" }, },
+							{"<C-J>", icon = "󰞗 ", desc = "jump back", mode = { "c", "i" }, },
+							{"<C-N>", icon = " ", desc = "next completion", mode = { "c", "i" }, },
+							{"<C-P>", icon = " ", desc = "prev completion", mode = { "c", "i" }, },
+							{"<C-Y>", icon = "󰿄 ", desc = "confirm completion ", mode = { "c", "i" }, },
+							{"<C-E>", icon = "󰜺 ", desc = "close completions", mode = { "c", "i" }, },
+						})
+					end
         '';
     };
 
@@ -85,6 +95,7 @@
     luasnip.enable = true;
     friendly-snippets.enable = true;
     lspkind.enable = true;
+    vim-dadbod-completion.enable = config.plugins.vim-dadbod.enable; # Dependency
   };
 
   keymaps = lib.concatLists [
