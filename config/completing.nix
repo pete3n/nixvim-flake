@@ -1,8 +1,7 @@
 # All configuration related to completing code/text
-{ ... }:
+{ config, lib, ... }:
 {
   plugins = {
-
     cmp = {
       enable = true;
       settings = {
@@ -14,17 +13,16 @@
             '';
         };
         mapping = {
-          "<C-d>" = "cmp.mapping.scroll_docs(-4)";
-          "<C-f>" = "cmp.mapping.scroll_docs(4)";
+          "<C-n>" = "cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert })";
+          "<C-p>" = "cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert })";
+          "<C-y>" = "cmp.mapping (cmp.mapping.confirm { behavior = cmp.ConfirmBehavior.Insert, select = true }, {'i','c'})";
           "<C-e>" = "cmp.mapping.close()";
-          "<C-space>" = "cmp.mapping.complete()";
-          "<C-y>" = "cmp.mapping.confirm({ select = true })";
         };
         sources = [
+          { name = "luasnip"; }
           { name = "nvim_lua"; }
           { name = "nvim_lsp"; }
           { name = "path"; }
-          { name = "luasnip"; }
           { name = "buffer"; }
         ];
         window.documentation.border = [
@@ -55,6 +53,27 @@
           		},
           	}),
           })
+
+          if pcall(require, "which-key") then
+          	local wk = require "which-key"
+
+          	wk.add ({
+          		{"<leader>c", group = "completing", icon = "󰈼", mode = { "n", "c", "i" }, },
+          		{"<leader>ck", icon = "󰞘 ", desc = "expand or jump to next snippet (^ K)", 
+          				mode = { "n", "c", "i", }, },
+          		{"<leader>cj", icon = "󰞗 ", desc = "jump back (^ J)", mode = { "n", "c", "i" }, },
+          		{"<leader>cn", icon = " ", desc = "next completion (^ N)", mode = { "n", "c", "i" }, },
+          		{"<leader>cp", icon = " ", desc = "prev completion (^ P)", mode = { "n", "c", "i" }, },
+          		{"<leader>cy", icon = "󰿄 ", desc = "confirm completion (^ Y)", mode = { "n", "c", "i" }, },
+          		{"<leader>ce", icon = "󰜺 ", desc = "close completions (^ E)", mode = { "n", "c", "i" }, },
+          		{"<C-K>", icon = "󰞘 ", desc = "expand or jump to next snippet", mode = { "c", "i" }, },
+          		{"<C-J>", icon = "󰞗 ", desc = "jump back", mode = { "c", "i" }, },
+          		{"<C-N>", icon = " ", desc = "next completion", mode = { "c", "i" }, },
+          		{"<C-P>", icon = " ", desc = "prev completion", mode = { "c", "i" }, },
+          		{"<C-Y>", icon = "󰿄 ", desc = "confirm completion ", mode = { "c", "i" }, },
+          		{"<C-E>", icon = "󰜺 ", desc = "close completions", mode = { "c", "i" }, },
+          	})
+          end
         '';
     };
 
@@ -64,5 +83,55 @@
     cmp-path.enable = true;
     cmp-ai.enable = false;
     luasnip.enable = true;
+    friendly-snippets.enable = true;
+    lspkind.enable = true;
   };
+
+  keymaps = lib.concatLists [
+    (
+      if config.plugins.luasnip.enable then
+        [
+          {
+            key = "<C-K>";
+            mode = [
+              "i"
+              "s"
+            ];
+            action.__raw = # lua
+              ''
+                function() 
+                	if require("luasnip").expand_or_jumpable() then 
+                		require("luasnip").expand_or_jump() 
+                	end
+                end
+              '';
+            options = {
+              desc = "expand or jump to next snippet";
+              silent = true;
+            };
+          }
+          {
+            key = "<C-J>";
+            mode = [
+              "i"
+              "s"
+            ];
+            action.__raw = # lua
+              ''
+                function() 
+                	if require("luasnip").jumpable(-1) then 
+                		require("luasnip").jump(-1) 
+                	end
+                end
+              '';
+            options = {
+              desc = "jump back";
+              silent = true;
+            };
+          }
+        ]
+      else
+        [ ]
+    )
+  ];
 }
