@@ -1,4 +1,4 @@
-# All configuration related to searching (Telescope)
+#All configuration related to searching (Telescope)
 {
   pkgs,
   lib,
@@ -243,6 +243,7 @@ in
 							{"<leader>sm", icon = "󱈧 ", desc = "multi grep", },
 							{"<leader>sM", icon = " ", desc = "multi grep in dirs", },
 							{"<leader>sp", icon = " ", desc = "project files", },
+							{"<leader>sr", icon = "󱘞 ", desc = "neoclip registers", },
 							{"<leader>ss", icon = "󰯃 ", desc = "neovim scripts", },
 							{"<leader>su", icon = " ", desc = "undo history", },
 							{"<leader>sw", icon = " ", desc = "current word", },
@@ -251,303 +252,309 @@ in
 					end
         '';
     };
+		neoclip = {
+			enable = true;
+			luaConfig.post = #lua
+				''
+					vim.keymap.set("n", "<leader>sr", function() 
+						require('telescope').extensions.neoclip.default({
+							prompt_title = "Neoclip Registers: ${telescope_help}" 
+						})
+					end)
+				'';
+		};
   };
 
   keymaps = lib.concatLists [
     # Telescope keymaps, these are defined using global keymaps since the
     # telescope plugin keymapping doesn't support raw lua
-    (
-      if config.plugins.telescope.enable then
-        [
-          {
-            key = "<leader>?";
-            mode = "n";
-            action.__raw = # lua
-              ''
-                function() require("telescope.builtin").oldfiles({
-                	prompt_title = "Recent Files: ${telescope_help}" })
-                end
-              '';
-            options = {
-              desc = "[?] recent files";
-            };
-          }
-          {
-            key = "<leader><space>";
-            mode = "n";
-            action.__raw = # lua
-              ''
-                function() require("telescope.builtin").buffers({
-                	prompt_title = "Buffers: ${telescope_help}" })
-                end
-              '';
-            options = {
-              desc = "[ ] buffer names";
-            };
-          }
-          {
-            key = "<leader>/";
-            mode = "n";
-            action.__raw = # lua
-              ''
-                function() require("telescope.builtin").current_buffer_fuzzy_find({
-                	prompt_title = "Buffer Fuzzy Find: ${telescope_help}" })
-                end
-              '';
-            options = {
-              desc = "[/] current buffer forward";
-            };
-          }
-          {
-            key = "<leader>sc";
-            mode = "n";
-            action.__raw = # lua
-              ''
-                function() require("telescope.builtin").commands({ 
-                	prompt_title = "Commands: ${telescope_help}" })
-                end
-              '';
-            options = {
-              desc = "commands";
-            };
-          }
-          {
-            key = "<leader>sd";
-            mode = "n";
-            action.__raw = # lua
-              ''
-                function() require("telescope.builtin").diagnostics({
-                	prompt_title = "Diagnostics: ${telescope_help}" })
-                end
-              '';
-            options = {
-              desc = "diagnostics";
-            };
-          }
-          {
-            key = "<leader>sh";
-            mode = "n";
-            action.__raw = # lua
-              ''
-                function() require("telescope.builtin").help_tags({
-                	prompt_title = "Help: ${telescope_help}" })
-                end
-              '';
-            options = {
-              desc = "help";
-            };
-          }
-          {
-            key = "<leader>sk";
-            mode = "n";
-            action.__raw = # lua
-              ''
-                function() require("telescope.builtin").keymaps({
-                	prompt_title = "Keymaps: ${telescope_help}" })
-                end
-              '';
-            options = {
-              desc = "keymaps";
-            };
-          }
-          {
-            key = "<leader>sl";
-            mode = "n";
-            action.__raw = # lua
-              ''
-                function() require("telescope.builtin").live_grep({
-                	prompt_title = "Live Grep: ${telescope_help}" })
-                end
-              '';
-            options = {
-              desc = "live grep";
-            };
-          }
-          {
-            key = "<leader>sL";
-            mode = "n";
-            action.__raw = # lua
-              ''
-                function() require("telescope").extensions.live_grep_args.live_grep_args({
-                	prompt_title = "Live Grep Args: ${telescope_help}" })
-                end
-              '';
-            options = {
-              desc = "live grep";
-            };
-          }
-          {
-            key = "<leader>sw";
-            action.__raw = # lua
-              ''
-                function() require("telescope.builtin").grep_string({
-                	prompt_title = "Current Word: ${telescope_help}" })
-                end
-              '';
-            options = {
-              desc = "current word";
-            };
-          }
-          {
-            key = "<leader>s/";
-            mode = "n";
-            action.__raw = # lua
-              ''
-                function() require("telescope.builtin").current_buffer_fuzzy_find({
-                	prompt_title = "Buffer Fuzzy Find: ${telescope_help}" })
-                end
-              '';
-            options = {
-              desc = "project files";
-            };
-          }
-          {
-            key = "<leader>s?";
-            mode = "n";
-            action.__raw = # lua
-              ''
-                function() require("telescope.builtin").oldfiles({
-                	prompt_title = "Recent Files: ${telescope_help}" })
-                end
-              '';
-            options = {
-              desc = "recent files";
-            };
-          }
-          {
-            key = "<leader>s<space>";
-            mode = "n";
-            action.__raw = # lua
-              ''
-                function() require("telescope.builtin").git_branches({ 
-                	prompt_title = "Git Branches: ${telescope_help}" })
-                end
-              '';
-            options = {
-              desc = "buffers";
-            };
-          }
-          {
-            key = "<leader>sb";
-            mode = "n";
-            action.__raw = # lua
-              ''
-                function() require("telescope.builtin").git_branches({ 
-                	prompt_title = "Git Branches: ${telescope_help}" })
-                end
-              '';
-            options = {
-              desc = "git branch";
-            };
-          }
-          {
-            key = "<leader>sf";
-            mode = "n";
-            action.__raw = # lua
-              ''
-                function() require("telescope.builtin").find_in_dirs({ 
-                	prompt_title = "Find Files: ${telescope_help}" })
-                end
-              '';
-            options = {
-              desc = "files in dirs";
-            };
-          }
-          {
-            key = "<leader>sg";
-            mode = "n";
-            action.__raw = # lua
-              ''
-                function() require("telescope.builtin").git_status({ 
-                	prompt_title = "Git Status: ${telescope_help}" })
-                end
-              '';
-            options = {
-              desc = "git status";
-            };
-          }
-          {
-            key = "<leader>sG";
-            mode = "n";
-            action.__raw = # lua
-              ''
-                function() require("telescope").extensions.advanced_git_search.show_custom_functions({
-                	prompt_title = "Advanced Git: ${telescope_help}" })
-                end
-              '';
-            options = {
-              desc = "git advanced search";
-            };
-          }
-          {
-            key = "<leader>sm";
-            mode = "n";
-            action.__raw = # lua
-              ''
-                function() require("telescope.builtin").live_multigrep({ 
-                	prompt_title = "Multi Grep (󱁐 󱁐 between args): ${telescope_help}" })
-                end
-              '';
-            options = {
-              desc = "multi grep";
-            };
-          }
-          {
-            key = "<leader>sM";
-            mode = "n";
-            action.__raw = # lua
-              ''
-                function() require("telescope.builtin").find_mg_in_dirs({
-                	prompt_title = "Multi Grep (󱁐 󱁐 between args): ${telescope_help}" })
-                end
-              '';
-            options = {
-              desc = "multi grep in dirs";
-            };
-          }
-          {
-            key = "<leader>sp";
-            mode = "n";
-            action.__raw = # lua
-              ''
-                function() require("telescope.builtin").find_project_files({
-                	prompt_title = "Project Files: ${telescope_help}" })
-                end
-              '';
-            options = {
-              desc = "project files";
-            };
-          }
-          {
-            key = "<leader>ss";
-            mode = "n";
-            action.__raw = # lua
-              ''
-                function() require("telescope.builtin").find_scripts({
-                	prompt_title = "Neovim Scripts: ${telescope_help}" })
-                end
-              '';
-            options = {
-              desc = "neovim scripts";
-            };
-          }
-          {
-            key = "<leader>su";
-            mode = "n";
-            action.__raw = # lua
-              ''
-                function() require("telescope").extensions.undo.undo({ 
-                	prompt_title = "Undo History: ${telescope_help}" })
-                end
-              '';
-            options = {
-              desc = "undo history";
-            };
-          }
-        ]
-      else
-        [ ]
-    )
+    (if config.plugins.telescope.enable then [
+			{
+				key = "<leader>?";
+				mode = "n";
+				action.__raw = # lua
+					''
+						function() require("telescope.builtin").oldfiles({
+							prompt_title = "Recent Files: ${telescope_help}" })
+						end
+					'';
+				options = {
+					desc = "[?] recent files";
+				};
+			}
+			{
+				key = "<leader><space>";
+				mode = "n";
+				action.__raw = # lua
+					''
+						function() require("telescope.builtin").buffers({
+							prompt_title = "Buffers: ${telescope_help}" })
+						end
+					'';
+				options = {
+					desc = "[ ] buffer names";
+				};
+			}
+			{
+				key = "<leader>/";
+				mode = "n";
+				action.__raw = # lua
+					''
+						function() require("telescope.builtin").current_buffer_fuzzy_find({
+							prompt_title = "Buffer Fuzzy Find: ${telescope_help}" })
+						end
+					'';
+				options = {
+					desc = "[/] current buffer forward";
+				};
+			}
+			{
+				key = "<leader>sc";
+				mode = "n";
+				action.__raw = # lua
+					''
+						function() require("telescope.builtin").commands({ 
+							prompt_title = "Commands: ${telescope_help}" })
+						end
+					'';
+				options = {
+					desc = "commands";
+				};
+			}
+			{
+				key = "<leader>sd";
+				mode = "n";
+				action.__raw = # lua
+					''
+						function() require("telescope.builtin").diagnostics({
+							prompt_title = "Diagnostics: ${telescope_help}" })
+						end
+					'';
+				options = {
+					desc = "diagnostics";
+				};
+			}
+			{
+				key = "<leader>sh";
+				mode = "n";
+				action.__raw = # lua
+					''
+						function() require("telescope.builtin").help_tags({
+							prompt_title = "Help: ${telescope_help}" })
+						end
+					'';
+				options = {
+					desc = "help";
+				};
+			}
+			{
+				key = "<leader>sk";
+				mode = "n";
+				action.__raw = # lua
+					''
+						function() require("telescope.builtin").keymaps({
+							prompt_title = "Keymaps: ${telescope_help}" })
+						end
+					'';
+				options = {
+					desc = "keymaps";
+				};
+			}
+			{
+				key = "<leader>sl";
+				mode = "n";
+				action.__raw = # lua
+					''
+						function() require("telescope.builtin").live_grep({
+							prompt_title = "Live Grep: ${telescope_help}" })
+						end
+					'';
+				options = {
+					desc = "live grep";
+				};
+			}
+			{
+				key = "<leader>sL";
+				mode = "n";
+				action.__raw = # lua
+					''
+						function() require("telescope").extensions.live_grep_args.live_grep_args({
+							prompt_title = "Live Grep Args: ${telescope_help}" })
+						end
+					'';
+				options = {
+					desc = "live grep";
+				};
+			}
+			{
+				key = "<leader>sw";
+				action.__raw = # lua
+					''
+						function() require("telescope.builtin").grep_string({
+							prompt_title = "Current Word: ${telescope_help}" })
+						end
+					'';
+				options = {
+					desc = "current word";
+				};
+			}
+			{
+				key = "<leader>s/";
+				mode = "n";
+				action.__raw = # lua
+					''
+						function() require("telescope.builtin").current_buffer_fuzzy_find({
+							prompt_title = "Buffer Fuzzy Find: ${telescope_help}" })
+						end
+					'';
+				options = {
+					desc = "project files";
+				};
+			}
+			{
+				key = "<leader>s?";
+				mode = "n";
+				action.__raw = # lua
+					''
+						function() require("telescope.builtin").oldfiles({
+							prompt_title = "Recent Files: ${telescope_help}" })
+						end
+					'';
+				options = {
+					desc = "recent files";
+				};
+			}
+			{
+				key = "<leader>s<space>";
+				mode = "n";
+				action.__raw = # lua
+					''
+						function() require("telescope.builtin").git_branches({ 
+							prompt_title = "Git Branches: ${telescope_help}" })
+						end
+					'';
+				options = {
+					desc = "buffers";
+				};
+			}
+			{
+				key = "<leader>sb";
+				mode = "n";
+				action.__raw = # lua
+					''
+						function() require("telescope.builtin").git_branches({ 
+							prompt_title = "Git Branches: ${telescope_help}" })
+						end
+					'';
+				options = {
+					desc = "git branch";
+				};
+			}
+			{
+				key = "<leader>sf";
+				mode = "n";
+				action.__raw = # lua
+					''
+						function() require("telescope.builtin").find_in_dirs({ 
+							prompt_title = "Find Files: ${telescope_help}" })
+						end
+					'';
+				options = {
+					desc = "files in dirs";
+				};
+			}
+			{
+				key = "<leader>sg";
+				mode = "n";
+				action.__raw = # lua
+					''
+						function() require("telescope.builtin").git_status({ 
+							prompt_title = "Git Status: ${telescope_help}" })
+						end
+					'';
+				options = {
+					desc = "git status";
+				};
+			}
+			{
+				key = "<leader>sG";
+				mode = "n";
+				action.__raw = # lua
+					''
+						function() require("telescope").extensions.advanced_git_search.show_custom_functions({
+							prompt_title = "Advanced Git: ${telescope_help}" })
+						end
+					'';
+				options = {
+					desc = "git advanced search";
+				};
+			}
+			{
+				key = "<leader>sm";
+				mode = "n";
+				action.__raw = # lua
+					''
+						function() require("telescope.builtin").live_multigrep({ 
+							prompt_title = "Multi Grep (󱁐 󱁐 between args): ${telescope_help}" })
+						end
+					'';
+				options = {
+					desc = "multi grep";
+				};
+			}
+			{
+				key = "<leader>sM";
+				mode = "n";
+				action.__raw = # lua
+					''
+						function() require("telescope.builtin").find_mg_in_dirs({
+							prompt_title = "Multi Grep (󱁐 󱁐 between args): ${telescope_help}" })
+						end
+					'';
+				options = {
+					desc = "multi grep in dirs";
+				};
+			}
+			{
+				key = "<leader>sp";
+				mode = "n";
+				action.__raw = # lua
+					''
+						function() require("telescope.builtin").find_project_files({
+							prompt_title = "Project Files: ${telescope_help}" })
+						end
+					'';
+				options = {
+					desc = "project files";
+				};
+			}
+			{
+				key = "<leader>ss";
+				mode = "n";
+				action.__raw = # lua
+					''
+						function() require("telescope.builtin").find_scripts({
+							prompt_title = "Neovim Scripts: ${telescope_help}" })
+						end
+					'';
+				options = {
+					desc = "neovim scripts";
+				};
+			}
+			{
+				key = "<leader>su";
+				mode = "n";
+				action.__raw = # lua
+					''
+						function() require("telescope").extensions.undo.undo({ 
+							prompt_title = "Undo History: ${telescope_help}" })
+						end
+					'';
+				options = {
+					desc = "undo history";
+				};
+			}
+		] else [ ])
     [
       {
         key = "<C-k>";
