@@ -228,105 +228,50 @@ in
           require("telescope.builtin").live_multigrep = live_multigrep
 
           -- Conditionally map telescope extension keys
-          local telescope = require("telescope")
+					local telescope = require("telescope")
+					local wk_available, wk = pcall(require, "which-key")
 
-          if pcall(telescope.load_extension, "advanced_git_search") then
-          	vim.keymap.set("n", "<leader>sG", function ()
-          	require("telescope").extensions.advanced_git_search.show_custom_functions({
-          		prompt_title = "Advanced Git: ${telescope_help}" 
-          	}) end, { desc = "git advanced search" })
+					local telescope_extensions = {
+						{ ext = "advanced_git_search", key = "<leader>sG", icon = " ", 
+							desc = "git advanced search", action = "show_custom_functions", 
+							prompt = "Advanced Git: ${telescope_help}" },
+						{ ext = "conventional_commits", key = "<leader>sC", icon = "󱖪 ", 
+							desc = "conventional commits messages", action = "conventional_commits",
+							prompt = "Conventional Commit Messages: ${telescope_help}" },
+						{ ext = "file_browser", key = "<leader>sB", icon = " ", 
+							desc = "file browser", action = "file_browser", 
+							prompt = "File Browser: ${telescope_help}" },
+						{ ext = "live_grep_args", key = "<leader>sL", icon = "󰑑 ", 
+							desc = "live grep args", action = "live_grep_args", 
+							prompt = "Live Grep Args: ${telescope_help}" },
+						{ ext = "repo", key = "<leader>sr", icon = "󰳐 ", 
+							desc = "git repos", action = "list", 
+							prompt = "Git Repos: ${telescope_help}" },
+						{ ext = "undo", key = "<leader>su", icon = " ", 
+							desc = "undo history", action = "undo", 
+							prompt = "Undo History: ${telescope_help}" },
+						{ ext = "zoxide", key = "<leader>sz", icon = "󰬡 ", 
+							desc = "zoxide list", action = "list", 
+							prompt = "Zoxide List: ${telescope_help}" }
+					}
 
-          	if pcall(require, "which-key") then
-          		local wk = require "which-key"
-          		wk.add ({
-          			{"<leader>sG", icon = " ", desc = "git advanced search", },
-          		})
-          	end
-          end
+					local function setup_telescope_extension(ext, key, action, prompt, desc, icon)
+						if pcall(telescope.load_extension, ext) then
+							vim.keymap.set("n", key, function()
+								telescope.extensions[ext][action]({ prompt_title = prompt })
+							end, { desc = desc })
 
-          if pcall(telescope.load_extension, "conventional_commits") then
-          	vim.keymap.set("n", "<leader>sC", function ()
-          	require("telescope").extensions.conventional_commits.conventional_commits({
-          		prompt_title = "Conventional Commit Messages: ${telescope_help}" 
-          	}) end, { desc = "git conventional commits" })
+							if wk_available then
+								wk.add({ 
+									{ key, icon = icon, desc = desc } 
+								})
+							end
+						end
+					end
 
-          	if pcall(require, "which-key") then
-          		local wk = require "which-key"
-          		wk.add ({
-          			{"<leader>sC", icon = "󱖪 ", desc = "conventional commits messages", },
-          		})
-          	end
-          end
-
-          if pcall(telescope.load_extension, "file_browser") then
-          	vim.keymap.set("n", "<leader>sB", function ()
-          	require("telescope").extensions.file_browser.file_browser({
-          		prompt_title = "File Browser: ${telescope_help}" 
-          	}) end, { desc = "live grep args" })
-
-          	if pcall(require, "which-key") then
-          		local wk = require "which-key"
-          		wk.add ({
-          			{"<leader>sL", icon = " ", desc = "file browser", },
-          		})
-          	end
-          end
-
-          if pcall(telescope.load_extension, "live_grep_args") then
-          	vim.keymap.set("n", "<leader>sL", function ()
-          	require("telescope").extensions.live_grep_args.live_grep_args({
-          		prompt_title = "Live Grep Args: ${telescope_help}" 
-          	}) end, { desc = "live grep args" })
-
-          	if pcall(require, "which-key") then
-          		local wk = require "which-key"
-          		wk.add ({
-          			{"<leader>sL", icon = "󰑑 ", desc = "live grep args", },
-          		})
-          	end
-          end
-
-          if pcall(telescope.load_extension, "repo") then
-          	vim.keymap.set("n", "<leader>sr", function ()
-          	require("telescope").extensions.repo.list({
-          		prompt_title = "Git Repos: ${telescope_help}" 
-          	}) end, { desc = "git repos" })
-
-          	if pcall(require, "which-key") then
-          		local wk = require "which-key"
-          		wk.add ({
-          			{"<leader>sr", icon = "󰳐 ", desc = "git repos", },
-          		})
-          	end
-          end
-
-          if pcall(telescope.load_extension, "undo") then
-          	vim.keymap.set("n", "<leader>su", function ()
-          	require("telescope").extensions.undo.undo({
-          		prompt_title = "Undo History: ${telescope_help}" 
-          	}) end, { desc = "undo history" })
-
-          	if pcall(require, "which-key") then
-          		local wk = require "which-key"
-          		wk.add ({
-          			{"<leader>su", icon = " ", desc = "undo history", },
-          		})
-          	end
-          end
-
-          if pcall(telescope.load_extension, "zoxide") then
-          	vim.keymap.set("n", "<leader>sz", function () 
-          		require("telescope").extensions.zoxide.list({
-          			prompt_title = "Zoxide List: ${telescope_help}"
-          		})
-          	end, { desc = "zoxide list" })
-          	if pcall(require, "which-key") then
-          		local wk = require "which-key"
-          		wk.add ({
-          			{"<leader>sz", icon = "󰬡 ", desc = "zoxide list", },
-          		})
-          	end
-          end
+					for _, ext in ipairs(telescope_extensions) do
+						setup_telescope_extension(ext.ext, ext.key, ext.action, ext.prompt, ext.desc, ext.icon)
+					end
 
           -- Conditionally map all other searching keys for which-key
           if pcall(require, "which-key") then
