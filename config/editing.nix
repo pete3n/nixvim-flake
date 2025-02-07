@@ -18,6 +18,7 @@
     };
     gitsigns.enable = true;
     neogit.enable = true;
+		render-markdown.enable = true;
 		vim-dadbod.enable = true;
 		vim-dadbod-ui.enable = config.plugins.vim-dadbod.enable; # Depedency
   };
