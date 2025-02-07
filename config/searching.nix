@@ -14,11 +14,12 @@ in
     fd
     fzf
     ripgrep
+    zoxide
   ];
 
   extraPlugins =
     [
-      pkgs.vimPlugins.advanced-git-search-nvim
+			pkgs.vimPlugins.advanced-git-search-nvim
       pkgs.vimPlugins.telescope-zoxide
     ]
     ++ [
@@ -69,76 +70,8 @@ in
           local make_entry = require("telescope.make_entry")
           local conf = require("telescope.config").values
 
-          local live_multigrep = function(opts)
-          	opts = opts or {}
-          	opts.cwd = opts.cwd or vim.uv.cwd()
-
-          	local finder = finders.new_async_job {
-          		command_generator = function(prompt)
-          			if not prompt or prompt == "" then
-          				return nil
-          			end
-
-          			local pieces = vim.split(prompt, "  ")
-          			local args = { "rg" }
-          			if pieces[1] then
-          				table.insert(args, "-e")
-          				table.insert(args, pieces[1])
-          			end
-
-          			if pieces[2] then
-          				table.insert(args, "-g")
-          				table.insert(args, pieces[2])
-          			end
-
-          			return vim.tbl_flatten({
-          				args,
-          				{ 
-          					"--color=never", 
-          					"--no-heading", 
-          					"--with-filename", 
-          					"--line-number", 
-          					"--column", 
-          					"--smart-case",
-          				},
-          			})
-          		end,
-          		entry_maker = make_entry.gen_from_vimgrep(opts),
-          		cwd = opts.cwd,
-          	}
-
-          	pickers.new(opts, {
-          		debounce = 100,
-          		prompt_title = opts.prompt_title,
-          		finder = finder,
-          		previewer = conf.grep_previewer(opts),
-          		sorter = require("telescope.sorters").empty(),
-          	}):find()
-          end
-          require("telescope.builtin").live_multigrep = live_multigrep
-
-          local find_project_files = function(opts)
-          	opts = opts or {}
-          	local is_inside_work_tree = {}
-
-          	local cwd = vim.fn.getcwd()
-          	if is_inside_work_tree[cwd] == nil then
-          		vim.fn.system("git rev-parse --is-inside-work-tree")
-          		is_inside_work_tree[cwd] = vim.v.shell_error == 0
-          	end
-
-          	if is_inside_work_tree[cwd] then
-          		opts.prompt_title = "Git Files: ${telescope_help}"
-          		require("telescope.builtin").git_files(opts)
-          	else
-          		opts.prompt_title = "Find Files: ${telescope_help}" 
-          		require("telescope.builtin").find_files(opts)
-          	end
-          end
-          require("telescope.builtin").find_project_files = find_project_files
-
-          -- TODO: Parse directories with escaped spaces
           local find_in_dirs = function(opts)
+          	-- TODO: Parse directories with escaped spaces
           	opts = opts or {}
           	vim.ui.input({ prompt = "Enter search directories (space-separated): " }, function(input)
           		if input then
@@ -160,8 +93,8 @@ in
           end
           require("telescope.builtin").find_in_dirs = find_in_dirs
 
-          -- TODO: Parse directories with escaped spaces
           local find_mg_in_dirs = function(opts)
+          	-- TODO: Parse directories with escaped spaces
           	opts = opts or {}
           	vim.ui.input({ prompt = "Enter grep directories (space-separated): " }, function(input)
           		if input then
@@ -226,11 +159,176 @@ in
           end
           require('telescope.builtin').find_scripts = find_scripts
 
+          local find_project_files = function(opts)
+          	opts = opts or {}
+          	local is_inside_work_tree = {}
+
+          	local cwd = vim.fn.getcwd()
+          	if is_inside_work_tree[cwd] == nil then
+          		vim.fn.system("git rev-parse --is-inside-work-tree")
+          		is_inside_work_tree[cwd] = vim.v.shell_error == 0
+          	end
+
+          	if is_inside_work_tree[cwd] then
+          		opts.prompt_title = "Git Files: ${telescope_help}"
+          		require("telescope.builtin").git_files(opts)
+          	else
+          		opts.prompt_title = "Find Files: ${telescope_help}" 
+          		require("telescope.builtin").find_files(opts)
+          	end
+          end
+          require("telescope.builtin").find_project_files = find_project_files
+
+          local live_multigrep = function(opts)
+          	opts = opts or {}
+          	opts.cwd = opts.cwd or vim.uv.cwd()
+
+          	local finder = finders.new_async_job {
+          		command_generator = function(prompt)
+          			if not prompt or prompt == "" then
+          				return nil
+          			end
+
+          			local pieces = vim.split(prompt, "  ")
+          			local args = { "rg" }
+          			if pieces[1] then
+          				table.insert(args, "-e")
+          				table.insert(args, pieces[1])
+          			end
+
+          			if pieces[2] then
+          				table.insert(args, "-g")
+          				table.insert(args, pieces[2])
+          			end
+
+          			return vim.tbl_flatten({
+          				args,
+          				{ 
+          					"--color=never", 
+          					"--no-heading", 
+          					"--with-filename", 
+          					"--line-number", 
+          					"--column", 
+          					"--smart-case",
+          				},
+          			})
+          		end,
+          		entry_maker = make_entry.gen_from_vimgrep(opts),
+          		cwd = opts.cwd,
+          	}
+
+          	pickers.new(opts, {
+          		debounce = 100,
+          		prompt_title = opts.prompt_title,
+          		finder = finder,
+          		previewer = conf.grep_previewer(opts),
+          		sorter = require("telescope.sorters").empty(),
+          	}):find()
+          end
+          require("telescope.builtin").live_multigrep = live_multigrep
+
+          -- Conditionally map telescope extension keys
           local telescope = require("telescope")
-          if pcall(telescope.load_extension, "zoxide") then
-          	vim.keymap.set("n", "<leader>sz", require("telescope").extensions.zoxide.list)
+
+          if pcall(telescope.load_extension, "advanced_git_search") then
+          	vim.keymap.set("n", "<leader>sG", function ()
+          	require("telescope").extensions.advanced_git_search.show_custom_functions({
+          		prompt_title = "Advanced Git: ${telescope_help}" 
+          	}) end, { desc = "git advanced search" })
+
+          	if pcall(require, "which-key") then
+          		local wk = require "which-key"
+          		wk.add ({
+          			{"<leader>sG", icon = " ", desc = "git advanced search", },
+          		})
+          	end
           end
 
+          if pcall(telescope.load_extension, "conventional_commits") then
+          	vim.keymap.set("n", "<leader>sC", function ()
+          	require("telescope").extensions.conventional_commits.conventional_commits({
+          		prompt_title = "Conventional Commit Messages: ${telescope_help}" 
+          	}) end, { desc = "git conventional commits" })
+
+          	if pcall(require, "which-key") then
+          		local wk = require "which-key"
+          		wk.add ({
+          			{"<leader>sC", icon = "󱖪 ", desc = "conventional commits messages", },
+          		})
+          	end
+          end
+
+          if pcall(telescope.load_extension, "file_browser") then
+          	vim.keymap.set("n", "<leader>sB", function ()
+          	require("telescope").extensions.file_browser.file_browser({
+          		prompt_title = "File Browser: ${telescope_help}" 
+          	}) end, { desc = "live grep args" })
+
+          	if pcall(require, "which-key") then
+          		local wk = require "which-key"
+          		wk.add ({
+          			{"<leader>sL", icon = " ", desc = "file browser", },
+          		})
+          	end
+          end
+
+          if pcall(telescope.load_extension, "live_grep_args") then
+          	vim.keymap.set("n", "<leader>sL", function ()
+          	require("telescope").extensions.live_grep_args.live_grep_args({
+          		prompt_title = "Live Grep Args: ${telescope_help}" 
+          	}) end, { desc = "live grep args" })
+
+          	if pcall(require, "which-key") then
+          		local wk = require "which-key"
+          		wk.add ({
+          			{"<leader>sL", icon = "󰑑 ", desc = "live grep args", },
+          		})
+          	end
+          end
+
+          if pcall(telescope.load_extension, "repo") then
+          	vim.keymap.set("n", "<leader>sr", function ()
+          	require("telescope").extensions.repo.list({
+          		prompt_title = "Git Repos: ${telescope_help}" 
+          	}) end, { desc = "git repos" })
+
+          	if pcall(require, "which-key") then
+          		local wk = require "which-key"
+          		wk.add ({
+          			{"<leader>sr", icon = "󰳐 ", desc = "git repos", },
+          		})
+          	end
+          end
+
+          if pcall(telescope.load_extension, "undo") then
+          	vim.keymap.set("n", "<leader>su", function ()
+          	require("telescope").extensions.undo.undo({
+          		prompt_title = "Undo History: ${telescope_help}" 
+          	}) end, { desc = "undo history" })
+
+          	if pcall(require, "which-key") then
+          		local wk = require "which-key"
+          		wk.add ({
+          			{"<leader>su", icon = " ", desc = "undo history", },
+          		})
+          	end
+          end
+
+          if pcall(telescope.load_extension, "zoxide") then
+          	vim.keymap.set("n", "<leader>sz", function () 
+          		require("telescope").extensions.zoxide.list({
+          			prompt_title = "Zoxide List: ${telescope_help}"
+          		})
+          	end, { desc = "zoxide list" })
+          	if pcall(require, "which-key") then
+          		local wk = require "which-key"
+          		wk.add ({
+          			{"<leader>sz", icon = "󰬡 ", desc = "zoxide list", },
+          		})
+          	end
+          end
+
+          -- Conditionally map all other searching keys for which-key
           if pcall(require, "which-key") then
           	local wk = require "which-key"
 
@@ -245,19 +343,14 @@ in
           		{"<leader>sd", icon = " ", desc = "diagnostics", },
           		{"<leader>sf", icon = " ", desc = "files in dirs", },
           		{"<leader>sg", icon = " ", desc = "git status", },
-          		{"<leader>sG", icon = " ", desc = "git advanced search", },
           		{"<leader>sh", icon = "󰋖 ", desc = "help", },
           		{"<leader>sk", icon = " ", desc = "keymaps", },
           		{"<leader>sl", icon = "󰑑 ", desc = "live grep", },
-          		{"<leader>sL", icon = "󰑑 ", desc = "live grep args", },
           		{"<leader>sm", icon = "󱈧 ", desc = "multi grep", },
           		{"<leader>sM", icon = " ", desc = "multi grep in dirs", },
           		{"<leader>sp", icon = " ", desc = "project files", },
-          		{"<leader>sr", icon = "󱘞 ", desc = "neoclip registers", },
           		{"<leader>ss", icon = "󰯃 ", desc = "neovim scripts", },
-          		{"<leader>su", icon = " ", desc = "undo history", },
           		{"<leader>sw", icon = " ", desc = "current word", },
-          		{"<leader>sz", icon = "󰬡 ", desc = "zoxide list", },
           	})
           end
         '';
@@ -266,11 +359,19 @@ in
       enable = true;
       luaConfig.post = # lua
         ''
-          vim.keymap.set("n", "<leader>sr", function() 
-          	require('telescope').extensions.neoclip.default({
-          		prompt_title = "Neoclip Registers: ${telescope_help}" 
-          	})
-          end)
+          if pcall(require, "telescope") then
+          	vim.keymap.set("n", "<leader>sn", function() 
+          		require('telescope').extensions.neoclip.default({
+          			prompt_title = "Neoclip Registers: ${telescope_help}" 
+          		})
+          	end)
+          	if pcall(require, "which-key") then
+          		local wk = require "which-key"
+          		wk.add ({
+          			{"<leader>sn", icon = "󱘞 ", desc = "neoclip", },
+          		})
+          	end
+          end
         '';
     };
   };
@@ -386,19 +487,6 @@ in
             };
           }
           {
-            key = "<leader>sL";
-            mode = "n";
-            action.__raw = # lua
-              ''
-                function() require("telescope").extensions.live_grep_args.live_grep_args({
-                	prompt_title = "Live Grep Args: ${telescope_help}" })
-                end
-              '';
-            options = {
-              desc = "live grep";
-            };
-          }
-          {
             key = "<leader>sw";
             action.__raw = # lua
               ''
@@ -489,19 +577,6 @@ in
             };
           }
           {
-            key = "<leader>sG";
-            mode = "n";
-            action.__raw = # lua
-              ''
-                function() require("telescope").extensions.advanced_git_search.show_custom_functions({
-                	prompt_title = "Advanced Git: ${telescope_help}" })
-                end
-              '';
-            options = {
-              desc = "git advanced search";
-            };
-          }
-          {
             key = "<leader>sm";
             mode = "n";
             action.__raw = # lua
@@ -551,19 +626,6 @@ in
               '';
             options = {
               desc = "neovim scripts";
-            };
-          }
-          {
-            key = "<leader>su";
-            mode = "n";
-            action.__raw = # lua
-              ''
-                function() require("telescope").extensions.undo.undo({ 
-                	prompt_title = "Undo History: ${telescope_help}" })
-                end
-              '';
-            options = {
-              desc = "undo history";
             };
           }
         ]
