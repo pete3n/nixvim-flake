@@ -19,7 +19,7 @@ in
   extraPlugins =
     [
       pkgs.vimPlugins.advanced-git-search-nvim
-      pkgs.vimPlugins.zoxide-vim
+      pkgs.vimPlugins.telescope-zoxide
     ]
     ++ [
       (pkgs.vimUtils.buildVimPlugin {
@@ -41,212 +41,214 @@ in
         file-browser.enable = true;
         fzf-native.enable = true;
         live-grep-args.enable = true;
-				ui-select.enable = true;
+        ui-select.enable = true;
         undo.enable = true;
       };
       enabledExtensions = [
         "advanced_git_search"
         "conventional_commits"
         "live_grep_args"
+        "zoxide"
       ];
 
       luaConfig.post = # lua
         ''
-          -- Thanks TJ: https://www.youtube.com/watch?v=xdXE1tOT-qg
-          local pickers = require("telescope.pickers")
-          local finders = require("telescope.finders")
-          local make_entry = require("telescope.make_entry")
-          local conf = require("telescope.config").values
+					-- Thanks TJ: https://www.youtube.com/watch?v=xdXE1tOT-qg
+					local pickers = require("telescope.pickers")
+					local finders = require("telescope.finders")
+					local make_entry = require("telescope.make_entry")
+					local conf = require("telescope.config").values
 
-          local live_multigrep = function(opts)
-          	opts = opts or {}
-          	opts.cwd = opts.cwd or vim.uv.cwd()
+					local live_multigrep = function(opts)
+						opts = opts or {}
+						opts.cwd = opts.cwd or vim.uv.cwd()
 
-          	local finder = finders.new_async_job {
-          		command_generator = function(prompt)
-          			if not prompt or prompt == "" then
-          				return nil
-          			end
+						local finder = finders.new_async_job {
+							command_generator = function(prompt)
+								if not prompt or prompt == "" then
+									return nil
+								end
 
-          			local pieces = vim.split(prompt, "  ")
-          			local args = { "rg" }
-          			if pieces[1] then
-          				table.insert(args, "-e")
-          				table.insert(args, pieces[1])
-          			end
+								local pieces = vim.split(prompt, "  ")
+								local args = { "rg" }
+								if pieces[1] then
+									table.insert(args, "-e")
+									table.insert(args, pieces[1])
+								end
 
-          			if pieces[2] then
-          				table.insert(args, "-g")
-          				table.insert(args, pieces[2])
-          			end
+								if pieces[2] then
+									table.insert(args, "-g")
+									table.insert(args, pieces[2])
+								end
 
-          			return vim.tbl_flatten({
-          				args,
-          				{ 
-          					"--color=never", 
-          					"--no-heading", 
-          					"--with-filename", 
-          					"--line-number", 
-          					"--column", 
-          					"--smart-case",
-          				},
-          			})
-          		end,
-          		entry_maker = make_entry.gen_from_vimgrep(opts),
-          		cwd = opts.cwd,
-          	}
+								return vim.tbl_flatten({
+									args,
+									{ 
+										"--color=never", 
+										"--no-heading", 
+										"--with-filename", 
+										"--line-number", 
+										"--column", 
+										"--smart-case",
+									},
+								})
+							end,
+							entry_maker = make_entry.gen_from_vimgrep(opts),
+							cwd = opts.cwd,
+						}
 
-          	pickers.new(opts, {
-          		debounce = 100,
-          		prompt_title = opts.prompt_title,
-          		finder = finder,
-          		previewer = conf.grep_previewer(opts),
-          		sorter = require("telescope.sorters").empty(),
-          	}):find()
-          end
-          require("telescope.builtin").live_multigrep = live_multigrep
+						pickers.new(opts, {
+							debounce = 100,
+							prompt_title = opts.prompt_title,
+							finder = finder,
+							previewer = conf.grep_previewer(opts),
+							sorter = require("telescope.sorters").empty(),
+						}):find()
+					end
+					require("telescope.builtin").live_multigrep = live_multigrep
 
-          local find_project_files = function(opts)
-          	opts = opts or {}
-          	local is_inside_work_tree = {}
+					local find_project_files = function(opts)
+						opts = opts or {}
+						local is_inside_work_tree = {}
 
-          	local cwd = vim.fn.getcwd()
-          	if is_inside_work_tree[cwd] == nil then
-          		vim.fn.system("git rev-parse --is-inside-work-tree")
-          		is_inside_work_tree[cwd] = vim.v.shell_error == 0
-          	end
+						local cwd = vim.fn.getcwd()
+						if is_inside_work_tree[cwd] == nil then
+							vim.fn.system("git rev-parse --is-inside-work-tree")
+							is_inside_work_tree[cwd] = vim.v.shell_error == 0
+						end
 
-          	if is_inside_work_tree[cwd] then
-          		opts.prompt_title = "Git Files: ${telescope_help}"
-          		require("telescope.builtin").git_files(opts)
-          	else
-          		opts.prompt_title = "Find Files: ${telescope_help}" 
-          		require("telescope.builtin").find_files(opts)
-          	end
-          end
-          require("telescope.builtin").find_project_files = find_project_files
+						if is_inside_work_tree[cwd] then
+							opts.prompt_title = "Git Files: ${telescope_help}"
+							require("telescope.builtin").git_files(opts)
+						else
+							opts.prompt_title = "Find Files: ${telescope_help}" 
+							require("telescope.builtin").find_files(opts)
+						end
+					end
+					require("telescope.builtin").find_project_files = find_project_files
 
+					-- TODO: Parse directories with escaped spaces
+					local find_in_dirs = function(opts)
+						opts = opts or {}
+						vim.ui.input({ prompt = "Enter search directories (space-separated): " }, function(input)
+							if input then
+								local dirs = {}
+								for dir in input:gmatch("%S+") do
+									table.insert(dirs, dir)
+								end
 
-          -- TODO: Parse directories with escaped spaces
-          local find_in_dirs = function(opts)
-          	opts = opts or {}
-          	vim.ui.input({ prompt = "Enter search directories (space-separated): " }, function(input)
-          		if input then
-          			local dirs = {}
-          			for dir in input:gmatch("%S+") do
-          				table.insert(dirs, dir)
-          			end
+								if #dirs == 0 then
+									vim.uv.cwd()
+								end
 
-          			if #dirs == 0 then
-          				vim.uv.cwd()
-          			end
+								require("telescope.builtin").find_files({ search_dirs = dirs,
+									prompt_title = opts.prompt_title})
+							else
+								print("No directories provided.")
+							end
+						end)
+					end
+					require("telescope.builtin").find_in_dirs = find_in_dirs
 
-          			require("telescope.builtin").find_files({ search_dirs = dirs,
-          				prompt_title = opts.prompt_title})
-          		else
-          			print("No directories provided.")
-          		end
-          	end)
-          end
-          require("telescope.builtin").find_in_dirs = find_in_dirs
+					-- TODO: Parse directories with escaped spaces
+					local find_mg_in_dirs = function(opts)
+						opts = opts or {}
+						vim.ui.input({ prompt = "Enter grep directories (space-separated): " }, function(input)
+							if input then
+								local dirs = {}
+								for dir in input:gmatch("%S+") do
+									table.insert(dirs, dir)
+								end
 
-          -- TODO: Parse directories with escaped spaces
-          local find_mg_in_dirs = function(opts)
-          	opts = opts or {}
-          	vim.ui.input({ prompt = "Enter grep directories (space-separated): " }, function(input)
-          		if input then
-          			local dirs = {}
-          			for dir in input:gmatch("%S+") do
-          				table.insert(dirs, dir)
-          			end
+								if #dirs == 0 then
+									vim.uv.cwd()
+								end
 
-          			if #dirs == 0 then
-          				vim.uv.cwd()
-          			end
-
-          			require("telescope.builtin").live_multigrep({ 
+								require("telescope.builtin").live_multigrep({ 
 									prompt_title = opts.prompt_title, search_dirs = dirs })
-          		else
-          			print("No directories provided.")
-          		end
-          	end)
-          end
-          require("telescope.builtin").find_mg_in_dirs = find_mg_in_dirs
+							else
+								print("No directories provided.")
+							end
+						end)
+					end
+					require("telescope.builtin").find_mg_in_dirs = find_mg_in_dirs
 
-          local find_scripts = function(opts)
-          	opts = opts or {}
-          	local scriptnames_output = vim.api.nvim_exec('scriptnames', true)
-          	local file_paths = {}
-
-
-          	for line in scriptnames_output:gmatch("[^\r\n]+") do
-          		-- Match optional leading spaces, digits, colon, spaces, and capture the path
-          		local path = line:match("^%s*%d+:%s*(.+)")
-          		if path then
-          			table.insert(file_paths, path)
-          		else
-          			print("Could not parse line: " .. line)
-          		end
-          	end
+					local find_scripts = function(opts)
+						opts = opts or {}
+						local scriptnames_output = vim.api.nvim_exec('scriptnames', true)
+						local file_paths = {}
 
 
-          local finder = require('telescope.finders').new_table {
-          	results = file_paths,
-          	entry_maker = function(entry)
-          		return {
-          			value = entry,
-          			display = entry,
-          			ordinal = entry,
-          		}
-          	end,
-          }
+						for line in scriptnames_output:gmatch("[^\r\n]+") do
+							-- Match optional leading spaces, digits, colon, spaces, and capture the path
+							local path = line:match("^%s*%d+:%s*(.+)")
+							if path then
+								table.insert(file_paths, path)
+							else
+								print("Could not parse line: " .. line)
+							end
+						end
 
-          	require('telescope.pickers').new(opts, {
-          		prompt_title = "Neovim Scripts",
-          		finder = finder,
-          		sorter = require('telescope.config').values.generic_sorter(opts),
-          		attach_mappings = function(_, map)
-          			map('i', '<CR>', function(prompt_bufnr)
-          				local selection = require('telescope.actions.state').get_selected_entry()
-          				require('telescope.actions').close(prompt_bufnr)
-          				vim.cmd("edit " .. selection.value)
-          			end)
-          			return true
-          		end,
-          	}):find()
-          end
+						local finder = require('telescope.finders').new_table {
+							results = file_paths,
+							entry_maker = function(entry)
+								return {
+									value = entry,
+									display = entry,
+									ordinal = entry,
+								}
+							end,
+						}
 
-          -- Add it to Telescope's built-in commands
-          require('telescope.builtin').find_scripts = find_scripts
+						require('telescope.pickers').new(opts, {
+							prompt_title = "Neovim Scripts",
+							finder = finder,
+							sorter = require('telescope.config').values.generic_sorter(opts),
+							attach_mappings = function(_, map)
+								map('i', '<CR>', function(prompt_bufnr)
+									local selection = require('telescope.actions.state').get_selected_entry()
+									require('telescope.actions').close(prompt_bufnr)
+									vim.cmd("edit " .. selection.value)
+								end)
+								return true
+							end,
+						}):find()
+					end
+					require('telescope.builtin').find_scripts = find_scripts
 
+					local telescope = require("telescope")
+					if pcall(telescope.load_extension, "zoxide") then
+						vim.keymap.set("n", "<leader>sz", require("telescope").extensions.zoxide.list)
+					end
 
-          if pcall(require, "which-key") then
-          	local wk = require "which-key"
+					if pcall(require, "which-key") then
+						local wk = require "which-key"
 
-          	wk.add ({
-          		-- Searching group 
-          		{"<leader>s", group = "searching", icon = " ", },
-          		{"<leader>s/", icon = "󱈅 ", desc = "current buffer fzf (/)", },
-          		{"<leader>s?", icon = "󱩾 ", desc = "recent files (?)", },
-          		{"<leader>s<space>", icon = "󱈆 ", desc = "buffer names (󱁐)", },
-          		{"<leader>sb", icon = "", desc = "git branch", },
-          		{"<leader>sc", icon = "", desc = "commands", },
-          		{"<leader>sd", icon = " ", desc = "diagnostics", },
-          		{"<leader>sf", icon = " ", desc = "files in dirs", },
-          		{"<leader>sg", icon = " ", desc = "git status", },
-          		{"<leader>sG", icon = " ", desc = "git advanced search", },
-          		{"<leader>sh", icon = "󰋖 ", desc = "help", },
-          		{"<leader>sk", icon = " ", desc = "keymaps", },
-          		{"<leader>sl", icon = "󰑑 ", desc = "live grep", },
-          		{"<leader>sL", icon = "󰑑 ", desc = "live grep args", },
-          		{"<leader>sm", icon = "󱈧 ", desc = "multi grep", },
-          		{"<leader>sM", icon = " ", desc = "multi grep in dirs", },
-          		{"<leader>sp", icon = " ", desc = "project files", },
-          		{"<leader>ss", icon = "󰯃 ", desc = "neovim scripts", },
-          		{"<leader>su", icon = " ", desc = "undo history", },
-          		{"<leader>sw", icon = " ", desc = "current word", },
-          	})
-          end
+						wk.add ({
+							-- Searching group 
+							{"<leader>s", group = "searching", icon = " ", },
+							{"<leader>s/", icon = "󱈅 ", desc = "current buffer fzf (/)", },
+							{"<leader>s?", icon = "󱩾 ", desc = "recent files (?)", },
+							{"<leader>s<space>", icon = "󱈆 ", desc = "buffer names (󱁐)", },
+							{"<leader>sb", icon = "", desc = "git branch", },
+							{"<leader>sc", icon = "", desc = "commands", },
+							{"<leader>sd", icon = " ", desc = "diagnostics", },
+							{"<leader>sf", icon = " ", desc = "files in dirs", },
+							{"<leader>sg", icon = " ", desc = "git status", },
+							{"<leader>sG", icon = " ", desc = "git advanced search", },
+							{"<leader>sh", icon = "󰋖 ", desc = "help", },
+							{"<leader>sk", icon = " ", desc = "keymaps", },
+							{"<leader>sl", icon = "󰑑 ", desc = "live grep", },
+							{"<leader>sL", icon = "󰑑 ", desc = "live grep args", },
+							{"<leader>sm", icon = "󱈧 ", desc = "multi grep", },
+							{"<leader>sM", icon = " ", desc = "multi grep in dirs", },
+							{"<leader>sp", icon = " ", desc = "project files", },
+							{"<leader>ss", icon = "󰯃 ", desc = "neovim scripts", },
+							{"<leader>su", icon = " ", desc = "undo history", },
+							{"<leader>sw", icon = " ", desc = "current word", },
+							{"<leader>sz", icon = "󰬡 ", desc = "zoxide list", },
+						})
+					end
         '';
     };
   };
