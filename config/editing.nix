@@ -18,21 +18,20 @@
     };
     gitsigns.enable = true;
     neogit.enable = true;
-		render-markdown.enable = true;
 		vim-dadbod.enable = true;
 		vim-dadbod-ui.enable = config.plugins.vim-dadbod.enable; # Depedency
   };
 
   keymaps = lib.concatLists [
-		(if config.plugins.undotree.enable then [
+		(if config.plugins.diffview.enable then [
 			{
-				key = "<leader>u";
+				key = "<leader>gd";
 				mode = "n";
-				action = "<cmd>UndotreeToggle<CR>";
+				action = "<cmd>DiffViewFileHistory<CR>";
 				options = {
-					desc = "undotree toggle";
+					desc = "diffview file history";
 				};
-			}]	else [])
+			}] else [])
 		(if config.plugins.fugitive.enable then [
 			{
 				key = "<leader>gf";
@@ -51,6 +50,15 @@
 					desc = "neogit";
 				};
 			}] else [])
+		(if config.plugins.undotree.enable then [
+			{
+				key = "<leader>u";
+				mode = "n";
+				action = "<cmd>UndotreeToggle<CR>";
+				options = {
+					desc = "undotree toggle";
+				};
+			}]	else [])
 		( if builtins.elem "advanced_git_search" config.plugins.telescope.enabledExtensions then [
 			{
 				key = "<leader>ga";
@@ -86,14 +94,15 @@
 				
 				wk.add({
 					{ "<leader>g", group = "git", icon = " ", },
-					{ "<leader>gf", group = "git fugitive", icon = " ", },
-					{ "<leader>gn", group = "neogit", icon = "󰊢 ", },
+					{ "<leader>gf", icon = " ", group = "diffview", },
+					{ "<leader>gf", icon = " ", group = "git fugitive", },
+					{ "<leader>gn", icon = "󰊢 ", group = "neogit", },
 					{ "<leader>gs", icon = " ", desc = "status", },
 					{ "<leader>gb", icon = " ", desc = "branches", },
 					{ "<leader>ga", icon = " ", desc = "advanced search", },
 				})
 			end
-    '' 
+    ''
 		# Only delete fugitive overlap keys if it is enabled 
 		+ (if config.plugins.fugitive.enable then # lua
 		''
