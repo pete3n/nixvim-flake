@@ -27,7 +27,7 @@
 			{
 				key = "<leader>gd";
 				mode = "n";
-				action = "<cmd>DiffViewFileHistory<CR>";
+				action = "<cmd>DiffviewFileHistory<CR>";
 				options = {
 					desc = "diffview file history";
 				};
