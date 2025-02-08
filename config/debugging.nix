@@ -166,7 +166,7 @@
 				action.__raw = "function() require('dapui').eval(nil, { enter = true }) end";
 				options = {
 					silent = true;
-					desc = "eval (<S-=>)";
+					desc = "eval ( 󱁐 = )";
 				};
 			}
 			{
@@ -184,121 +184,127 @@
 
   extraConfigLuaPost = # lua
     ''
-      local dap = require("dap")
-      local dapui = require("dapui")
+			-- Conditional configuration for dap and dapui
+			local dap_deps, dap, dapui = pcall(function() 
+				return require("dap"), require("dapui") 
+			end)
 
+			if dap_deps then
+				local dap = require("dap")
+				local dapui = require("dapui")
 
-      dap.set_log_level('DEBUG')
+				dap.set_log_level('DEBUG')
 
-      dap.adapters.lldb = {
-      		type = 'executable',
-      		command = 'lldb-dap', 
-      		name = 'lldb'
-      }
+				dap.adapters.lldb = {
+						type = 'executable',
+						command = 'lldb-dap', 
+						name = 'lldb'
+				}
 
-      dap.adapters.gdb = {
-      		type = "executable",
-      		command = "gdb",
-      		args = { "-i", "dap" }
-      }
+				dap.adapters.gdb = {
+						type = "executable",
+						command = "gdb",
+						args = { "-i", "dap" }
+				}
 
-      dap.listeners.before.attach.dapui_config = function()
-      	dapui.open()
-      end
-      dap.listeners.before.launch.dapui_config = function()
-      	dapui.open()
-      end
-      dap.listeners.before.event_terminated.dapui_config = function()
-      	dapui.close()
-      end
-      dap.listeners.before.event_exited.dapui_config = function()
-      	dapui.close()
-      end
+				dap.listeners.before.attach.dapui_config = function()
+					dapui.open()
+				end
+				dap.listeners.before.launch.dapui_config = function()
+					dapui.open()
+				end
+				dap.listeners.before.event_terminated.dapui_config = function()
+					dapui.close()
+				end
+				dap.listeners.before.event_exited.dapui_config = function()
+					dapui.close()
+				end
 
-      dap.configurations.c = {
-      	{
-      		name = "Launch",
-      		type = "gdb",
-      		request = "launch",
-      		program = function()
-      			return vim.fn.input('Path of the executable: ', vim.fn.getcwd() .. '/', 'file')
-      		end,
-      		cwd = "''${workspaceFolder}",
-      	},
-      }
+				dap.configurations.c = {
+					{
+						name = "Launch",
+						type = "gdb",
+						request = "launch",
+						program = function()
+							return vim.fn.input('Path of the executable: ', vim.fn.getcwd() .. '/', 'file')
+						end,
+						cwd = "''${workspaceFolder}",
+					},
+				}
 
-      dap.configurations.rust = {
-      	{
-      		name = 'Launch',
-      		type = 'lldb',
-      		request = 'launch',
-      		program = function()
-      			return vim.fn.input('Path of the executable: ', vim.fn.getcwd() .. '/', 'file')
-      		end,
-      		cwd = "''${workspaceFolder}",
-      		stopOnEntry = false,
-      		args = {},
-      	},
-      }
+				dap.configurations.rust = {
+					{
+						name = 'Launch',
+						type = 'lldb',
+						request = 'launch',
+						program = function()
+							return vim.fn.input('Path of the executable: ', vim.fn.getcwd() .. '/', 'file')
+						end,
+						cwd = "''${workspaceFolder}",
+						stopOnEntry = false,
+						args = {},
+					},
+				}
 
-      dap.configurations.zig = {
-      	{
-      		name = 'Launch',
-      		type = 'lldb',
-      		request = 'launch',
-      		program = function()
-      			return vim.fn.input('Root path of executable: ', vim.fn.getcwd() .. '/', 'file')
-      				end,
-      		cwd = "''${workspaceFolder}",
-      		stopOnEntry = false,
-      		args = {},
-      	},
-      }
-      -- Conditionally map telescope dap extension keys					
-      if pcall(require, "telescope") then
-      	local telescope = require("telescope")
-      	local telescope_help = 'Keymaps <C-/> (Insert) or ? (Normal)';
+				dap.configurations.zig = {
+					{
+						name = 'Launch',
+						type = 'lldb',
+						request = 'launch',
+						program = function()
+							return vim.fn.input('Root path of executable: ', vim.fn.getcwd() .. '/', 'file')
+								end,
+						cwd = "''${workspaceFolder}",
+						stopOnEntry = false,
+						args = {},
+					},
+				}
+				-- Conditionally map telescope dap extension keys					
+				if pcall(require, "telescope") then
+					local telescope = require("telescope")
+					local telescope_help = 'Keymaps <C-/> (Insert) or ? (Normal)';
 
-      	if pcall(telescope.load_extension, "dap") then
-      		local wk_available, wk = pcall(require, "which-key")
-      		local telescope_dap_functions = {
-      			{ key = "<leader>dsb", icon = " ", desc = "breakpoints", action = "list_breakpoints", 
-      				prompt = "DAP Breakpoints: " .. telescope_help },
-      			{ key = "<leader>dsc", icon = " ", desc = "commands", action = "commands", 
-      				prompt = "DAP Commands: " .. telescope_help },
-      			{ key = "<leader>dsf", icon = "󰋴 ", desc = "frames", action = "frames", 
-      				prompt = "DAP Frames: " .. telescope_help },
-      			{ key = "<leader>dso", icon = " ", desc = "configurations", action = "configurations", 
-      				prompt = "DAP Configurations: " .. telescope_help },
-      			{ key = "<leader>dsv", icon = "󰫧 ", desc = "variables", action = "variables", 
-      				prompt = "DAP Variables: " .. telescope_help },
-      		}
-      		local function setup_dap_functions(key, action, prompt, desc, icon)
-						if telescope.extensions.dap then
-      				vim.keymap.set("n", key, function()
-      					telescope.extensions.dap[action]({ prompt_title = prompt })
-      				end, { desc = desc })
+					if pcall(telescope.load_extension, "dap") then
+						local wk_available, wk = pcall(require, "which-key")
+						local telescope_dap_functions = {
+							{ key = "<leader>dsb", icon = " ", desc = "breakpoints", action = "list_breakpoints", 
+								prompt = "DAP Breakpoints: " .. telescope_help },
+							{ key = "<leader>dsc", icon = " ", desc = "commands", action = "commands", 
+								prompt = "DAP Commands: " .. telescope_help },
+							{ key = "<leader>dsf", icon = "󰋴 ", desc = "frames", action = "frames", 
+								prompt = "DAP Frames: " .. telescope_help },
+							{ key = "<leader>dso", icon = " ", desc = "configurations", action = "configurations", 
+								prompt = "DAP Configurations: " .. telescope_help },
+							{ key = "<leader>dsv", icon = "󰫧 ", desc = "variables", action = "variables", 
+								prompt = "DAP Variables: " .. telescope_help },
+						}
+						local function setup_dap_functions(key, action, prompt, desc, icon)
+							if telescope.extensions.dap then
+								vim.keymap.set("n", key, function()
+									telescope.extensions.dap[action]({ prompt_title = prompt })
+								end, { desc = desc })
+							end
+
+							if wk_available then
+								wk.add({ 
+									{ "<leader>ds", group = "searching", icon = " "},
+									{ key, icon = icon, desc = desc },
+								})
+							end
 						end
 
-						if wk_available then
-							wk.add({ 
-								{ "<leader>ds", group = "searching", icon = " "},
-								{ key, icon = icon, desc = desc },
-							})
+						for _, func in ipairs(telescope_dap_functions) do
+							setup_dap_functions(func.key, func.action, func.prompt, func.desc, func.icon)
 						end
-      		end
+					end
+				end
 
-      		for _, func in ipairs(telescope_dap_functions) do
-      			setup_dap_functions(func.key, func.action, func.prompt, func.desc, func.icon)
-      		end
+				if pcall(require, "which-key") then
+					local wk = require("which-key")
+					wk.add ({
+						{ "<leader>d", group = "debugging", icon = "󰃤 "},
+					})
 				end
 			end
-
-      if pcall(require, "which-key") then
-      	local wk = require("which-key")
-      	wk.add ({
-      		{ "<leader>d", group = "debugging", icon = "󰃤 "},
-      	})
-      end
     '';
 }
