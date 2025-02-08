@@ -20,6 +20,7 @@ in
   extraPlugins =
     [
 			pkgs.vimPlugins.advanced-git-search-nvim
+			pkgs.vimPlugins.telescope-dap-nvim
       pkgs.vimPlugins.telescope-zoxide
     ]
     ++ [
@@ -57,6 +58,7 @@ in
       enabledExtensions = [
         "advanced_git_search"
         "conventional_commits"
+				"dap"
         "live_grep_args"
         "repo"
         "zoxide"
@@ -236,7 +238,7 @@ in
 							desc = "git advanced search", action = "show_custom_functions", 
 							prompt = "Advanced Git: ${telescope_help}" },
 						{ ext = "conventional_commits", key = "<leader>sC", icon = "󱖪 ", 
-							desc = "conventional commits messages", action = "conventional_commits",
+							desc = "conventional commits", action = "conventional_commits",
 							prompt = "Conventional Commit Messages: ${telescope_help}" },
 						{ ext = "file_browser", key = "<leader>sB", icon = " ", 
 							desc = "file browser", action = "file_browser", 
