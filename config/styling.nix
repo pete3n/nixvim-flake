@@ -65,7 +65,9 @@
           };
         };
         popupmenu = {
-          kindIcons = false;
+					enabled = true;
+          kindIcons = true;
+					backend = "cmp";
         };
         extraOptions = {
           inc_rename.cmdline.format.IncRename = {
