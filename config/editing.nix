@@ -28,66 +28,65 @@
   };
 
   keymaps = lib.concatLists [
-    (
-      if config.plugins.diffview.enable then
-        [
-          {
-            key = "<leader>gd";
-            mode = "n";
-            action = "<cmd>DiffviewFileHistory<CR>";
-            options = {
-              desc = "diffview file history";
-            };
-          }
-        ]
-      else
-        [ ]
-    )
-    (
-      if config.plugins.fugitive.enable then
-        [
-          {
-            key = "<leader>gf";
-            mode = "n";
-            action = "<cmd>Git<CR>";
-            options = {
-              desc = "git fugitive";
-            };
-          }
-        ]
-      else
-        [ ]
-    )
-    (
-      if config.plugins.neogit.enable then
-        [
-          {
-            key = "<leader>gn";
-            mode = "n";
-            action = "<cmd>Neogit<CR>";
-            options = {
-              desc = "neogit";
-            };
-          }
-        ]
-      else
-        [ ]
-    )
-    (
-      if config.plugins.undotree.enable then
-        [
-          {
-            key = "<leader>u";
-            mode = "n";
-            action = "<cmd>UndotreeToggle<CR>";
-            options = {
-              desc = "undotree toggle";
-            };
-          }
-        ]
-      else
-        [ ]
-    )
+    (lib.optionals config.plugins.diffview.enable [
+      {
+        key = "<leader>gd";
+        mode = "n";
+        action = "<cmd>DiffviewFileHistory<CR>";
+        options = {
+          desc = "diffview file history";
+        };
+      }
+    ])
+    (lib.optionals config.plugins.fugitive.enable [
+      {
+        key = "<leader>gf";
+        mode = "n";
+        action = "<cmd>Git<CR>";
+        options = {
+          desc = "git fugitive";
+        };
+      }
+    ])
+    (lib.optionals config.plugins.neogit.enable [
+      {
+        key = "<leader>gn";
+        mode = "n";
+        action = "<cmd>Neogit<CR>";
+        options = {
+          desc = "neogit";
+        };
+      }
+    ])
+    (lib.optionals config.plugins.undotree.enable [
+      {
+        key = "<leader>u";
+        mode = "n";
+        action = "<cmd>UndotreeToggle<CR>";
+        options = {
+          desc = "undotree toggle";
+        };
+      }
+    ])
+    (lib.optionals config.plugins.telescope.enable [
+      {
+        key = "<leader>gs";
+        mode = "n";
+        action = ":lua require('telescope.builtin').git_status()<CR>";
+        options = {
+          desc = "git status";
+        };
+      }
+      {
+        key = "<leader>gb";
+        mode = "n";
+        action = ":lua require('telescope.builtin').git_branches()<CR>";
+        options = {
+          desc = "git branch";
+        };
+      }
+    ])
+		# Cross-map the advanced_git_search telescope extension from the searching group
     (
       if builtins.elem "advanced_git_search" config.plugins.telescope.enabledExtensions then
         [
@@ -103,60 +102,58 @@
       else
         [ ]
     )
-    (
-      if config.plugins.telescope.enable then
-        [
-          {
-            key = "<leader>gs";
-            mode = "n";
-            action = ":lua require('telescope.builtin').git_status()<CR>";
-            options = {
-              desc = "git status";
-            };
-          }
-          {
-            key = "<leader>gb";
-            mode = "n";
-            action = ":lua require('telescope.builtin').git_branches()<CR>";
-            options = {
-              desc = "git branch";
-            };
-          }
-        ]
-      else
-        [ ]
-    )
   ];
 
-  extraConfigLuaPost = # lua
+  extraConfigLuaPost = lib.concatStringsSep "\n" [
+		# lua
     ''
       if pcall(require, "which-key") then
       	local wk = require("which-key")
-      	
-      	wk.add({
-      		{ "<leader>g", group = "git", icon = " ", },
-      		{ "<leader>gd", icon = " ", desc = "diffview", },
-      		{ "<leader>gf", icon = " ", desc = "git fugitive", },
-      		{ "<leader>gn", icon = "󰊢 ", desc = "neogit", },
-      		{ "<leader>gs", icon = " ", desc = "status", },
-      		{ "<leader>gb", icon = " ", desc = "branches", },
-      		{ "<leader>ga", icon = " ", desc = "advanced search", },
-      	})
-      end
-    ''
-    # Only delete fugitive overlap keys if it is enabled 
-    + (
-      if config.plugins.fugitive.enable then # lua
-        ''
-          local function rm_fugitive_keymap_overlap()
-          	if vim.fn.mapcheck("y<C-G>", "n") ~= "" then
-          		vim.keymap.del("n", "y<C-G>")
-          	end
-          end
+				local keymaps = {}
+				
+				-- Unconditional git group mapping
+				table.insert(keymaps, { "<leader>g", group = "git", icon = " ", })
 
-          vim.schedule(rm_fugitive_keymap_overlap)
-        ''
-      else
-        ""
-    );
+				-- Conditional mappings
+				if pcall(require, "diffview") then
+					table.insert(keymaps, { "<leader>gd", icon = " ", desc = "diffview", })
+				end
+
+				if pcall(require, "fugitive") then
+					table.insert(keymaps, { "<leader>gf", icon = " ", desc = "git fugitive", })
+				end
+
+				if pcall(require, "neogit") then
+					table.insert(keymaps, { "<leader>gn", icon = "󰊢 ", desc = "neogit", })
+				end
+
+				if pcall(require, "telescope.builtin.git_status") then
+					table.insert(keymaps, { "<leader>gs", icon = " ", desc = "status", })
+				end
+
+				if pcall(require, "telescope.builtin.git_branches") then
+					table.insert(keymaps, { "<leader>gb", icon = " ", desc = "branches", })
+				end
+
+				if pcall(telescope.load_extension, "advanced_git_search") then
+					table.insert(keymaps, { "<leader>ga", icon = " ", desc = "advanced search", })
+				end
+
+				wk.add(keymaps)
+      end
+    '' 
+		(if config.plugins.fugitive.enable then 
+		# lua
+		''
+			-- Remove fugitive overlap mapping
+			local function rm_fugitive_keymap_overlap()
+				if vim.fn.mapcheck("y<C-G>", "n") ~= "" then
+					vim.keymap.del("n", "y<C-G>")
+				end
+			end
+
+			vim.schedule(rm_fugitive_keymap_overlap)
+		''
+      else "")
+		];
 }

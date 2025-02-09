@@ -106,50 +106,45 @@
   };
 
   keymaps = lib.concatLists [
-    (
-      if config.plugins.luasnip.enable then
-        [
-          {
-            key = "<C-K>";
-            mode = [
-              "i"
-              "s"
-            ];
-            action.__raw = # lua
-              ''
-                function() 
-                	if require("luasnip").expand_or_jumpable() then 
-                		require("luasnip").expand_or_jump() 
-                	end
-                end
-              '';
-            options = {
-              desc = "expand or jump to next snippet";
-              silent = true;
-            };
-          }
-          {
-            key = "<C-J>";
-            mode = [
-              "i"
-              "s"
-            ];
-            action.__raw = # lua
-              ''
-                function() 
-                	if require("luasnip").jumpable(-1) then 
-                		require("luasnip").jump(-1) 
-                	end
-                end
-              '';
-            options = {
-              desc = "jump back";
-              silent = true;
-            };
-          }
-        ]
-      else
-        [ ]
-    )
+    (lib.optionals config.plugins.luasnip.enable [
+			{
+				key = "<C-K>";
+				mode = [
+					"i"
+					"s"
+				];
+				action.__raw = # lua
+					''
+						function() 
+							if require("luasnip").expand_or_jumpable() then 
+								require("luasnip").expand_or_jump() 
+							end
+						end
+					'';
+				options = {
+					desc = "expand or jump to next snippet";
+					silent = true;
+				};
+			}
+			{
+				key = "<C-J>";
+				mode = [
+					"i"
+					"s"
+				];
+				action.__raw = # lua
+					''
+						function() 
+							if require("luasnip").jumpable(-1) then 
+								require("luasnip").jump(-1) 
+							end
+						end
+					'';
+				options = {
+					desc = "jump back";
+					silent = true;
+				};
+			}
+    ])
   ];
 }

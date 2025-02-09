@@ -18,6 +18,13 @@
       enable = true;
       settings = {
         delay = 500;
+				spec = [
+					{
+						__unkeyed = "<C-R>";
+						mode = "n";
+						desc = "(insert mode) open registers";
+					}
+				];
       };
       luaConfig.post = # lua
         ''
