@@ -210,8 +210,7 @@
       	end
       end
 
-      if pcall(require, "which-key") then
-      	local wk = require("which-key")
+      if wk_available then
       	wk.add ({
       		{"<leader>i", group = "interpreting", icon = " "},
       		{"<leader>ia", icon = " ", desc = "accept code action", },

@@ -312,7 +312,6 @@
       		local telescope_help = 'Keymaps <C-/> (Insert) or ? (Normal)';
 
       		if pcall(telescope.load_extension, "dap") then
-      			local wk_available, wk = pcall(require, "which-key")
 
 						-- Unconditional searching group map
 						if wk_available then
@@ -354,8 +353,7 @@
       		end
       	end
 
-      	if pcall(require, "which-key") then
-      		local wk = require("which-key")
+      	if wk_available then
       		wk.add ({
       			{ "<leader>d", group = "debugging", icon = "󰃤 "},
 						{ "<leader>dg", group = "go", icon = " "},

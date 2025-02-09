@@ -198,8 +198,7 @@
 
   extraConfigLuaPost = # lua
     ''
-      if pcall(require, "which-key") then
-      	local wk = require("which-key")
+      if wk_available then
 				local keymaps = {}
 
 				-- Unconditional searching group mapping

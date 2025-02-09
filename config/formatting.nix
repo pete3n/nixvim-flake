@@ -244,15 +244,14 @@
       	})
       end
 
-      if pcall(require, "which-key") then
-      	local wk = require ("which-key")
-      		wk.add ({
-      			{ "<leader>f", group = "formatting", icon = "󰉢 " },
-      			{ "<leader>ff", icon = "󰉢 ", desc ="format with conform", },
-      			{ "<leader>ft",  icon = "󰔡 ", desc = "toggle format on-save" },
-      			{ "<leader>fT", icon = "󰔡 ", desc = "toggle format on-save globally" },
-      			{ "<leader>fr", icon = " ", desc = "render markdown toggle", },
-      		})
+      if wk_available then
+				wk.add ({
+					{ "<leader>f", group = "formatting", icon = "󰉢 " },
+					{ "<leader>ff", icon = "󰉢 ", desc ="format with conform", },
+					{ "<leader>ft",  icon = "󰔡 ", desc = "toggle format on-save" },
+					{ "<leader>fT", icon = "󰔡 ", desc = "toggle format on-save globally" },
+					{ "<leader>fr", icon = " ", desc = "render markdown toggle", },
+				})
       end
     '';
 }

@@ -232,7 +232,6 @@ in
 
           -- Conditionally map telescope extension keys
           local telescope = require("telescope")
-          local wk_available, wk = pcall(require, "which-key")
 
           local telescope_extensions = {
           	{ ext = "advanced_git_search", key = "<leader>sG", icon = " ", 
@@ -278,9 +277,7 @@ in
 
           -- Conditionally map telescope dap extension keys					
           if pcall(telescope.load_extension, "dap") then
-          	local wk_available, wk = pcall(require, "which-key")
 
-							-- Unconditional debugging group map
           		if wk_available then
           			wk.add({ 
           				{ "<leader>se", group = "debugging search", icon = " "},
@@ -319,9 +316,7 @@ in
           end
 
           -- Conditionally map all other searching keys for which-key
-          if pcall(require, "which-key") then
-          	local wk = require "which-key"
-
+					if wk_available then
           	wk.add ({
           		-- Searching group 
           		{"<leader>s", group = "searching", icon = " ", },
@@ -355,8 +350,7 @@ in
           			prompt_title = "Neoclip Registers: ${telescope_help}" 
           		})
           	end)
-          	if pcall(require, "which-key") then
-          		local wk = require "which-key"
+          	if wk_available then
           		wk.add ({
           			{"<leader>sn", icon = "󱘞 ", desc = "neoclip", },
           		})
@@ -676,8 +670,7 @@ in
   # Non-telescope based searching keymaps
   extraConfigLuaPost = # lua
     ''
-      if pcall(require, "which-key") then
-      	local wk = require ("which-key")
+			if wk_available then
       	wk.add ({
       		-- Normal mode group
       		{"/", icon = "󱈅 ", desc = "search current buffer", },

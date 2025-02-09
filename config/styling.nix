@@ -101,47 +101,46 @@
           		vim.cmd("Noice last")
           end
 
-          if pcall(require, "which-key") then
-          	local wk = require("which-key")
-          		wk.add({
-          		{ "<leader>e", group = "event notifications", icon = "󰍢 " },
-          		{ "<leader>ed", dismiss_noice, desc = "dismiss notification", 
-          			icon = "🔕", mode = { "n", "v", "o" }},
-          		{ "<leader>eh", "<cmd>NoiceHistory<CR>", desc = "notification history", 
-          			icon = "󰋚 ", mode = { "n", "v", "o" }},
-          		{ "<leader>em", "<cmd>messages<CR>", desc = "messages",
-          			icon = "󰵅 ", mode = { "n", "v", "o" }},
-          		{ "<leader>et", toggle_noice, desc = "toggle notifications", 
-          			icon = "󰔡 ", mode = "n" },
-          		{ "<leader>er", redisplay_last_noice, 
-          			desc = "re-display previous notification", icon = "🔔", 
-          			mode = { "n", "v", "o" }},
-          		})
-          	end
+          if wk_available then
+						wk.add({
+						{ "<leader>e", group = "event notifications", icon = "󰍢 " },
+						{ "<leader>ed", dismiss_noice, desc = "dismiss notification", 
+							icon = "🔕", mode = { "n", "v", "o" }},
+						{ "<leader>eh", "<cmd>NoiceHistory<CR>", desc = "notification history", 
+							icon = "󰋚 ", mode = { "n", "v", "o" }},
+						{ "<leader>em", "<cmd>messages<CR>", desc = "messages",
+							icon = "󰵅 ", mode = { "n", "v", "o" }},
+						{ "<leader>et", toggle_noice, desc = "toggle notifications", 
+							icon = "󰔡 ", mode = "n" },
+						{ "<leader>er", redisplay_last_noice, 
+							desc = "re-display previous notification", icon = "🔔", 
+							mode = { "n", "v", "o" }},
+						})
+					end
 
-          	-- Noice recommended config
-          	require("noice").setup({
-          		lsp = {
-          			override = {
-          				["vim.lsp.util.convert_input_to_markdown_lines"] = true,
-          				["vim.lsp.util.stylize_markdown"] = true,
-          				["cmp.entry.get_documentation"] = true, -- requires hrsh7th/nvim-cmp
-          			},
-          		},
-          	})
-          	-- Show @recording in the statusline
-          	-- see: https://github.com/folke/noice.nvim/wiki/Configuration-Recipes#show-recording-messages
-          	require("lualine").setup({
-          		sections = {
-          			lualine_x = {
-          				{
-          					require("noice").api.statusline.mode.get,
-          					cond = require("noice").api.statusline.mode.has,
-          					color = { fg = "#ff9e64" },
-          				}
-          			},
-          		},
-          	})
+					-- Noice recommended config
+					require("noice").setup({
+						lsp = {
+							override = {
+								["vim.lsp.util.convert_input_to_markdown_lines"] = true,
+								["vim.lsp.util.stylize_markdown"] = true,
+								["cmp.entry.get_documentation"] = true, -- requires hrsh7th/nvim-cmp
+							},
+						},
+					})
+					-- Show @recording in the statusline
+					-- see: https://github.com/folke/noice.nvim/wiki/Configuration-Recipes#show-recording-messages
+					require("lualine").setup({
+						sections = {
+							lualine_x = {
+								{
+									require("noice").api.statusline.mode.get,
+									cond = require("noice").api.statusline.mode.has,
+									color = { fg = "#ff9e64" },
+								}
+							},
+						},
+					})
         '';
     };
   };

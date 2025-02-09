@@ -107,8 +107,7 @@
   extraConfigLuaPost = lib.concatStringsSep "\n" [
 		# lua
     ''
-      if pcall(require, "which-key") then
-      	local wk = require("which-key")
+      if wk_available then
 				local keymaps = {}
 				
 				-- Unconditional git group mapping

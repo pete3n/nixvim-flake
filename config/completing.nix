@@ -71,9 +71,7 @@
 						}),
 					})
 
-					if pcall(require, "which-key") then
-						local wk = require "which-key"
-
+					if wk_available then -- Defined in keymapping.nix
 						wk.add ({
 							{"<leader>c", group = "completing", icon = "󰈼", mode = { "n", "c", "i" }, },
 							{"<leader>ck", icon = "󰞘 ", desc = "expand or jump to next snippet (^ K)", 

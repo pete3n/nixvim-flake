@@ -21,8 +21,7 @@
 					end
 				end
 
-				if pcall(require, "which-key") then
-					local wk = require ("which-key")
+				if wk_available then
 					wk.add({
 						{ "z", group = "folding", icon = "󰅪"},
 						{ "<leader>z", group = "folding", proxy = "z", icon = "󰅪", };
