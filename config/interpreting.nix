@@ -4,6 +4,7 @@
   extraPackages = with pkgs; [
     asm-lsp
     bash-language-server
+		cargo
     cmake-language-server
     go
     gopls
@@ -14,6 +15,7 @@
     python312Packages.python-lsp-server
     ruff
     rust-analyzer
+		rustc
     superhtml
     typescript
     typescript-language-server
@@ -26,8 +28,60 @@
   extraPlugins = with pkgs.vimPlugins; [
     nvim-lspconfig
     typescript-tools-nvim
+		webapi-vim
   ];
 
+	plugins.rustaceanvim = {
+		enable = true;
+		settings.server = {
+			default_settings = {
+				rust-analyzer = {
+					cargo = {
+						buildScripts.enable = true;
+						features = "all";
+					};
+
+					diagnostics = {
+						enable = true;
+						styleLints.enable = true;
+					};
+
+					checkOnSave = true;
+					check = {
+						command = "clippy";
+						features = "all";
+					};
+
+					files = {
+						excludeDirs = [
+							".cargo"
+							".direnv"
+							".git"
+							"node_modules"
+							"target"
+						];
+					};
+
+					inlayHints = {
+						bindingModeHints.enable = true;
+						closureStyle = "rust_analyzer";
+						closureReturnTypeHints.enable = "always";
+						discriminantHints.enable = "always";
+						expressionAdjustmentHints.enable = "always";
+						implicitDrops.enable = true;
+						lifetimeElisionHints.enable = "always";
+						rangeExclusiveHints.enable = true;
+					};
+
+					procMacro = {
+						enable = true;
+					};
+
+					rustc.source = "discover";
+				};
+			};
+		};
+	};
   plugins.lsp = {
     servers = {
       # TODO: Fix this https://github.com/bergercookie/asm-lsp/issues/193
@@ -50,11 +104,11 @@
         package = pkgs.python312Packages.python-lsp-server;
       };
       ruff.enable = true;
-      rust_analyzer = {
-        enable = true;
-        installCargo = true;
-        installRustc = true;
-      };
+			#rust_analyzer = {
+      #  enable = true;
+      #  installCargo = true;
+      #  installRustc = true;
+      #};
       superhtml.enable = true;
       ts_ls.enable = true;
       yamlls.enable = true;
@@ -290,21 +344,21 @@
       })
 
       -- Rust LSP
-      require("lspconfig").rust_analyzer.setup({
-      root_dir = function(fname)
-      	return vim.loop.cwd()
-      end,
-      settings = {
-      	['rust_analyzer'] = {
-      		cargo = {
-      			allFeatures = true,
-      		},
-      	},
-      },
-      on_attach = function()
-      	set_cmn_lsp_keybinds()
-      end,
-      })
+      --require("lspconfig").rust_analyzer.setup({
+      --root_dir = function(fname)
+      --	return vim.loop.cwd()
+      --end,
+      --settings = {
+      --	['rust_analyzer'] = {
+      --		cargo = {
+      --			allFeatures = true,
+      --		},
+      --	},
+      --},
+      --on_attach = function()
+      --	set_cmn_lsp_keybinds()
+      --end,
+      --})
 
       -- Typescript/Javascript LSP
       require("lspconfig").ts_ls.setup({
