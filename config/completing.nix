@@ -1,8 +1,13 @@
 # All configuration related to completing code/text
-{ config, lib, ... }:
 
 {
-  plugins = {
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+{
+  extraPlugins = with pkgs.vimPlugins; [ ultimate-autopair-nvim ]; plugins = {
     cmp = {
       enable = true;
       settings = {
@@ -38,19 +43,9 @@
           "│"
         ];
       };
-      luaConfig.post =
-        # lua
-        ''
-          if pcall(require, "vim-dadbod-completion") then
-          	-- Setup vim-dadbod
-          	cmp.setup.filetype({ "sql" }, {
-          		sources = {
-          			{ name = "vim-dadbod-completion" },
-          			{ name = "buffer" },
-          		},
-          	})
-          end
 
+      luaConfig.post = # lua
+        ''
           -- Extra options for cmp-cmdline setup
           cmp.setup.cmdline('/', {
           	mapping = cmp.mapping.preset.cmdline(),
@@ -92,28 +87,6 @@
           	})
           end
         '';
-    };
-
-    nvim-autopairs = {
-      enable = true;
-      settings = {
-        check_ts = config.plugins.treesitter.enable; # Dependency
-      };
-      luaConfig.post = # lua
-				''
-					-- Auto close nix attr sets {} with a ;
-					local npairs = require("nvim-autopairs")
-					local Rule = require("nvim-autopairs.rule")
-
-					npairs.add_rules({
-						Rule("{", "};", "nix"):with_pair(function(opts)
-							-- Ensure `};` is not already present
-							local line = opts.line
-							local col = opts.col
-							return not line:sub(col, col + 2):match("};")
-						end):set_end_pair_length(1), -- Ensures cursor is inside `{ }`
-					})
-				'';
     };
 
     cmp-buffer.enable = true;
@@ -170,4 +143,35 @@
       }
     ])
   ];
+  extraConfigLuaPost =
+    (
+      if builtins.elem pkgs.vimPlugins.ultimate-autopair-nvim config.extraPlugins then
+        # lua
+        ''
+				
+local ua = require("ultimate-autopair")
+ua.init({
+  ua.extend_default({
+  }),
+  { profile = require("ultimate-autopair.experimental.cmpair").init },
+})
+        ''
+      else
+        # lua 
+        ''
+          print("ultimate-autopair is required but was not included as a package. Check config.extraPlugins")
+        ''
+    ) +
+    # lua
+   ''
+      if pcall(require, "vim-dadbod-completion") then
+      	-- Setup vim-dadbod
+      	cmp.setup.filetype({ "sql" }, {
+      		sources = {
+      			{ name = "vim-dadbod-completion" },
+      			{ name = "buffer" },
+      		},
+      	})
+      end
+    '';
 }
