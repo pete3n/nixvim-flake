@@ -1,8 +1,35 @@
 # All configuration related to parsing languages (Treesitter)
-{ ... }:
+# TODO: Separate keymaps from wk dependency
+{ pkgs, ... }:
 {
-  plugins = {
+  extraPackages = with pkgs; [
+    nix-prefetch-git
+    jq
+  ];
 
+  extraPlugins = [
+    (pkgs.vimUtils.buildVimPlugin {
+      name = "ninjection";
+      src = pkgs.fetchFromGitHub {
+        owner = "pete3n";
+        repo = "ninjection.nvim";
+        rev = "ba14f4cd6be2e6e406e2631aed7a76a786c31d6f";
+        hash = "sha256-iee2P2HLVOhz5IRQlhYC4dueLOLWp9URHJMQxfkFDEw=";
+      };
+    })
+
+    (pkgs.vimUtils.buildVimPlugin {
+      name = "nix-prefetch.nvim";
+      src = pkgs.fetchFromGitHub {
+        owner = "pete3n";
+        repo = "nix-prefetch.nvim";
+        rev = "44496fb3e706c795e87d475d674708919a01cbea";
+        hash = "sha256-tSDIGbTD+5fm1Qo3922DGJ1YIRNAUJF2btWf4kWbCoM=";
+      };
+    })
+  ];
+
+  plugins = {
     treesitter = {
       enable = true;
       settings = {
@@ -21,46 +48,47 @@
       luaConfig.post = # lua
         ''
           local function contains(tbl, value)
-            for _, v in ipairs(tbl) do
-              if v == value then
-                return true
-              end
-            end
-            return false
+          	for _, v in ipairs(tbl) do
+          		if v == value then
+          			return true
+          		end
+          	end
+          	return false
           end
 
           -- Variable to track the current InspectTree window.
           local inspect_tree_win = nil
 
           local function inspect_tree_toggle()
-            -- If we have a recorded window and it’s still valid, close it.
-            if inspect_tree_win and vim.api.nvim_win_is_valid(inspect_tree_win) then
-              vim.api.nvim_win_close(inspect_tree_win, true)
-              inspect_tree_win = nil
-              return
-            end
+          	-- If we have a recorded window and it’s still valid, close it.
+          	if inspect_tree_win and vim.api.nvim_win_is_valid(inspect_tree_win) then
+          		vim.api.nvim_win_close(inspect_tree_win, true)
+          		inspect_tree_win = nil
+          		return
+          	end
 
-            -- Otherwise, open a new inspect tree window.
-            local wins_before = vim.api.nvim_list_wins()
-            vim.cmd("InspectTree")
-            -- Schedule a function to run after the command takes effect.
-            vim.schedule(function()
-              local wins_after = vim.api.nvim_list_wins()
-              for _, win in ipairs(wins_after) do
-                if not contains(wins_before, win) then
-                  inspect_tree_win = win
-                  break
-                end
-              end
-            end)
+          	-- Otherwise, open a new inspect tree window.
+          	local wins_before = vim.api.nvim_list_wins()
+          	vim.cmd("InspectTree")
+          	-- Schedule a function to run after the command takes effect.
+          	vim.schedule(function()
+          		local wins_after = vim.api.nvim_list_wins()
+          		for _, win in ipairs(wins_after) do
+          			if not contains(wins_before, win) then
+          				inspect_tree_win = win
+          				break
+          			end
+          		end
+          	end)
           end
-
           vim.api.nvim_create_user_command("InspectTreeToggle", inspect_tree_toggle, {})
 
           if wk_available then
           	wk.add({
           	{ "<leader>pi", "<cmd>InspectTreeToggle<CR>", desc = "toggle inspect tree", 
           		icon = "󰔡 ", },
+          	{ "<leader>pn", "<cmd>NJedit<CR>", desc = "ninject"},
+          	{ "<leader>pu", "<cmd>NPUpdateRepo<CR>", desc = "update nix-prefetch"},
           	})
           end
         '';
@@ -80,42 +108,44 @@
       };
       luaConfig.post = # lua
         ''
-					-- Function to temporarily show/hide the context window
-					-- Returns nil context to force TS Context to close the window
+          -- Function to temporarily show/hide the context window
+          -- Returns nil context to force TS Context to close the window
 
-					local ts_context = require("treesitter-context")
-					local context = require("treesitter-context.context")
-					local render = require("treesitter-context.render")
+          local ts_context = require("treesitter-context")
+          local context = require("treesitter-context.context")
+          local render = require("treesitter-context.render")
 
-					_G.ts_context_display = true
+          _G.ts_context_display = true
 
-					local original_get = context.get
-					context.get = function(bufnr, winid)
-						if not _G.ts_context_display then
-							-- Return no context: this will trigger update_single_context to close the window.
-							return nil, {}
-						end
-						return original_get(bufnr, winid)
-					end
+          local original_get = context.get
+          context.get = function(bufnr, winid)
+          	if not _G.ts_context_display then
+          		-- Return no context: this will trigger update_single_context to close the window.
+          		return nil, {}
+          	end
+          	return original_get(bufnr, winid)
+          end
 
-					vim.api.nvim_create_user_command("TSContextToggleDisplay", function()
-						_G.ts_context_display = not _G.ts_context_display
-						local cur_win = vim.api.nvim_get_current_win()
-						if not _G.ts_context_display then
-							pcall(render.close, cur_win)
-							vim.notify("Treesitter Context hidden", vim.log.levels.INFO)
-						else
-							vim.notify("Treesitter Context enabled; move the cursor to refresh", vim.log.levels.INFO)
-						end
-					end, {})
+          vim.api.nvim_create_user_command("TSContextToggleDisplay", function()
+          	_G.ts_context_display = not _G.ts_context_display
+          	local cur_win = vim.api.nvim_get_current_win()
+          	if not _G.ts_context_display then
+          		pcall(render.close, cur_win)
+          		vim.notify("Treesitter Context hidden", vim.log.levels.INFO)
+          	else
+          		vim.notify("Treesitter Context enabled; move the cursor to refresh", vim.log.levels.INFO)
+          	end
+          end, {})
 
 
-					if wk_available then
-						wk.add({
-							{ "<leader>pc", "<cmd>TSContextToggleDisplay<CR>",
-							desc = "toggle treesitter-context display", mode = "n", icon = "󰔡 ", },
-						})
-					end
+          if wk_available then
+          	wk.add({
+          		{ "<leader>pc", "<cmd>TSContextToggleDisplay<CR>",
+          		desc = "toggle treesitter-context display", mode = "n", icon = "󰔡 ", },
+          		{ "<leader>un", "<cmd>NPUpdateRepo<CR>",
+          		desc = "update github repo info", mode = "n", icon = "󰚰 ", },
+          	})
+          end
         '';
     };
 
@@ -324,20 +354,20 @@
 
   extraConfigLuaPost = # lua
     ''
-			if wk_available then
-				wk.add({ 
-					{ "<leader>p", group = "parsing", icon = " " },
-					{ "<leader>pp", group = "paramater swap", icon = "󰓡 " },
-					{ "<leader>pf", group = "function swap", icon = "󰓡 " },
-					{ "<leader>ppi", desc = "swap next inner parameter"},
-					{ "<leader>ppo", desc = "swap next outer parameter"},
-					{ "<leader>ppI", desc = "swap prev inner parameter"},
-					{ "<leader>ppO", desc = "swap prev outer parameter"},
-					{ "<leader>pfi", desc = "swap next inner function"},
-					{ "<leader>pfo", desc = "swap next outer function"},
-					{ "<leader>pfI", desc = "swap prev inner function"},
-					{ "<leader>pfO", desc = "swap prev outer function"},
-				})
-			end
+      if wk_available then
+      	wk.add({ 
+      		{ "<leader>p", group = "parsing", icon = " " },
+      		{ "<leader>pp", group = "paramater swap", icon = "󰓡 " },
+      		{ "<leader>pf", group = "function swap", icon = "󰓡 " },
+      		{ "<leader>ppi", desc = "swap next inner parameter"},
+      		{ "<leader>ppo", desc = "swap next outer parameter"},
+      		{ "<leader>ppI", desc = "swap prev inner parameter"},
+      		{ "<leader>ppO", desc = "swap prev outer parameter"},
+      		{ "<leader>pfi", desc = "swap next inner function"},
+      		{ "<leader>pfo", desc = "swap next outer function"},
+      		{ "<leader>pfI", desc = "swap prev inner function"},
+      		{ "<leader>pfO", desc = "swap prev outer function"},
+      	})
+      end
     '';
 }
