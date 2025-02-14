@@ -1,5 +1,6 @@
 # All configuration related to completing code/text
 { config, lib, ... }:
+
 {
   plugins = {
     cmp = {
@@ -17,6 +18,7 @@
           "<C-p>" = "cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert })";
           "<C-y>" = "cmp.mapping (cmp.mapping.confirm { behavior = cmp.ConfirmBehavior.Insert, select = true }, {'i','c'})";
           "<C-e>" = "cmp.mapping.close()";
+          "<CR>" = "cmp.mapping.confirm({ select = true })";
         };
         sources = [
           { name = "luasnip"; }
@@ -39,57 +41,79 @@
       luaConfig.post =
         # lua
         ''
-					if pcall(require, "vim-dadbod-completion") then
-						-- Setup vim-dadbod
-						cmp.setup.filetype({ "sql" }, {
-							sources = {
-								{ name = "vim-dadbod-completion" },
-								{ name = "buffer" },
-							},
-						})
-					end
+          if pcall(require, "vim-dadbod-completion") then
+          	-- Setup vim-dadbod
+          	cmp.setup.filetype({ "sql" }, {
+          		sources = {
+          			{ name = "vim-dadbod-completion" },
+          			{ name = "buffer" },
+          		},
+          	})
+          end
 
-					-- Extra options for cmp-cmdline setup
-					cmp.setup.cmdline('/', {
-						mapping = cmp.mapping.preset.cmdline(),
-							sources = {
-								{ name = 'buffer' }
-							}
-					})
+          -- Extra options for cmp-cmdline setup
+          cmp.setup.cmdline('/', {
+          	mapping = cmp.mapping.preset.cmdline(),
+          		sources = {
+          			{ name = 'buffer' }
+          		}
+          })
 
-					cmp.setup.cmdline(":", {
-						mapping = cmp.mapping.preset.cmdline(),
-						sources = cmp.config.sources({
-							{ name = "path" },
-						}, {
-							{
-								name = "cmdline",
-								option = {
-									ignore_cmds = { "Man", "!" },
-								},
-							},
-						}),
-					})
+          cmp.setup.cmdline(":", {
+          	mapping = cmp.mapping.preset.cmdline(),
+          	sources = cmp.config.sources({
+          		{ name = "path" },
+          	}, {
+          		{
+          			name = "cmdline",
+          			option = {
+          				ignore_cmds = { "Man", "!" },
+          			},
+          		},
+          	}),
+          })
 
-					if wk_available then -- Defined in keymapping.nix
-						wk.add ({
-							{"<leader>c", group = "completing", icon = "󰈼", mode = { "n", "c", "i" }, },
-							{"<leader>ck", icon = "󰞘 ", desc = "expand or jump to next snippet (^ K)", 
-									mode = { "n", "c", "i", }, },
-							{"<leader>cj", icon = "󰞗 ", desc = "jump back (^ J)", mode = { "n", "c", "i" }, },
-							{"<leader>cn", icon = " ", desc = "next completion (^ N)", mode = { "n", "c", "i" }, },
-							{"<leader>cp", icon = " ", desc = "prev completion (^ P)", mode = { "n", "c", "i" }, },
-							{"<leader>cy", icon = "󰿄 ", desc = "confirm completion (^ Y)", mode = { "n", "c", "i" }, },
-							{"<leader>ce", icon = "󰜺 ", desc = "close completions (^ E)", mode = { "n", "c", "i" }, },
-							{"<C-K>", icon = "󰞘 ", desc = "expand or jump to next snippet", mode = { "c", "i" }, },
-							{"<C-J>", icon = "󰞗 ", desc = "jump back", mode = { "c", "i" }, },
-							{"<C-N>", icon = " ", desc = "next completion", mode = { "c", "i" }, },
-							{"<C-P>", icon = " ", desc = "prev completion", mode = { "c", "i" }, },
-							{"<C-Y>", icon = "󰿄 ", desc = "confirm completion ", mode = { "c", "i" }, },
-							{"<C-E>", icon = "󰜺 ", desc = "close completions", mode = { "c", "i" }, },
-						})
-					end
+          if wk_available then -- Defined in keymapping.nix
+          	wk.add ({
+          		{"<leader>c", group = "completing", icon = "󰈼", mode = { "n", "c", "i" }, },
+          		{"<leader>ck", icon = "󰞘 ", desc = "expand or jump to next snippet (^ K)", 
+          				mode = { "n", "c", "i", }, },
+          		{"<leader>cj", icon = "󰞗 ", desc = "jump back (^ J)", mode = { "n", "c", "i" }, },
+          		{"<leader>cn", icon = " ", desc = "next completion (^ N)", mode = { "n", "c", "i" }, },
+          		{"<leader>cp", icon = " ", desc = "prev completion (^ P)", mode = { "n", "c", "i" }, },
+          		{"<leader>cy", icon = "󰿄 ", desc = "confirm completion (^ Y)", mode = { "n", "c", "i" }, },
+          		{"<leader>ce", icon = "󰜺 ", desc = "close completions (^ E)", mode = { "n", "c", "i" }, },
+          		{"<C-K>", icon = "󰞘 ", desc = "expand or jump to next snippet", mode = { "c", "i" }, },
+          		{"<C-J>", icon = "󰞗 ", desc = "jump back", mode = { "c", "i" }, },
+          		{"<C-N>", icon = " ", desc = "next completion", mode = { "c", "i" }, },
+          		{"<C-P>", icon = " ", desc = "prev completion", mode = { "c", "i" }, },
+          		{"<C-Y>", icon = "󰿄 ", desc = "confirm completion ", mode = { "c", "i" }, },
+          		{"<C-E>", icon = "󰜺 ", desc = "close completions", mode = { "c", "i" }, },
+          	})
+          end
         '';
+    };
+
+    nvim-autopairs = {
+      enable = true;
+      settings = {
+        check_ts = config.plugins.treesitter.enable; # Dependency
+      };
+      luaConfig.post = # lua
+				''
+					-- Auto close nix attr sets {} with a ;
+					local npairs = require("nvim-autopairs")
+					local Rule = require("nvim-autopairs.rule")
+
+					npairs.add_rules({
+						Rule("{", "};", "nix"):with_pair(function(opts)
+							-- Ensure `};` is not already present
+							local line = opts.line
+							local col = opts.col
+							return not line:sub(col, col + 2):match("};")
+						end):set_end_pair_length(1), -- Ensures cursor is inside `{ }`
+					})
+				'';
     };
 
     cmp-buffer.enable = true;
@@ -103,46 +127,47 @@
     vim-dadbod-completion.enable = config.plugins.vim-dadbod.enable; # Dependency
   };
 
+  # TODO: Why did these break?
   keymaps = lib.concatLists [
     (lib.optionals config.plugins.luasnip.enable [
-			{
-				key = "<C-K>";
-				mode = [
-					"i"
-					"s"
-				];
-				action.__raw = # lua
-					''
-						function() 
-							if require("luasnip").expand_or_jumpable() then 
-								require("luasnip").expand_or_jump() 
-							end
-						end
-					'';
-				options = {
-					desc = "expand or jump to next snippet";
-					silent = true;
-				};
-			}
-			{
-				key = "<C-J>";
-				mode = [
-					"i"
-					"s"
-				];
-				action.__raw = # lua
-					''
-						function() 
-							if require("luasnip").jumpable(-1) then 
-								require("luasnip").jump(-1) 
-							end
-						end
-					'';
-				options = {
-					desc = "jump back";
-					silent = true;
-				};
-			}
+      {
+        key = "<C-K>";
+        mode = [
+          "i"
+          "s"
+        ];
+        action.__raw = # lua
+          ''
+            function() 
+            	if require("luasnip").expand_or_jumpable() then 
+            		require("luasnip").expand_or_jump() 
+            	end
+            end
+          '';
+        options = {
+          desc = "expand or jump to next snippet";
+          silent = true;
+        };
+      }
+      {
+        key = "<C-J>";
+        mode = [
+          "i"
+          "s"
+        ];
+        action.__raw = # lua
+          ''
+            function() 
+            	if require("luasnip").jumpable(-1) then 
+            		require("luasnip").jump(-1) 
+            	end
+            end
+          '';
+        options = {
+          desc = "jump back";
+          silent = true;
+        };
+      }
     ])
   ];
 }
