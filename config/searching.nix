@@ -96,6 +96,7 @@ in
           end
           require("telescope.builtin").find_in_dirs = find_in_dirs
 
+					-- TODO: Fix directory input bug
           local find_mg_in_dirs = function(opts)
           	-- TODO: Parse directories with escaped spaces
           	opts = opts or {}
