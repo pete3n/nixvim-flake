@@ -13,6 +13,8 @@
 
   plugins = {
 
+		rainbow-delimiters.enable = true;
+
     notify = {
       enable = true;
       timeout = 5000;
