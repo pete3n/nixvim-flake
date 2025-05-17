@@ -13,8 +13,8 @@
       src = pkgs.fetchFromGitHub {
         owner = "pete3n";
         repo = "ninjection.nvim";
-        rev = "ba14f4cd6be2e6e406e2631aed7a76a786c31d6f";
-        hash = "sha256-iee2P2HLVOhz5IRQlhYC4dueLOLWp9URHJMQxfkFDEw=";
+        rev = "c71b0071a2691e9f00f754f9bd65a9e5431db58b";
+        hash = "sha256-jj5b7LUPbsZsUdXCVshRuUsXoUqmeEQPBHnFky2txpY=";
       };
     })
 
@@ -23,8 +23,8 @@
       src = pkgs.fetchFromGitHub {
         owner = "pete3n";
         repo = "nix-prefetch.nvim";
-        rev = "44496fb3e706c795e87d475d674708919a01cbea";
-        hash = "sha256-tSDIGbTD+5fm1Qo3922DGJ1YIRNAUJF2btWf4kWbCoM=";
+        rev = "fa50db7784bb96f50f969bf1e2aed3e3aab7d764";
+        hash = "sha256-C3Fgi0trkTx/2jutz1IHpUDrHrZ1taBD/LsI6vxy4qs=";
       };
     })
   ];
@@ -85,10 +85,11 @@
 
           if wk_available then
           	wk.add({
-          	{ "<leader>pi", "<cmd>InspectTreeToggle<CR>", desc = "toggle inspect tree", 
-          		icon = "󰔡 ", },
-          	{ "<leader>pn", "<cmd>NJedit<CR>", desc = "ninject"},
-          	{ "<leader>pu", "<cmd>NPUpdateRepo<CR>", desc = "update nix-prefetch"},
+          		{ "<leader>pi", "<cmd>InspectTreeToggle<CR>", desc = "toggle inspect tree", icon = "󰔡 " },
+          		{ "<leader>pne", "<Plug>(NinjectionEdit)", desc = "ninject edit" },
+          		{ "<leader>pnv", "<Plug>(NinjectionSelect)", desc = "ninject select" },
+          		{ "<leader>pnr", "<Plug>(NinjectionReplace)", desc = "ninject replace" },
+          		{ "<leader>pu", "<cmd>NPUpdateRepo<CR>", desc = "update nix-prefetch" },
           	})
           end
         '';
