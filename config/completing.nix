@@ -149,30 +149,33 @@
       if builtins.elem pkgs.vimPlugins.ultimate-autopair-nvim config.extraPlugins then
         # lua
         ''
-				
-local ua = require("ultimate-autopair")
-ua.init({
-  ua.extend_default({
-  }),
-  { profile = require("ultimate-autopair.experimental.cmpair").init },
-})
+					local ua = require("ultimate-autopair")
+					ua.init({
+						ua.extend_default({
+							-- Override default options – enable tabout
+							cmap = false, -- disable command-line autopairs
+							pair_cmap = false,
+						}),
+						{ profile = require("ultimate-autopair.experimental.cmpair").init },
+					})
         ''
       else
         # lua 
         ''
           print("ultimate-autopair is required but was not included as a package. Check config.extraPlugins")
         ''
-    ) +
-    # lua
-   ''
-      if pcall(require, "vim-dadbod-completion") then
-      	-- Setup vim-dadbod
-      	cmp.setup.filetype({ "sql" }, {
-      		sources = {
-      			{ name = "vim-dadbod-completion" },
-      			{ name = "buffer" },
-      		},
-      	})
-      end
-    '';
+    )
+    +
+      # lua
+      ''
+        if pcall(require, "vim-dadbod-completion") then
+        	-- Setup vim-dadbod
+        	cmp.setup.filetype({ "sql" }, {
+        		sources = {
+        			{ name = "vim-dadbod-completion" },
+        			{ name = "buffer" },
+        		},
+        	})
+        end
+      '';
 }
