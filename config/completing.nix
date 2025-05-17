@@ -7,7 +7,8 @@
   ...
 }:
 {
-  extraPlugins = with pkgs.vimPlugins; [ ultimate-autopair-nvim ]; plugins = {
+  extraPlugins = with pkgs.vimPlugins; [ ultimate-autopair-nvim ];
+  plugins = {
     cmp = {
       enable = true;
       settings = {
