@@ -78,9 +78,8 @@
     mini = {
       enable = true;
       modules = {
-        icons = {
-          enable = true;
-        };
+        icons.enable = true;
+				doc.enable = true;
         comment = {
           disable_default_keymaps = true;
         };
