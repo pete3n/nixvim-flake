@@ -4,7 +4,7 @@
   extraPackages = with pkgs; [
     asm-lsp
     bash-language-server
-		cargo
+    cargo
     cmake-language-server
     go
     gopls
@@ -15,7 +15,7 @@
     python312Packages.python-lsp-server
     ruff
     rust-analyzer
-		rustc
+    rustc
     superhtml
     typescript
     typescript-language-server
