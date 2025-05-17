@@ -351,22 +351,21 @@
       };
     };
   };
-
   extraConfigLuaPost = # lua
     ''
       if wk_available then
-      	wk.add({ 
+      	wk.add({
       		{ "<leader>p", group = "parsing", icon = " " },
       		{ "<leader>pp", group = "paramater swap", icon = "󰓡 " },
       		{ "<leader>pf", group = "function swap", icon = "󰓡 " },
-      		{ "<leader>ppi", desc = "swap next inner parameter"},
-      		{ "<leader>ppo", desc = "swap next outer parameter"},
-      		{ "<leader>ppI", desc = "swap prev inner parameter"},
-      		{ "<leader>ppO", desc = "swap prev outer parameter"},
-      		{ "<leader>pfi", desc = "swap next inner function"},
-      		{ "<leader>pfo", desc = "swap next outer function"},
-      		{ "<leader>pfI", desc = "swap prev inner function"},
-      		{ "<leader>pfO", desc = "swap prev outer function"},
+      		{ "<leader>ppi", desc = "swap next inner parameter" },
+      		{ "<leader>ppo", desc = "swap next outer parameter" },
+      		{ "<leader>ppI", desc = "swap prev inner parameter" },
+      		{ "<leader>ppO", desc = "swap prev outer parameter" },
+      		{ "<leader>pfi", desc = "swap next inner function" },
+      		{ "<leader>pfo", desc = "swap next outer function" },
+      		{ "<leader>pfI", desc = "swap prev inner function" },
+      		{ "<leader>pfO", desc = "swap prev outer function" },
       	})
       end
     '';

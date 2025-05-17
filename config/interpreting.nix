@@ -126,14 +126,14 @@
       -- Extra nvim-lspconfig configuration
       local function set_cmn_lsp_keybinds()
       	local lsp_keybinds = {
-					{
-						key = "<leader>ia",
-						action = vim.lsp.buf.code_action,
-						options = {
-							buffer = 0,
-							desc = "code action",
-						},
-					},
+      		{
+      			key = "<leader>ia",
+      			action = vim.lsp.buf.code_action,
+      			options = {
+      				buffer = 0,
+      				desc = "code action",
+      			},
+      		},
       		{
       			key = "<leader>ii",
       			action = vim.lsp.buf.hover,
@@ -150,30 +150,30 @@
       				desc = "go to previous diagnostic",
       			},
       		},
-					{
-						key = "<leader>ik",
-						action = vim.diagnostic.goto_next,
-						options = {
-							buffer = 0,
-							desc = "go to next diagnostic",
-						},
-					},
-					{
-						key = "<leader>iq",
-						action = vim.diagnostic.setqflist,
-						options = {
-							buffer = 0,
-							desc = "diagnostics quickfix list",
-						},
-					},
-					{
-						key = "<leader>ir",
-						action = vim.lsp.buf.rename,
-						options = {
-							buffer = 0,
-							desc = "rename variable <S-R>",
-						},
-					},
+      		{
+      			key = "<leader>ik",
+      			action = vim.diagnostic.goto_next,
+      			options = {
+      				buffer = 0,
+      				desc = "go to next diagnostic",
+      			},
+      		},
+      		{
+      			key = "<leader>iq",
+      			action = vim.diagnostic.setqflist,
+      			options = {
+      				buffer = 0,
+      				desc = "diagnostics quickfix list",
+      			},
+      		},
+      		{
+      			key = "<leader>ir",
+      			action = vim.lsp.buf.rename,
+      			options = {
+      				buffer = 0,
+      				desc = "rename variable <S-R>",
+      			},
+      		},
       		{
       			key = "<leader>r",
       			action = vim.lsp.buf.rename,

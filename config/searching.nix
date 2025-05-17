@@ -335,7 +335,8 @@ in
           		{"<leader>sm", icon = "󱈧 ", desc = "multi grep", },
           		{"<leader>sM", icon = " ", desc = "multi grep in dirs", },
           		{"<leader>sp", icon = " ", desc = "project files", },
-          		{"<leader>ss", icon = "󰯃 ", desc = "neovim scripts", },
+          		{"<leader>ss", icon = " ", desc = "symbols", },
+          		{"<leader>sS", icon = "󰯃 ", desc = "neovim scripts", },
           		{"<leader>sw", icon = " ", desc = "current word", },
           	})
           end
@@ -656,6 +657,18 @@ in
       }
       {
         key = "<leader>ss";
+        mode = "n";
+        action.__raw = # lua
+          ''
+            	function() require("telescope.builtin").lsp_document_symbols({
+            		prompt_title = "Document Symbols: ${telescope_help}" })
+            	end
+          '';
+        options = {
+          desc = "neovim scripts";
+        };
+      }{
+        key = "<leader>sS";
         mode = "n";
         action.__raw = # lua
           ''
