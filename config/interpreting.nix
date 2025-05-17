@@ -28,91 +28,94 @@
   extraPlugins = with pkgs.vimPlugins; [
     nvim-lspconfig
     typescript-tools-nvim
-		webapi-vim
+    webapi-vim
   ];
 
-	plugins.rustaceanvim = {
-		enable = true;
-		settings.server = {
-			default_settings = {
-				rust-analyzer = {
-					cargo = {
-						buildScripts.enable = true;
-						features = "all";
-					};
+  plugins = {
+    rustaceanvim = {
+      enable = true;
+      settings.server = {
+        default_settings = {
+          rust-analyzer = {
+            cargo = {
+              buildScripts.enable = true;
+              features = "all";
+            };
 
-					diagnostics = {
-						enable = true;
-						styleLints.enable = true;
-					};
+            diagnostics = {
+              enable = true;
+              styleLints.enable = true;
+            };
 
-					checkOnSave = true;
-					check = {
-						command = "clippy";
-						features = "all";
-					};
+            checkOnSave = true;
+            check = {
+              command = "clippy";
+              features = "all";
+            };
 
-					files = {
-						excludeDirs = [
-							".cargo"
-							".direnv"
-							".git"
-							"node_modules"
-							"target"
-						];
-					};
+            files = {
+              excludeDirs = [
+                ".cargo"
+                ".direnv"
+                ".git"
+                "node_modules"
+                "target"
+              ];
+            };
 
-					inlayHints = {
-						bindingModeHints.enable = true;
-						closureStyle = "rust_analyzer";
-						closureReturnTypeHints.enable = "always";
-						discriminantHints.enable = "always";
-						expressionAdjustmentHints.enable = "always";
-						implicitDrops.enable = true;
-						lifetimeElisionHints.enable = "always";
-						rangeExclusiveHints.enable = true;
-					};
+            inlayHints = {
+              bindingModeHints.enable = true;
+              closureStyle = "rust_analyzer";
+              closureReturnTypeHints.enable = "always";
+              discriminantHints.enable = "always";
+              expressionAdjustmentHints.enable = "always";
+              implicitDrops.enable = true;
+              lifetimeElisionHints.enable = "always";
+              rangeExclusiveHints.enable = true;
+            };
 
-					procMacro = {
-						enable = true;
-					};
+            procMacro = {
+              enable = true;
+            };
 
-					rustc.source = "discover";
-				};
-			};
-		};
-	};
-  plugins.lsp = {
-    servers = {
-      # TODO: Fix this https://github.com/bergercookie/asm-lsp/issues/193
-      asm_lsp.enable = true;
-      bashls.enable = true;
-      clangd.enable = true;
-      cmake.enable = true;
-      cssls.enable = true;
-      eslint.enable = true;
-      gopls.enable = true;
-      jsonls.enable = true;
-      lua_ls.enable = true;
-      nixd.enable = true;
-      prismals = {
-        enable = true;
-        package = pkgs.nodePackages."@prisma/language-server";
+            rustc.source = "discover";
+          };
+        };
       };
-      pylsp = {
-        enable = true;
-        package = pkgs.python312Packages.python-lsp-server;
+    };
+
+    lsp = {
+      servers = {
+        # TODO: Fix this https://github.com/bergercookie/asm-lsp/issues/193
+        asm_lsp.enable = true;
+        bashls.enable = true;
+        clangd.enable = true;
+        cmake.enable = true;
+        cssls.enable = true;
+        eslint.enable = true;
+        gopls.enable = true;
+        jsonls.enable = true;
+        lua_ls.enable = true;
+        nixd.enable = true;
+        prismals = {
+          enable = true;
+          package = pkgs.nodePackages."@prisma/language-server";
+        };
+        pylsp = {
+          enable = true;
+          package = pkgs.python312Packages.python-lsp-server;
+        };
+        ruff.enable = true;
+        #rust_analyzer = {
+        #  enable = true;
+        #  installCargo = true;
+        #  installRustc = true;
+        #};
+        superhtml.enable = true;
+        ts_ls.enable = true;
+        yamlls.enable = true;
+        zls.enable = true;
       };
-      ruff.enable = true;
-			#rust_analyzer = {
-      #  enable = true;
-      #  installCargo = true;
-      #  installRustc = true;
-      #};
-      superhtml.enable = true;
-      ts_ls.enable = true;
-      yamlls.enable = true;
-      zls.enable = true;
     };
   };
 
