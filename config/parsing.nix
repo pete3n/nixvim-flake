@@ -15,8 +15,8 @@
       src = pkgs.fetchFromGitHub {
         owner = "pete3n";
         repo = "ninjection.nvim";
-        rev = "db63e5cc6adf51b151ee447e2cfeb42abaa86915";
-        hash = "sha256-gYce0FJrv5BF79Vmi3qoeZj7y5/mpyB8X/AamInoWP4=";
+        rev = "47b82d185eb8ef4abf91566f46dddd4da7b19d0e";
+        hash = "sha256-HLop3tNPljyrQpgzVTeiDTUQwJIVgyhPmIcvr1PEvJg=";
       };
 
       dependencies = [
