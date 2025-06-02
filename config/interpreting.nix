@@ -312,8 +312,15 @@
         checkThirdParty = false,
         library = {
           -- These lines tell lua_ls where to find Neovim runtime files.
-          [vim.fn.expand("$VIMRUNTIME/lua")] = true,
-          [vim.fn.expand("$VIMRUNTIME/lua/vim/lsp")] = true,
+					"${pkgs.neovim}/share/nvim/runtime/lua" = true;
+					"${pkgs.neovim}/share/nvim/runtime/lua/vim/lsp" = true;
+          };
+        };
+        telemetry.enable = false;
+      };
+    };
+  };
+};
         },
       },
       telemetry = {
