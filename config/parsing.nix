@@ -9,25 +9,40 @@
 
   extraPlugins = [
     (pkgs.vimUtils.buildVimPlugin {
-      name = "ninjection";
+      pname = "ninjection";
+      version = "unstable-2025-06-02";
+
       src = pkgs.fetchFromGitHub {
         owner = "pete3n";
         repo = "ninjection.nvim";
-        rev = "c71b0071a2691e9f00f754f9bd65a9e5431db58b";
-        hash = "sha256-jj5b7LUPbsZsUdXCVshRuUsXoUqmeEQPBHnFky2txpY=";
+        rev = "db63e5cc6adf51b151ee447e2cfeb42abaa86915";
+        hash = "sha256-gYce0FJrv5BF79Vmi3qoeZj7y5/mpyB8X/AamInoWP4=";
       };
-    })
 
-    (pkgs.vimUtils.buildVimPlugin {
-      name = "nix-prefetch.nvim";
-      src = pkgs.fetchFromGitHub {
-        owner = "pete3n";
-        repo = "nix-prefetch.nvim";
-        rev = "fa50db7784bb96f50f969bf1e2aed3e3aab7d764";
-        hash = "sha256-C3Fgi0trkTx/2jutz1IHpUDrHrZ1taBD/LsI6vxy4qs=";
+      dependencies = [
+        pkgs.vimPlugins.nvim-lspconfig
+        pkgs.vimPlugins.nvim-treesitter
+      ];
+
+      #nvimRequireCheck = [ "ninjection" ];
+
+      meta = {
+        description = "Edit injected languages with Treesitter and LSP support";
+        homepage = "https://github.com/pete3n/ninjection.nvim";
+        license = pkgs.lib.licenses.mit;
       };
     })
   ];
+
+  #    (pkgs.vimUtils.buildVimPlugin {
+  #      name = "nix-prefetch.nvim";
+  #      src = pkgs.fetchFromGitHub {
+  #        owner = "pete3n";
+  #        repo = "nix-prefetch.nvim";
+  #        rev = "fa50db7784bb96f50f969bf1e2aed3e3aab7d764";
+  #        hash = "sha256-C3Fgi0trkTx/2jutz1IHpUDrHrZ1taBD/LsI6vxy4qs=";
+  #      };
+  #    })
 
   plugins = {
     treesitter = {
