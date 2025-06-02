@@ -82,6 +82,8 @@
         };
       };
     };
+		
+		lazydev.enable = true;
 
     lsp = {
       servers = {
@@ -292,36 +294,11 @@
       })
 
       -- Lua LSP
-     require("lspconfig").lua_ls.setup({
-  on_attach = function(client, bufnr)
-    set_cmn_lsp_keybinds(client, bufnr)
-  end,
-  settings = {
-    Lua = {
-      runtime = {
-        -- Tell the language server which version of Lua you're using
-        version = "LuaJIT",
-        -- Setup your lua path; this is usually fine as is
-        path = vim.split(package.path, ';'),
-      },
-      diagnostics = {
-        -- Recognize the `vim` global
-        globals = { "vim" },
-      },
-      workspace = {
-        checkThirdParty = false,
-        library = {
-          -- These lines tell lua_ls where to find Neovim runtime files.
-          [vim.fn.expand("$VIMRUNTIME/lua")] = true,
-          [vim.fn.expand("$VIMRUNTIME/lua/vim/lsp")] = true,
-        },
-      },
-      telemetry = {
-        enable = false,
-      },
-    },
-  },
-})      
+			require("lspconfig").lua_ls.setup({
+				on_attach = function(client, bufnr)
+					set_cmn_lsp_keybinds(client, bufnr)
+				end,
+			})      
 			-- Markdown LSP
       require("lspconfig").marksman.setup({
       on_attach = function()
@@ -341,13 +318,6 @@
       		},
       	},
       },
-      })
-
-      -- Prisma LSP
-      require("lspconfig").prismals.setup({
-      on_attach = function()
-      	set_cmn_lsp_keybinds()
-      end,
       })
 
       -- Ruff
