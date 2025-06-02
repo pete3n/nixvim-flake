@@ -13,29 +13,23 @@
       nixpkgs,
       nixpkgs-unstable,
       nixvim,
-      flake-parts,
-    }@inputs:
+    }:
     let
-      config = import ./config;
-    in
-
-    flake-parts.lib.mkFlake { inherit inputs; } {
       systems = [
         "x86_64-linux"
         "aarch64-linux"
         "x86_64-darwin"
-        "aarch64-darwin"
+        "aarch64-darwin" # Not tested on bare metal
       ];
 
-      perSystem =
-        { system, ... }:
-        let
-          pkgs = import nixpkgs { inherit system; };
+      config = import ./config;
 
-          pkgs-unstable = import nixpkgs-unstable { inherit system; };
+      forAllSystems = f: nixpkgs.lib.genAttrs systems (system: f system);
 
-          asm-lsp-darwin_overlay = final: prev: {
-            asm-lsp = pkgs-unstable.asm-lsp.overrideAttrs (oldAttrs: {
+      overlays = [
+        (final: prev: {
+          asm-lsp = (
+            nixpkgs-unstable.legacyPackages.${final.system}.asm-lsp.overrideAttrs (oldAttrs: {
               buildInputs =
                 oldAttrs.buildInputs
                 ++ final.lib.optionals final.stdenv.isDarwin [
@@ -43,61 +37,123 @@
                   final.darwin.apple_sdk.frameworks.CoreServices
                   final.darwin.apple_sdk.frameworks.SystemConfiguration
                 ];
-
-              # tests expect ~/.cache/asm-lsp to be writable
-              preCheck = ''
-                export HOME=$(mktemp -d)
-              '';
-
+              preCheck = ''export HOME=$(mktemp -d)'';
               meta = oldAttrs.meta // {
                 platforms = final.lib.platforms.linux ++ final.lib.platforms.darwin;
               };
-            });
-          };
-
-          bashdb-darwin_overlay = final: prev: {
-            bashdb = prev.bashdb.overrideAttrs (oldAttrs: {
-              meta = oldAttrs.meta // {
-                platforms = final.lib.platforms.linux ++ final.lib.platforms.darwin;
-              };
-            });
-          };
-
-          pkgsWithOverlays = pkgs.extend (
-            final: prev: asm-lsp-darwin_overlay final prev // bashdb-darwin_overlay final prev
+            })
           );
+        })
 
-          nixvimLib = nixvim.lib.${system};
+        (final: prev: {
+          bashdb = prev.bashdb.overrideAttrs (oldAttrs: {
+            meta = oldAttrs.meta // {
+              platforms = final.lib.platforms.linux ++ final.lib.platforms.darwin;
+            };
+          });
+        })
+      ];
+
+    in
+    {
+      packages = forAllSystems (
+        system:
+        let
+          pkgs = import nixpkgs {
+            inherit system;
+            overlays = overlays;
+          };
+
           nvim = nixvim.legacyPackages.${system}.makeNixvimWithModule {
-            pkgs = pkgsWithOverlays;
+            pkgs = pkgs;
             module = config;
           };
+
+          isLinux = pkgs.stdenv.isLinux;
         in
         {
-          checks = {
-            default = nixvimLib.check.mkTestDerivationFromNvim {
-              inherit nvim;
-              name = "A nixvim configuration";
+          default = nvim;
+        }
+        // pkgs.lib.optionalAttrs isLinux {
+
+          dockerImage = pkgs.dockerTools.buildImage {
+            name = "nixvim-dev-container";
+            tag = "v25.05";
+
+            copyToRoot = pkgs.buildEnv {
+              name = "nixvim-docker-root";
+              paths = [
+                nvim
+                pkgs.git
+                pkgs.curl
+                pkgs.bashInteractive
+              ];
+            };
+
+            config = {
+              Cmd = [ "${nvim}/bin/nvim" ];
+              Env = [
+                "HOME=/root"
+                "TERM=xterm-256color"
+                "VIMRUNTIME=${nvim}/share/nvim/runtime"
+              ];
             };
           };
+        }
+      );
 
-          formatter = pkgs.nixfmt-rfc-style;
-
-          packages = {
-            default = nvim;
+      devShells = forAllSystems (
+        system:
+        let
+          pkgs = import nixpkgs {
+            inherit system;
+            overlays = overlays;
           };
+          nvim = self.packages.${system}.default;
+          runtimePath = "${nvim}/share/nvim/runtime";
+        in
+        {
+          default = pkgs.mkShell {
+            name = "Nixvim 25.05 dev-shell";
 
-          devShells.default = pkgs.mkShellNoCC {
-            shellHook =
-              # bash
-              ''
-                VIMRUNTIME=${nvim}/share/nvim/runtime
-                echo Welcome to a Neovim dev environment powered by Nixvim -- https://github.com/nix-community/nixvim
-                PS1="Nixvim: \\w \$ "
-                alias vim='nvim'
-              '';
-            packages = [ nvim ];
+            buildInputs = with pkgs; [
+              lua-language-server
+              luajitPackages.luacheck
+              luajitPackages.busted
+              stylua
+              nil
+              nvim
+            ];
+
+            shellHook = ''
+              echo "[devShell] Configuring Neovim dev environment"
+              export VIMRUNTIME="${runtimePath}"
+              export NVIM_RTP="${runtimePath}"
+              export NVIM_PACKPATH="${runtimePath}"
+              export LUA_PATH="./lua/?.lua;./lua/?/init.lua;./plugin/?.lua;./plugin/?/init.lua;$LUA_PATH"
+              echo "[devShell] VIMRUNTIME=$VIMRUNTIME"
+              echo "[devShell] LUA_PATH=$LUA_PATH"
+
+              alias vim=nvim
+            '';
           };
-        };
+        }
+      );
+
+      checks = forAllSystems (
+        system:
+        let
+          nvim = self.packages.${system}.default;
+          nixvimLib = nixvim.lib.${system};
+        in
+        {
+          default = nixvimLib.check.mkTestDerivationFromNvim {
+            inherit nvim;
+            name = "A nixvim configuration";
+          };
+        }
+      );
+
+      formatter = forAllSystems (system: (import nixpkgs { inherit system; }).nixfmt-rfc-style);
     };
 }
