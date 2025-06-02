@@ -19,7 +19,7 @@
     ])
     ++ (
       if pkgs.stdenv.isDarwin then
-        null
+        []
       else
         [
           pkgs.gdb
@@ -31,15 +31,11 @@
 	
 	plugins.rustaceanvim.settings.dap.autoloadConfigurations = true;
 
-  plugins.dap = {
-    enable = true;
-    extensions = {
-      dap-ui.enable = true;
-      dap-virtual-text.enable = true;
-      dap-go.enable = true;
-      dap-python.enable = true;
-    };
-  };
+  plugins.dap.enable = true;
+  plugins.dap-ui.enable = true;
+  plugins.dap-virtual-text.enable = true;
+  plugins.dap-go.enable = true;
+  plugins.dap-python.enable = true;
 
   keymaps = lib.concatLists [
     (lib.optionals config.plugins.dap.enable [
@@ -170,7 +166,7 @@
 				};
 			}
 		])
-    (lib.optionals config.plugins.dap.extensions.dap-go.enable [
+    (lib.optionals config.plugins.dap-go.enable [
 			{
 				key = "<leader>dgt";
 				mode = "n";
@@ -190,7 +186,7 @@
 				};
 			}
     ])
-    (lib.optionals config.plugins.dap.extensions.dap-ui.enable [
+    (lib.optionals config.plugins.dap-ui.enable [
 			{
 				key = "<leader>du";
 				mode = "n";

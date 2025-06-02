@@ -17,7 +17,7 @@
 
     notify = {
       enable = true;
-      timeout = 5000;
+      settings.timeout = 5000;
     };
 
     lualine = {

@@ -11,7 +11,6 @@
     lua-language-server
     marksman
     nixd
-    nodePackages."@prisma/language-server"
     python312Packages.python-lsp-server
     ruff
     rust-analyzer
@@ -97,10 +96,6 @@
         jsonls.enable = true;
         lua_ls.enable = true;
         nixd.enable = true;
-        prismals = {
-          enable = true;
-          package = pkgs.nodePackages."@prisma/language-server";
-        };
         pylsp = {
           enable = true;
           package = pkgs.python312Packages.python-lsp-server;

@@ -1,11 +1,10 @@
 {
-  description = "A minimal Neovim flake to test embedded languages";
+  description = "A cross-platform NixVim flake with package, dev-shell, and Docker image outputs";
 
   inputs = {
-    nixvim.url = "github:nix-community/nixvim/nixos-24.11";
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-24.11";
+    nixvim.url = "github:nix-community/nixvim/nixos-25.05";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
-    flake-parts.url = "github:hercules-ci/flake-parts";
   };
 
   outputs =
