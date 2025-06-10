@@ -145,6 +145,14 @@
 
           stylua = {
             command = "${lib.getExe pkgs.stylua}";
+						args = [
+							"--search-parent-directories"
+							"--stdin-filepath"
+							"$FILENAME"
+							"--"
+							"-"
+						];
+						stdin = true;
           };
         };
       };

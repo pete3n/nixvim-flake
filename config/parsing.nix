@@ -10,13 +10,13 @@
   extraPlugins = [
     (pkgs.vimUtils.buildVimPlugin {
       pname = "ninjection";
-      version = "unstable-2025-06-02";
+      version = "unstable-2025-06-03";
 
       src = pkgs.fetchFromGitHub {
         owner = "pete3n";
         repo = "ninjection.nvim";
-        rev = "47b82d185eb8ef4abf91566f46dddd4da7b19d0e";
-        hash = "sha256-HLop3tNPljyrQpgzVTeiDTUQwJIVgyhPmIcvr1PEvJg=";
+        rev = "be097364dbf78df336c9b7d4dbf15d3952b1564f";
+				hash = "sha256-QarhxLu4Q1lLkh6QSfU3zTJCU1OaUEvY0Cek+7yBK70=";
       };
 
       dependencies = [
@@ -56,7 +56,6 @@
           keymaps = {
             init_selection = "grm";
             node_incremental = "grn";
-            node_decremental = "grc";
           };
         };
       };
@@ -102,6 +101,7 @@
           	wk.add({
           		{ "<leader>pi", "<cmd>InspectTreeToggle<CR>", desc = "toggle inspect tree", icon = "󰔡 " },
           		{ "<leader>pne", "<Plug>(NinjectionEdit)", desc = "ninject edit" },
+          		{ "<leader>pnf", "<Plug>(NinjectionFormat)", desc = "ninject format" },
           		{ "<leader>pnv", "<Plug>(NinjectionSelect)", desc = "ninject select" },
           		{ "<leader>pnr", "<Plug>(NinjectionReplace)", desc = "ninject replace" },
           		{ "<leader>pu", "<cmd>NPUpdateRepo<CR>", desc = "update nix-prefetch" },
