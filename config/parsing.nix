@@ -10,7 +10,7 @@
   extraPlugins = [
     (pkgs.vimUtils.buildVimPlugin {
       pname = "ninjection";
-      version = "unstable-2025-06-03";
+      version = "unstable-2025-06-10";
 
       src = pkgs.fetchFromGitHub {
         owner = "pete3n";
