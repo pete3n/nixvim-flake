@@ -29,6 +29,13 @@
     webapi-vim
   ];
 
+  diagnostic.settings = {
+    virtual_lines = {
+      current_line = true;
+    };
+    virtual_text = false;
+  };
+
   plugins = {
     rustaceanvim = {
       enable = true;
@@ -81,8 +88,8 @@
         };
       };
     };
-		
-		lazydev.enable = true;
+
+    lazydev.enable = true;
 
     lsp = {
       servers = {
