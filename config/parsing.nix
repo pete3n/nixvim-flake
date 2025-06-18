@@ -124,53 +124,53 @@
       };
       luaConfig.post = # lua
         ''
-                    -- Function to temporarily show/hide the context window
-                    -- Returns nil context to force TS Context to close the window
-                    local ts_context = require("treesitter-context")
-                    local context = require("treesitter-context.context")
-                    local render = require("treesitter-context.render")
+          -- Function to temporarily show/hide the context window
+          -- Returns nil context to force TS Context to close the window
+          local ts_context = require("treesitter-context")
+          local context = require("treesitter-context.context")
+          local render = require("treesitter-context.render")
 
-                    _G.ts_context_display = true
+          _G.ts_context_display = true
 
-          					local original_get = context.get
-          					context.get = function(bufnr, winid)
-                    	if not _G.ts_context_display then
-                    		-- Return no context: this will trigger update_single_context to close the window.
-                    		return nil, {}
-                    	end
+          local original_get = context.get
+          context.get = function(bufnr, winid)
+          	if not _G.ts_context_display then
+          		-- Return no context: this will trigger update_single_context to close the window.
+          		return nil, {}
+          	end
 
-                    	return original_get(bufnr, winid)
-                    end
+          	return original_get(bufnr, winid)
+          end
 
-                    vim.api.nvim_create_user_command("TSContextToggleDisplay", function()
-                    	_G.ts_context_display = not _G.ts_context_display
-                    	local cur_win = vim.api.nvim_get_current_win()
-                    	if not _G.ts_context_display then
-                    		pcall(render.close, cur_win)
-                    		vim.notify("Treesitter Context hidden", vim.log.levels.INFO)
-                    	else
-                    		vim.notify("Treesitter Context enabled; move the cursor to refresh", vim.log.levels.INFO)
-                    	end
-                    end, {})
+          vim.api.nvim_create_user_command("TSContextToggleDisplay", function()
+          	_G.ts_context_display = not _G.ts_context_display
+          	local cur_win = vim.api.nvim_get_current_win()
+          	if not _G.ts_context_display then
+          		pcall(render.close, cur_win)
+          		vim.notify("Treesitter Context hidden", vim.log.levels.INFO)
+          	else
+          		vim.notify("Treesitter Context enabled; move the cursor to refresh", vim.log.levels.INFO)
+          	end
+          end, {})
 
-                    if wk_available then
-                    	wk.add({
-                    		{
-                    			"<leader>pc",
-                    			"<cmd>TSContextToggleDisplay<CR>",
-                    			desc = "toggle treesitter-context display",
-                    			mode = "n",
-                    			icon = "󰔡 ",
-                    		},
-                    		{
-                    			"<leader>un",
-                    			"<cmd>NPUpdateRepo<CR>",
-                    			desc = "update github repo info",
-                    			mode = "n",
-                    			icon = "󰚰 ",
-                    		},
-                    	})
-                    end
+          if wk_available then
+          	wk.add({
+          		{
+          			"<leader>pc",
+          			"<cmd>TSContextToggleDisplay<CR>",
+          			desc = "toggle treesitter-context display",
+          			mode = "n",
+          			icon = "󰔡 ",
+          		},
+          		{
+          			"<leader>un",
+          			"<cmd>NPUpdateRepo<CR>",
+          			desc = "update github repo info",
+          			mode = "n",
+          			icon = "󰚰 ",
+          		},
+          	})
+          end
         '';
     };
 

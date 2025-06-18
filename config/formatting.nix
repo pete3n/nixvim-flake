@@ -1,9 +1,9 @@
 # All configuration related formatting languages
 { lib, pkgs, ... }:
 {
-  extraPackages = with pkgs; [ 
-		python311Packages.pylatexenc
-	];
+  extraPackages = with pkgs; [
+    python311Packages.pylatexenc
+  ];
 
   plugins = {
     conform-nvim = {
@@ -76,9 +76,9 @@
           nix = [ "nixfmt-rfc-style" ];
           python = [
             "isort"
-            "black"
+            "ruff_format"
           ];
-					# rust = [ "rustfmt" ];
+          # rust = [ "rustfmt" ];
           sh = [ "shfmt" ];
           typescript = [
             "prettierd"
@@ -119,10 +119,6 @@
             command = "${lib.getExe pkgs.isort}";
           };
 
-          black = {
-            command = "${lib.getExe pkgs.black}";
-          };
-
           nixfmt-rfc-style = {
             command = "${lib.getExe pkgs.nixfmt-rfc-style}";
           };
@@ -135,6 +131,10 @@
             command = "${lib.getExe pkgs.prettierd}";
           };
 
+          ruff = {
+            command = "${lib.getExe pkgs.ruff}";
+          };
+
           rustfmt = {
             command = "${lib.getExe pkgs.rustfmt}";
           };
@@ -145,14 +145,14 @@
 
           stylua = {
             command = "${lib.getExe pkgs.stylua}";
-						args = [
-							"--search-parent-directories"
-							"--stdin-filepath"
-							"$FILENAME"
-							"--"
-							"-"
-						];
-						stdin = true;
+            args = [
+              "--search-parent-directories"
+              "--stdin-filepath"
+              "$FILENAME"
+              "--"
+              "-"
+            ];
+            stdin = true;
           };
         };
       };
@@ -205,61 +205,61 @@
   extraConfigLuaPost =
     # lua
     ''
-      slow_format_filetypes = {}
+            slow_format_filetypes = {}
 
-      vim.api.nvim_create_user_command("FormatDisable", function(args)
-      	 if args.bang then
-      		-- FormatDisable! will disable formatting just for this buffer
-      		vim.b.disable_autoformat = true
-      	else
-      		vim.g.disable_autoformat = true
-      	end
-      end, {
-      	desc = "Disable autoformat-on-save",
-      	bang = true,
-      })
-      vim.api.nvim_create_user_command("FormatEnable", function()
-      	vim.b.disable_autoformat = false
-      	vim.g.disable_autoformat = false
-      end, {
-      	desc = "Re-enable autoformat-on-save",
-      })
-      vim.api.nvim_create_user_command("FormatToggle", function(args)
-      	local new_state
-      	if args.bang then
-      		-- Toggle formatting for current buffer
-      		vim.b.disable_autoformat = not vim.b.disable_autoformat
-      		new_state = vim.b.disable_autoformat and "disabled" or "enabled"
-      		vim.notify("Format on-save for current buffer: " .. new_state)
-      	else
-      		-- Toggle formatting globally
-      		vim.g.disable_autoformat = not vim.g.disable_autoformat
-      		new_state = vim.g.disable_autoformat and "disabled" or "enabled"
-      		vim.notify("Format on-save globally: " .. new_state)
-      	end
-      end, {
-      	desc = "Toggle autoformat-on-save",
-      	bang = true,
-      })
+            vim.api.nvim_create_user_command("FormatDisable", function(args)
+            	 if args.bang then
+            		-- FormatDisable! will disable formatting just for this buffer
+            		vim.b.disable_autoformat = true
+            	else
+            		vim.g.disable_autoformat = true
+            	end
+            end, {
+            	desc = "Disable autoformat-on-save",
+            	bang = true,
+            })
+            vim.api.nvim_create_user_command("FormatEnable", function()
+            	vim.b.disable_autoformat = false
+            	vim.g.disable_autoformat = false
+            end, {
+            	desc = "Re-enable autoformat-on-save",
+            })
+            vim.api.nvim_create_user_command("FormatToggle", function(args)
+            	local new_state
+            	if args.bang then
+            		-- Toggle formatting for current buffer
+            		vim.b.disable_autoformat = not vim.b.disable_autoformat
+            		new_state = vim.b.disable_autoformat and "disabled" or "enabled"
+            		vim.notify("Format on-save for current buffer: " .. new_state)
+            	else
+            		-- Toggle formatting globally
+            		vim.g.disable_autoformat = not vim.g.disable_autoformat
+            		new_state = vim.g.disable_autoformat and "disabled" or "enabled"
+            		vim.notify("Format on-save globally: " .. new_state)
+            	end
+            end, {
+            	desc = "Toggle autoformat-on-save",
+            	bang = true,
+            })
 
-      -- On-demand formatting function for conform
-      _G.format_with_conform = function()
-      	local conform = require("conform")
-      	conform.format({
-      		lsp_fallback = true,
-      		async = false,
-      		timeout_ms = 2000,
-      	})
-      end
+            -- On-demand formatting function for conform
+            _G.format_with_conform = function()
+            	local conform = require("conform")
+            	conform.format({
+            		lsp_fallback = true,
+            		async = false,
+            		timeout_ms = 2000,
+            	})
+            end
 
-      if wk_available then
-				wk.add ({
-					{ "<leader>f", group = "formatting", icon = "󰉢 " },
-					{ "<leader>ff", icon = "󰉢 ", desc ="format with conform", },
-					{ "<leader>ft",  icon = "󰔡 ", desc = "toggle format on-save" },
-					{ "<leader>fT", icon = "󰔡 ", desc = "toggle format on-save globally" },
-					{ "<leader>fr", icon = " ", desc = "render markdown toggle", },
-				})
-      end
+            if wk_available then
+      				wk.add ({
+      					{ "<leader>f", group = "formatting", icon = "󰉢 " },
+      					{ "<leader>ff", icon = "󰉢 ", desc ="format with conform", },
+      					{ "<leader>ft",  icon = "󰔡 ", desc = "toggle format on-save" },
+      					{ "<leader>fT", icon = "󰔡 ", desc = "toggle format on-save globally" },
+      					{ "<leader>fr", icon = " ", desc = "render markdown toggle", },
+      				})
+            end
     '';
 }
