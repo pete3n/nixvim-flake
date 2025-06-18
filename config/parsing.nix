@@ -10,13 +10,13 @@
   extraPlugins = [
     (pkgs.vimUtils.buildVimPlugin {
       pname = "ninjection";
-      version = "unstable-2025-06-10";
+      version = "unstable-2025-06-18";
 
       src = pkgs.fetchFromGitHub {
         owner = "pete3n";
         repo = "ninjection.nvim";
-        rev = "be097364dbf78df336c9b7d4dbf15d3952b1564f";
-				hash = "sha256-QarhxLu4Q1lLkh6QSfU3zTJCU1OaUEvY0Cek+7yBK70=";
+        rev = "edc690cc2a026692044c412bdddd781940bbc146";
+        hash = "sha256-F7cEUxaWFi0ddLYzjxEpm95XmzAbSuQQxOA7ovEZwe0=";
       };
 
       dependencies = [
