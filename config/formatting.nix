@@ -80,6 +80,7 @@
           ];
           # rust = [ "rustfmt" ];
           sh = [ "shfmt" ];
+          text = [ "par" ];
           typescript = [
             "prettierd"
             "prettier"
@@ -121,6 +122,12 @@
 
           nixfmt-rfc-style = {
             command = "${lib.getExe pkgs.nixfmt-rfc-style}";
+          };
+
+          par = {
+            command = "${lib.getExe pkgs.par}";
+            args = [ "80" ];
+            stdin = true;
           };
 
           prettier = {
