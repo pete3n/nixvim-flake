@@ -15,8 +15,8 @@
       src = pkgs.fetchFromGitHub {
         owner = "pete3n";
         repo = "ninjection.nvim";
-        rev = "3ece8f2bcdc266f5a3e932a7488aff299617d82f";
-        hash = "sha256-bIK0gJTVCwh5Q6rwyZza/CAmUA5m+NK68U0ncSPKla8=";
+        rev = "39698030f2b89127245aed8826405dccc478277e";
+        hash = "sha256-ytXqqEP6xlnDOwPPhQxHQSjd1lC1vJsarRrTd0dj2cQ=";
       };
 
       dependencies = [
@@ -32,17 +32,18 @@
         license = pkgs.lib.licenses.mit;
       };
     })
-  ];
 
-  #    (pkgs.vimUtils.buildVimPlugin {
-  #      name = "nix-prefetch.nvim";
-  #      src = pkgs.fetchFromGitHub {
-  #        owner = "pete3n";
-  #        repo = "nix-prefetch.nvim";
-  #        rev = "fa50db7784bb96f50f969bf1e2aed3e3aab7d764";
-  #        hash = "sha256-C3Fgi0trkTx/2jutz1IHpUDrHrZ1taBD/LsI6vxy4qs=";
-  #      };
-  #    })
+    (pkgs.vimUtils.buildVimPlugin {
+      name = "nix-prefetch.nvim";
+      src = pkgs.fetchFromGitHub {
+        owner = "pete3n";
+        repo = "nix-prefetch.nvim";
+				rev = "4f32441c3a7f550ccb8cbd73cba8ab11aa32f8d1";
+        hash = "sha256-FpUYNdyn3YrbrAWdkyeE7Kl/ThmSKBNl1l2ePjznKRc=";
+      };
+    })
+
+  ];
 
   plugins = {
     treesitter = {
@@ -104,7 +105,9 @@
           		{ "<leader>pnf", "<Plug>(NinjectionFormat)", desc = "ninject format" },
           		{ "<leader>pnv", "<Plug>(NinjectionSelect)", desc = "ninject select" },
           		{ "<leader>pnr", "<Plug>(NinjectionReplace)", desc = "ninject replace" },
-          		{ "<leader>pu", "<cmd>NPUpdateRepo<CR>", desc = "update nix-prefetch" },
+          		{ "<leader>puu", "<Plug>(NixPrefetchUpdate)", desc = "nix-prefetch update" },
+          		{ "<leader>pub", "<Plug>(NixPrefetchUpdateBranch)", desc = "nix-prefetch update branch" },
+          		{ "<leader>pur", "<Plug>(NixPrefetchUpdateRev)", desc = "nix-prefetch update rev" },
           	})
           end
         '';
