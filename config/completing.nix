@@ -32,6 +32,7 @@
           { name = "nvim_lsp"; }
           { name = "path"; }
           { name = "buffer"; }
+          { name = "cmdline"; }
         ];
         window.documentation.border = [
           "╭"
