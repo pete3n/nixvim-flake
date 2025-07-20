@@ -1,4 +1,5 @@
 # All configuration related to debugging code
+# TODO: Per-language configuration, with top-level language option config
 {
   pkgs,
   lib,
