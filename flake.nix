@@ -26,25 +26,7 @@
 
       forAllSystems = f: nixpkgs.lib.genAttrs systems (system: f system);
 
-      overlays = [
-        (final: prev: {
-          asm-lsp = (
-            nixpkgs-unstable.legacyPackages.${final.system}.asm-lsp.overrideAttrs (oldAttrs: {
-              buildInputs =
-                oldAttrs.buildInputs
-                ++ final.lib.optionals final.stdenv.isDarwin [
-                  final.darwin.apple_sdk.frameworks.CoreFoundation
-                  final.darwin.apple_sdk.frameworks.CoreServices
-                  final.darwin.apple_sdk.frameworks.SystemConfiguration
-                ];
-              preCheck = ''export HOME=$(mktemp -d)'';
-              meta = oldAttrs.meta // {
-                platforms = final.lib.platforms.linux ++ final.lib.platforms.darwin;
-              };
-            })
-          );
-        })
-
+      overlaysBySystem = forAllSystems (system: [
         (final: prev: {
           bashdb = prev.bashdb.overrideAttrs (oldAttrs: {
             meta = oldAttrs.meta // {
@@ -52,7 +34,11 @@
             };
           });
         })
-      ];
+
+        (final: prev: {
+          mbake = nixpkgs-unstable.legacyPackages.${system}.mbake;
+        })
+      ]);
 
     in
     {
@@ -61,7 +47,7 @@
         let
           pkgs = import nixpkgs {
             inherit system;
-            overlays = overlays;
+            overlays = overlaysBySystem.${system};
           };
 
           nvim = nixvim.legacyPackages.${system}.makeNixvimWithModule {
@@ -104,7 +90,7 @@
         let
           pkgs = import nixpkgs {
             inherit system;
-            overlays = overlays;
+            overlays = overlaysBySystem.${system};
           };
           nvim = self.packages.${system}.default;
           runtimePath = "${nvim}/share/nvim/runtime";
@@ -115,11 +101,12 @@
 
             buildInputs = with pkgs; [
               lua-language-server
-              luajitPackages.luacheck
               luajitPackages.busted
-              stylua
+              luajitPackages.luacheck
+              mbake
               nil
               nvim
+              stylua
             ];
 
             shellHook = ''

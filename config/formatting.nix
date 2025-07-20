@@ -2,6 +2,7 @@
 { lib, pkgs, ... }:
 {
   extraPackages = with pkgs; [
+    mbake # Makefile formatter - TODO: implement
     python311Packages.pylatexenc
   ];
 
