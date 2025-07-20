@@ -198,45 +198,45 @@
 
   extraConfigLuaPost = # lua
     ''
-            if wk_available then
-      				local keymaps = {}
+      if wk_available then
+      	local keymaps = {}
 
-      				-- Unconditional searching group mapping
-      				table.insert(keymaps, { "<leader>n", group = "navigating", icon = " " })
+      	-- Unconditional searching group mapping
+      	table.insert(keymaps, { "<leader>n", group = "navigating", icon = " " })
 
-      				-- Conditionall map harpoon icons
-      				if pcall(require, "harpoon") then
-      					table.insert(keymaps, { "<leader>a", icon = " " })
-      					table.insert(keymaps, { "<leader>na", icon = " " })
-      					table.insert(keymaps, { "<leader>ne", icon = "󰮫 ", })
-      					table.insert(keymaps, { "<C-e>", icon = "󰮫 ", })
-      					table.insert(keymaps, { "<leader>n1", icon = "󱡅 ", })
-      					table.insert(keymaps, { "<C-h>", icon = "󱡅 ", })
-      					table.insert(keymaps, { "<leader>n2", icon = "󱡅 ", })
-      					table.insert(keymaps, { "<C-t>", icon = "󱡅 ", })
-      					table.insert(keymaps, { "<leader>n3", icon = "󱡅 ", })
-      					table.insert(keymaps, { "<C-n>", icon = "󱡅 ", })
-      					table.insert(keymaps, { "<leader>n4", icon = "󱡅 ", })
-      					table.insert(keymaps, { "<C-s>", icon = "󱡅 ", })
-      					table.insert(keymaps, { "<leader>n5", icon = "󱡅 ", })
-      					table.insert(keymaps, { "<leader>n6", icon = "󱡅 ", })
-      					table.insert(keymaps, { "<leader>n7", icon = "󱡅 ", })
-      					table.insert(keymaps, { "<leader>n8", icon = "󱡅 ", })
-      					table.insert(keymaps, { "<leader>n9", icon = "󱡅 ", })
-      					table.insert(keymaps, { "<leader>n0", icon = "󱡅 ", })
-      				end
+      	-- Conditionall map harpoon icons
+      	if pcall(require, "harpoon") then
+      		table.insert(keymaps, { "<leader>a", icon = " " })
+      		table.insert(keymaps, { "<leader>na", icon = " " })
+      		table.insert(keymaps, { "<leader>ne", icon = "󰮫 ", })
+      		table.insert(keymaps, { "<C-e>", icon = "󰮫 ", })
+      		table.insert(keymaps, { "<leader>n1", icon = "󱡅 ", })
+      		table.insert(keymaps, { "<C-h>", icon = "󱡅 ", })
+      		table.insert(keymaps, { "<leader>n2", icon = "󱡅 ", })
+      		table.insert(keymaps, { "<C-t>", icon = "󱡅 ", })
+      		table.insert(keymaps, { "<leader>n3", icon = "󱡅 ", })
+      		table.insert(keymaps, { "<C-n>", icon = "󱡅 ", })
+      		table.insert(keymaps, { "<leader>n4", icon = "󱡅 ", })
+      		table.insert(keymaps, { "<C-s>", icon = "󱡅 ", })
+      		table.insert(keymaps, { "<leader>n5", icon = "󱡅 ", })
+      		table.insert(keymaps, { "<leader>n6", icon = "󱡅 ", })
+      		table.insert(keymaps, { "<leader>n7", icon = "󱡅 ", })
+      		table.insert(keymaps, { "<leader>n8", icon = "󱡅 ", })
+      		table.insert(keymaps, { "<leader>n9", icon = "󱡅 ", })
+      		table.insert(keymaps, { "<leader>n0", icon = "󱡅 ", })
+      	end
 
-      				-- Conditionall map oil icon
-      				if pcall(require, "oil") then
-      					table.insert(keymaps, { "<leader>nv", icon = "󰏇 ", })
-      				end
+      	-- Conditionall map oil icon
+      	if pcall(require, "oil") then
+      		table.insert(keymaps, { "<leader>nv", icon = "󰏇 ", })
+      	end
 
-      				-- Conditionall map nvim-tree icon
-      				if pcall(require, "nvim-tree") then
-      					table.insert(keymaps, { "<leader>nt", icon = " ", })
-      				end
+      	-- Conditionall map nvim-tree icon
+      	if pcall(require, "nvim-tree") then
+      		table.insert(keymaps, { "<leader>nt", icon = " ", })
+      	end
 
-      				wk.add(keymaps) 
-            end
+      	wk.add(keymaps)
+      end
     '';
 }

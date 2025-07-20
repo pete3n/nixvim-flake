@@ -87,8 +87,10 @@ in
           				vim.uv.cwd()
           			end
 
-          			require("telescope.builtin").find_files({ search_dirs = dirs,
-          				prompt_title = opts.prompt_title})
+          			require("telescope.builtin").find_files({
+          				search_dirs = dirs,
+          				prompt_title = opts.prompt_title
+          			})
           		else
           			print("No directories provided.")
           		end
@@ -96,7 +98,7 @@ in
           end
           require("telescope.builtin").find_in_dirs = find_in_dirs
 
-					-- TODO: Fix directory input bug
+          -- TODO: Fix directory input bug
           local find_mg_in_dirs = function(opts)
           	-- TODO: Parse directories with escaped spaces
           	opts = opts or {}
@@ -111,7 +113,7 @@ in
           				vim.uv.cwd()
           			end
 
-          			require("telescope.builtin").live_multigrep({ 
+          			require("telescope.builtin").live_multigrep({
           				prompt_title = opts.prompt_title, search_dirs = dirs })
           		else
           			print("No directories provided.")
@@ -177,7 +179,7 @@ in
           		opts.prompt_title = "Git Files: ${telescope_help}"
           		require("telescope.builtin").git_files(opts)
           	else
-          		opts.prompt_title = "Find Files: ${telescope_help}" 
+          		opts.prompt_title = "Find Files: ${telescope_help}"
           		require("telescope.builtin").find_files(opts)
           	end
           end
@@ -207,12 +209,12 @@ in
 
           			return vim.tbl_flatten({
           				args,
-          				{ 
-          					"--color=never", 
-          					"--no-heading", 
-          					"--with-filename", 
-          					"--line-number", 
-          					"--column", 
+          				{
+          					"--color=never",
+          					"--no-heading",
+          					"--with-filename",
+          					"--line-number",
+          					"--column",
           					"--smart-case",
           				},
           			})
@@ -235,27 +237,62 @@ in
           local telescope = require("telescope")
 
           local telescope_extensions = {
-          	{ ext = "advanced_git_search", key = "<leader>sG", icon = " ", 
-          		desc = "git advanced search", action = "show_custom_functions", 
-          		prompt = "Advanced Git: ${telescope_help}" },
-          	{ ext = "conventional_commits", key = "<leader>sC", icon = "󱖪 ", 
-          		desc = "conventional commits", action = "conventional_commits",
-          		prompt = "Conventional Commit Messages: ${telescope_help}" },
-          	{ ext = "file_browser", key = "<leader>sB", icon = " ", 
-          		desc = "file browser", action = "file_browser", 
-          		prompt = "File Browser: ${telescope_help}" },
-          	{ ext = "live_grep_args", key = "<leader>sL", icon = "󰑑 ", 
-          		desc = "live grep args", action = "live_grep_args", 
-          		prompt = "Live Grep Args: ${telescope_help}" },
-          	{ ext = "repo", key = "<leader>sr", icon = "󰳐 ", 
-          		desc = "git repos", action = "list", 
-          		prompt = "Git Repos: ${telescope_help}" },
-          	{ ext = "undo", key = "<leader>su", icon = " ", 
-          		desc = "undo history", action = "undo", 
-          		prompt = "Undo History: ${telescope_help}" },
-          	{ ext = "zoxide", key = "<leader>sz", icon = "󰬡 ", 
-          		desc = "zoxide list", action = "list", 
-          		prompt = "Zoxide List: ${telescope_help}" }
+          	{
+          		ext = "advanced_git_search",
+          		key = "<leader>sG",
+          		icon = " ",
+          		desc = "git advanced search",
+          		action = "show_custom_functions",
+          		prompt = "Advanced Git: ${telescope_help}"
+          	},
+          	{
+          		ext = "conventional_commits",
+          		key = "<leader>sC",
+          		icon = "󱖪 ",
+          		desc = "conventional commits",
+          		action = "conventional_commits",
+          		prompt = "Conventional Commit Messages: ${telescope_help}"
+          	},
+          	{
+          		ext = "file_browser",
+          		key = "<leader>sB",
+          		icon = " ",
+          		desc = "file browser",
+          		action = "file_browser",
+          		prompt = "File Browser: ${telescope_help}"
+          	},
+          	{
+          		ext = "live_grep_args",
+          		key = "<leader>sL",
+          		icon = "󰑑 ",
+          		desc = "live grep args",
+          		action = "live_grep_args",
+          		prompt = "Live Grep Args: ${telescope_help}"
+          	},
+          	{
+          		ext = "repo",
+          		key = "<leader>sr",
+          		icon = "󰳐 ",
+          		desc = "git repos",
+          		action = "list",
+          		prompt = "Git Repos: ${telescope_help}"
+          	},
+          	{
+          		ext = "undo",
+          		key = "<leader>su",
+          		icon = " ",
+          		desc = "undo history",
+          		action = "undo",
+          		prompt = "Undo History: ${telescope_help}"
+          	},
+          	{
+          		ext = "zoxide",
+          		key = "<leader>sz",
+          		icon = "󰬡 ",
+          		desc = "zoxide list",
+          		action = "list",
+          		prompt = "Zoxide List: ${telescope_help}"
+          	}
           }
 
           local function map_telescope_extensions(ext, key, action, prompt, desc, icon)
@@ -265,8 +302,8 @@ in
           		end, { desc = desc })
 
           		if wk_available then
-          			wk.add({ 
-          				{ key, icon = icon, desc = desc } 
+          			wk.add({
+          				{ key, icon = icon, desc = desc }
           			})
           		end
           	end
@@ -278,24 +315,48 @@ in
 
           -- Conditionally map telescope dap extension keys					
           if pcall(telescope.load_extension, "dap") then
+          	if wk_available then
+          		wk.add({
+          			{ "<leader>se", group = "debugging search", icon = " " },
+          		})
+          	end
 
-          		if wk_available then
-          			wk.add({ 
-          				{ "<leader>se", group = "debugging search", icon = " "},
-          			})
-          		end
-						
           	local telescope_dap_extension_keymaps = {
-          		{ key = "<leader>seb", icon = " ", desc = "breakpoints", action = "list_breakpoints", 
-          			prompt = "DAP Breakpoints: ${telescope_help}" },
-          		{ key = "<leader>sec", icon = " ", desc = "commands", action = "commands", 
-          			prompt = "DAP Commands: ${telescope_help}" },
-          		{ key = "<leader>sef", icon = "󰋴 ", desc = "frames", action = "frames", 
-          			prompt = "DAP Frames: ${telescope_help}" },
-          		{ key = "<leader>seo", icon = " ", desc = "configurations", action = "configurations", 
-          			prompt = "DAP Configurations: ${telescope_help}" },
-          		{ key = "<leader>sev", icon = "󰫧 ", desc = "variables", action = "variables", 
-          			prompt = "DAP Variables: ${telescope_help}" },
+          		{
+          			key = "<leader>seb",
+          			icon = " ",
+          			desc = "breakpoints",
+          			action = "list_breakpoints",
+          			prompt = "DAP Breakpoints: ${telescope_help}"
+          		},
+          		{
+          			key = "<leader>sec",
+          			icon = " ",
+          			desc = "commands",
+          			action = "commands",
+          			prompt = "DAP Commands: ${telescope_help}"
+          		},
+          		{
+          			key = "<leader>sef",
+          			icon = "󰋴 ",
+          			desc = "frames",
+          			action = "frames",
+          			prompt = "DAP Frames: ${telescope_help}"
+          		},
+          		{
+          			key = "<leader>seo",
+          			icon = " ",
+          			desc = "configurations",
+          			action = "configurations",
+          			prompt = "DAP Configurations: ${telescope_help}"
+          		},
+          		{
+          			key = "<leader>sev",
+          			icon = "󰫧 ",
+          			desc = "variables",
+          			action = "variables",
+          			prompt = "DAP Variables: ${telescope_help}"
+          		},
           	}
           	local function setup_dap_functions(key, action, prompt, desc, icon)
           		if telescope.extensions.dap then
@@ -305,7 +366,7 @@ in
           		end
 
           		if wk_available then
-          			wk.add({ 
+          			wk.add({
           				{ key, icon = icon, desc = desc },
           			})
           		end
@@ -317,27 +378,27 @@ in
           end
 
           -- Conditionally map all other searching keys for which-key
-					if wk_available then
-          	wk.add ({
-          		-- Searching group 
-          		{"<leader>s", group = "searching", icon = " ", },
-          		{"<leader>s/", icon = "󱈅 ", desc = "current buffer fzf (/)", },
-          		{"<leader>s?", icon = "󱩾 ", desc = "recent files (?)", },
-          		{"<leader>s<space>", icon = "󱈆 ", desc = "buffer names (󱁐)", },
-          		{"<leader>sb", icon = "", desc = "git branch", },
-          		{"<leader>sc", icon = "", desc = "commands", },
-          		{"<leader>sd", icon = " ", desc = "diagnostics", },
-          		{"<leader>sf", icon = " ", desc = "files in dirs", },
-          		{"<leader>sg", icon = " ", desc = "git status", },
-          		{"<leader>sh", icon = "󰋖 ", desc = "help", },
-          		{"<leader>sk", icon = " ", desc = "keymaps", },
-          		{"<leader>sl", icon = "󰑑 ", desc = "live grep", },
-          		{"<leader>sm", icon = "󱈧 ", desc = "multi grep", },
-          		{"<leader>sM", icon = " ", desc = "multi grep in dirs", },
-          		{"<leader>sp", icon = " ", desc = "project files", },
-          		{"<leader>ss", icon = " ", desc = "symbols", },
-          		{"<leader>sS", icon = "󰯃 ", desc = "neovim scripts", },
-          		{"<leader>sw", icon = " ", desc = "current word", },
+          if wk_available then
+          	wk.add({
+          		-- Searching group
+          		{ "<leader>s", group = "searching", icon = " ", },
+          		{ "<leader>s/", icon = "󱈅 ", desc = "current buffer fzf (/)", },
+          		{ "<leader>s?", icon = "󱩾 ", desc = "recent files (?)", },
+          		{ "<leader>s<space>", icon = "󱈆 ", desc = "buffer names (󱁐)", },
+          		{ "<leader>sb", icon = "", desc = "git branch", },
+          		{ "<leader>sc", icon = "", desc = "commands", },
+          		{ "<leader>sd", icon = " ", desc = "diagnostics", },
+          		{ "<leader>sf", icon = " ", desc = "files in dirs", },
+          		{ "<leader>sg", icon = " ", desc = "git status", },
+          		{ "<leader>sh", icon = "󰋖 ", desc = "help", },
+          		{ "<leader>sk", icon = " ", desc = "keymaps", },
+          		{ "<leader>sl", icon = "󰑑 ", desc = "live grep", },
+          		{ "<leader>sm", icon = "󱈧 ", desc = "multi grep", },
+          		{ "<leader>sM", icon = " ", desc = "multi grep in dirs", },
+          		{ "<leader>sp", icon = " ", desc = "project files", },
+          		{ "<leader>ss", icon = " ", desc = "symbols", },
+          		{ "<leader>sS", icon = "󰯃 ", desc = "neovim scripts", },
+          		{ "<leader>sw", icon = " ", desc = "current word", },
           	})
           end
         '';
@@ -685,16 +746,16 @@ in
   # Non-telescope based searching keymaps
   extraConfigLuaPost = # lua
     ''
-			if wk_available then
-      	wk.add ({
+      if wk_available then
+      	wk.add({
       		-- Normal mode group
-      		{"/", icon = "󱈅 ", desc = "search current buffer", },
-      		{"<leader><space>", icon = "󱈆 ", desc = "search buffer names", },
+      		{ "/", icon = "󱈅 ", desc = "search current buffer", },
+      		{ "<leader><space>", icon = "󱈆 ", desc = "search buffer names", },
 
       		-- Quickfixing group
-      		{"<leader>q", icon = "󰑮 ", group = "quickfixing", },
-      		{"<leader>qk", icon = " ", "<cmd>cnext<CR>", desc= "next quickfix (^ K)", },
-      		{"<leader>qj", icon = " ", "<cmd>cprev<CR>", desc= "prev quickfix (^ J)", },
+      		{ "<leader>q", icon = "󰑮 ", group = "quickfixing", },
+      		{ "<leader>qk", icon = " ", "<cmd>cnext<CR>", desc = "next quickfix (^ K)", },
+      		{ "<leader>qj", icon = " ", "<cmd>cprev<CR>", desc = "prev quickfix (^ J)", },
       	})
       end
     '';

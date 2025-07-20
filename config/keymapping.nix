@@ -6,80 +6,80 @@
 { config, ... }:
 {
   /*
-    		which-key is used project wide to create help-menu icons and entries for
-    		keymaps. All keymap commands are defined outside of which-key to allow 
-				which-key to be disabled or removed without breaking core-functionality. 
-				
-				Default keymaps for normal, insert, and visual modes are also mapped 
-				into apropriate top-level groups (searching, parsing, folding, etc.) 
-				to provide easy reference. The faster or default keymaps are preserved 
-				and displayed in the description.
+    	which-key is used project wide to create help-menu icons and entries for
+    	keymaps. All keymap commands are defined outside of which-key to allow
+    	which-key to be disabled or removed without breaking core-functionality.
 
-				Keymaps for insert and visual mode are also displayed as hints in the
-				normal mode menu.
+    	Default keymaps for normal, insert, and visual modes are also mapped
+    	into apropriate top-level groups (searching, parsing, folding, etc.)
+    	to provide easy reference. The faster or default keymaps are preserved
+    	and displayed in the description.
+
+    	Keymaps for insert and visual mode are also displayed as hints in the
+    	normal mode menu.
   */
   plugins = {
     which-key = {
       enable = true;
       settings = {
         delay = 500;
-				spec = [
-					{
-						__unkeyed = "<C-R>";
-						mode = "n";
-						desc = "(insert mode) open registers";
-					}
-				];
+        spec = [
+          {
+            __unkeyed = "<C-R>";
+            mode = "n";
+            desc = "(insert mode) open registers";
+          }
+        ];
       };
       luaConfig.post = # lua
         ''
-					wk.add({
-						{ "<C-L>", icon = "󰞋 ", desc = "Help", "<cmd>help<CR>", },
-						{ "<leader>y", icon = "", desc = "yank to system clipboard ( + register)", },
-						{ "y",  icon = " ", desc = "yank to \" register", },
-						{ "u",  icon = "󰕌 ", desc = "undo", },
-						{ "U",  icon = "󰑎 ", desc = "redo", },
-						{ "J", icon = "󱞿 ", desc = "move line down", },
-						{ "<C-y>", icon = "", desc = "toggle verticle column", },
-						{ "h", icon = " ", desc = "Left", },
-						{ "j", icon = " ", desc = "Down", },
-						{ "k", icon = " ", desc = "Up", },
-						{ "l", icon = " ", desc = "Right", },
-						{ "_", icon = "󰞓 ", desc = "Start of Line (whitespace, with count)", },
-						{ "^", icon = "󰞓 ", desc = "Start of Line (whitespace, single-line)", },
-						{ "0", icon = "󰞓 ", desc = "Start of Line (absolute, single-line)", },
-						{ "$", icon = "󰞔 ", desc = "End of Line", },
-						{ "<", icon = "󰞗 ", desc = "Indent Left", },
-						{ ">", icon = "󰞘 ", desc = "Indent Right", },
-						{ "G", icon = "󰞒 ", desc = "Last Line", },
-						{ "~", icon = "󰬵 ", desc = "Toggle case", },
-						{ "{", icon = "󰉸 ", desc = "Prev empty line", },
-						{ "}", icon = "󰉸 ", desc = "Next empty line", },
+          wk.add({
+          	{ "<C-L>", icon = "󰞋 ", desc = "Help", "<cmd>help<CR>", },
+          	{ "<leader>y", icon = "", desc = "yank to system clipboard ( + register)", },
+          	{ "y", icon = " ", desc = "yank to \" register", },
+          	{ "u", icon = "󰕌 ", desc = "undo", },
+          	{ "U", icon = "󰑎 ", desc = "redo", },
+          	{ "J", icon = "󱞿 ", desc = "move line down", },
+          	{ "<C-y>", icon = "", desc = "toggle verticle column", },
+          	{ "h", icon = " ", desc = "Left", },
+          	{ "j", icon = " ", desc = "Down", },
+          	{ "k", icon = " ", desc = "Up", },
+          	{ "l", icon = " ", desc = "Right", },
+          	{ "_", icon = "󰞓 ", desc = "Start of Line (whitespace, with count)", },
+          	{ "^", icon = "󰞓 ", desc = "Start of Line (whitespace, single-line)", },
+          	{ "0", icon = "󰞓 ", desc = "Start of Line (absolute, single-line)", },
+          	{ "$", icon = "󰞔 ", desc = "End of Line", },
+          	{ "<", icon = "󰞗 ", desc = "Indent Left", },
+          	{ ">", icon = "󰞘 ", desc = "Indent Right", },
+          	{ "G", icon = "󰞒 ", desc = "Last Line", },
+          	{ "~", icon = "󰬵 ", desc = "Toggle case", },
+          	{ "{", icon = "󰉸 ", desc = "Prev empty line", },
+          	{ "}", icon = "󰉸 ", desc = "Next empty line", },
 
-						-- Tab group
-						{ "<Tab>", group = "tabs", icon = "󰓩 ", },
-						{ "<leader><Tab>", group = "tabs", proxy = "<Tab>", },
-						{ "<Tab>n", icon = "󰓩 ", desc = "new tab", },
-						{ "<Tab>q", icon = "󰱝 ", desc = "close tab", },
-						{ "<Tab>l",  icon = " ", desc = "next tab (gt)", },
-						{ "<Tab>h",  icon = " ", desc = "prev tab (gT)", },
+          	-- Tab group
+          	{ "<Tab>", group = "tabs", icon = "󰓩 ", },
+          	{ "<leader><Tab>", group = "tabs", proxy = "<Tab>", },
+          	{ "<Tab>n", icon = "󰓩 ", desc = "new tab", },
+          	{ "<Tab>q", icon = "󰱝 ", desc = "close tab", },
+          	{ "<Tab>l", icon = " ", desc = "next tab (gt)", },
+          	{ "<Tab>h", icon = " ", desc = "prev tab (gT)", },
 
-						-- Windows group - built-in
-						{ "<leader>w", group = "windows", proxy = "<C-w>", icon = "󰖲 ", },
+          	-- Windows group - built-in
+          	{ "<leader>w", group = "windows", proxy = "<C-w>", icon = "󰖲 ", },
 
-						{ "<leader>o", group = "options", icon = " ", },
+          	{ "<leader>o", group = "options", icon = " ", },
 
-						-- Global group
-						{ "g", group = "Global", icon = " ", },
-						{ "gg", icon = "󰞒 ", desc = "First Line", },
-					})
+          	-- Global group
+          	{ "g", group = "Global", icon = " ", },
+          	{ "gg", icon = "󰞒 ", desc = "First Line", },
+          })
         '';
     };
     mini = {
       enable = true;
       modules = {
         icons.enable = true;
-				doc.enable = true;
+        doc.enable = true;
         comment = {
           disable_default_keymaps = true;
         };
@@ -233,15 +233,17 @@
       };
     }
   ];
-	
-	# Create define which-key as available for the rest of the config
-	extraConfigLuaPre = (if config.plugins.which-key.enable then
-		# lua
-		''
-      local wk_available, wk = pcall(require, "which-key")
-		'' else 
-		# lua
-		''
-			local wk_available = false
-		'');
+
+  # Create define which-key as available for the rest of the config
+  extraConfigLuaPre = (
+    if config.plugins.which-key.enable then # lua
+      ''
+        local wk_available, wk = pcall(require, "which-key")
+      ''
+    # lua
+    else
+      ''
+        local wk_available = false
+      ''
+  );
 }
