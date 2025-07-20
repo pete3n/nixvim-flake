@@ -5,17 +5,21 @@
     python311Packages.pylatexenc
   ];
 
-	# Show whitespace for stupid languages that are sensitive to whitespace.
-  autoCmd = {
-    whitespaceFiletypes = {
+  # Show whitespace for stupid languages that are sensitive to whitespace.
+  autoCmd = [
+    {
       event = [ "FileType" ];
-      pattern = [ "make" "yaml" "python" ];
+      pattern = [
+        "make"
+        "yaml"
+        "python"
+      ];
       command = ''
         setlocal list
         setlocal listchars=tab:▸\ ,trail:·,extends:…,precedes:…,nbsp:␣
       '';
-    };
-  };
+    }
+  ];
 
   plugins = {
     conform-nvim = {
