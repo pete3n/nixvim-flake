@@ -6,17 +6,16 @@
   ];
 
 	# Show whitespace for stupid languages that are sensitive to whitespace.
-  autocmds = [
-    {
+  autoCmd = {
+    whitespaceFiletypes = {
       event = [ "FileType" ];
-      pattern = [
-        "make"
-        "yaml"
-        "python"
-      ];
-      command = "setlocal list";
-    }
-  ];
+      pattern = [ "make" "yaml" "python" ];
+      command = ''
+        setlocal list
+        setlocal listchars=tab:▸\ ,trail:·,extends:…,precedes:…,nbsp:␣
+      '';
+    };
+  };
 
   plugins = {
     conform-nvim = {
