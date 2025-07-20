@@ -667,7 +667,8 @@ in
         options = {
           desc = "neovim scripts";
         };
-      }{
+      }
+      {
         key = "<leader>sS";
         mode = "n";
         action.__raw = # lua

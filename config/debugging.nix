@@ -13,13 +13,13 @@
       gcc14
       go
       lldb_19
-			vscode-extensions.vadimcn.vscode-lldb
+      vscode-extensions.vadimcn.vscode-lldb
       llvmPackages_19.bintools-unwrapped
       python314Full
     ])
     ++ (
       if pkgs.stdenv.isDarwin then
-        []
+        [ ]
       else
         [
           pkgs.gdb
@@ -28,8 +28,8 @@
     ); # gdb and rr not supported on Darwin
 
   extraPlugins = [ pkgs.vimPlugins.nvim-nio ];
-	
-	plugins.rustaceanvim.settings.dap.autoloadConfigurations = true;
+
+  plugins.rustaceanvim.settings.dap.autoloadConfigurations = true;
 
   plugins.dap.enable = true;
   plugins.dap-ui.enable = true;

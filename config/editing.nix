@@ -86,7 +86,7 @@
         };
       }
     ])
-		# Cross-map the advanced_git_search telescope extension from the searching group
+    # Cross-map the advanced_git_search telescope extension from the searching group
     (
       if builtins.elem "advanced_git_search" config.plugins.telescope.enabledExtensions then
         [

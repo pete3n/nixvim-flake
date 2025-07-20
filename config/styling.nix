@@ -13,7 +13,7 @@
 
   plugins = {
 
-		rainbow-delimiters.enable = true;
+    rainbow-delimiters.enable = true;
 
     notify = {
       enable = true;
@@ -67,9 +67,9 @@
           };
         };
         popupmenu = {
-					enabled = true;
+          enabled = true;
           kindIcons = true;
-					backend = "cmp";
+          backend = "cmp";
         };
         extraOptions = {
           inc_rename.cmdline.format.IncRename = {

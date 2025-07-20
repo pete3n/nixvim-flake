@@ -75,11 +75,9 @@
           default = nvim;
         }
         // pkgs.lib.optionalAttrs isLinux {
-
           dockerImage = pkgs.dockerTools.buildImage {
             name = "nixvim-dev-container";
             tag = "v25.05";
-
             copyToRoot = pkgs.buildEnv {
               name = "nixvim-docker-root";
               paths = [
@@ -89,7 +87,6 @@
                 pkgs.bashInteractive
               ];
             };
-
             config = {
               Cmd = [ "${nvim}/bin/nvim" ];
               Env = [

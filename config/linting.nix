@@ -15,29 +15,29 @@
   ];
 
   plugins = {
-		lint = {
-			enable = true;
-			lintersByFt = {
-				c = [ "clangtidy" ];
-				cpp = [ "clangtidy" ];
-				css = [ "eslint_d" ];
-				go = [ "golangcilint" ];
-				javascript = [ "eslint_d" ];
-				javascriptreact = [ "eslint_d" ];
-				json = [ "jsonlint" ];
-				lua = [ "luacheck" ];
-				markdownlint = [ "markdownlint" ];
-				nix = [ "nix" ];
-				python = [ "ruff" ];
-				sh = [ "shellcheck" ];
-				typescript = [ "eslint_d" ];
-				typescriptreact = [ "eslint_d" ];
-				yaml = [ "yamllint" ];
-			};
-		};
-		trouble = {
-			enable = true;
-		};
+    lint = {
+      enable = true;
+      lintersByFt = {
+        c = [ "clangtidy" ];
+        cpp = [ "clangtidy" ];
+        css = [ "eslint_d" ];
+        go = [ "golangcilint" ];
+        javascript = [ "eslint_d" ];
+        javascriptreact = [ "eslint_d" ];
+        json = [ "jsonlint" ];
+        lua = [ "luacheck" ];
+        markdownlint = [ "markdownlint" ];
+        nix = [ "nix" ];
+        python = [ "ruff" ];
+        sh = [ "shellcheck" ];
+        typescript = [ "eslint_d" ];
+        typescriptreact = [ "eslint_d" ];
+        yaml = [ "yamllint" ];
+      };
+    };
+    trouble = {
+      enable = true;
+    };
   };
 
   extraConfigLuaPost = # lua

@@ -105,9 +105,9 @@
         lua_ls.enable = true;
         nixd.enable = true;
         ruff = {
-					enable = true;
-					filetypes = [ "python" ];
-				};
+          enable = true;
+          filetypes = [ "python" ];
+        };
 
         #rust_analyzer = {
         #  enable = true;
