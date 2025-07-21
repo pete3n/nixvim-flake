@@ -89,6 +89,15 @@
       };
     };
 
+    none-ls = {
+      enable = true;
+      sources = {
+        diagnostics = {
+          checkmake.enable = true;
+        };
+      };
+    };
+
     lazydev.enable = true;
 
     lsp = {
