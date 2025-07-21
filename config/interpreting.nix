@@ -29,6 +29,108 @@
     webapi-vim
   ];
 
+  extraConfigLuaPre = # lua
+		''
+      function set_cmn_lsp_keybinds()
+      	local lsp_keybinds = {
+      		{
+      			key = "<leader>ia",
+      			mode = "n",
+      			action = vim.lsp.buf.code_action,
+      			options = {
+      				buffer = 0,
+      				desc = "code action",
+      			},
+      		},
+      		{
+      			key = "<leader>ii",
+      			mode = "n",
+      			action = vim.lsp.buf.hover,
+      			options = {
+      				buffer = 0,
+      				desc = "hover token info <S-K>",
+      			},
+      		},
+      		{
+      			key = "<leader>ij",
+      			mode = "n",
+      			action = vim.diagnostic.goto_prev,
+      			options = {
+      				buffer = 0,
+      				desc = "go to previous diagnostic",
+      			},
+      		},
+      		{
+      			key = "<leader>ik",
+      			mode = "n",
+      			action = vim.diagnostic.goto_next,
+      			options = {
+      				buffer = 0,
+      				desc = "go to next diagnostic",
+      			},
+      		},
+      		{
+      			key = "<leader>iq",
+      			mode = "n",
+      			action = vim.diagnostic.setqflist,
+      			options = {
+      				buffer = 0,
+      				desc = "diagnostics quickfix list",
+      			},
+      		},
+      		{
+      			key = "<leader>ir",
+      			mode = "n",
+      			action = vim.lsp.buf.rename,
+      			options = {
+      				buffer = 0,
+      				desc = "rename variable <S-R>",
+      			},
+      		},
+      		{
+      			key = "<leader>r",
+      			mode = "n",
+      			action = vim.lsp.buf.rename,
+      			options = {
+      				buffer = 0,
+      				desc = "rename variable",
+      			},
+      		},
+      		{
+      			key = "gd",
+      			mode = "n",
+      			action = vim.lsp.buf.definition,
+      			options = {
+      				buffer = 0,
+      				desc = "go to to definition",
+      			},
+      		},
+      		{
+      			key = "gi",
+      			mode = "n",
+      			action = vim.lsp.buf.implementation,
+      			options = {
+      				buffer = 0,
+      				desc = "go to implementation",
+      			},
+      		},
+      		{
+      			key = "gy",
+      			mode = "n",
+      			action = vim.lsp.buf.type_definition,
+      			options = {
+      				buffer = 0,
+      				desc = "go to type definition",
+      			},
+      		}
+      	}
+
+      	for _, bind in ipairs(lsp_keybinds) do
+      		vim.keymap.set("n", bind.key, bind.action, bind.options)
+      	end
+      end
+		'';
+
   diagnostic.settings = {
     virtual_lines = {
       current_line = true;
@@ -96,6 +198,14 @@
           checkmake.enable = true;
         };
       };
+      settings = {
+        on_attach = # lua
+          ''
+            function()
+            	set_cmn_lsp_keybinds()
+            end
+          '';
+      };
     };
 
     lazydev.enable = true;
@@ -135,94 +245,6 @@
     ''
       -- Common LSP key mappings
       -- Extra nvim-lspconfig configuration
-      local function set_cmn_lsp_keybinds()
-      	local lsp_keybinds = {
-      		{
-      			key = "<leader>ia",
-      			action = vim.lsp.buf.code_action,
-      			options = {
-      				buffer = 0,
-      				desc = "code action",
-      			},
-      		},
-      		{
-      			key = "<leader>ii",
-      			action = vim.lsp.buf.hover,
-      			options = {
-      				buffer = 0,
-      				desc = "hover token info <S-K>",
-      			},
-      		},
-      		{
-      			key = "<leader>ij",
-      			action = vim.diagnostic.goto_prev,
-      			options = {
-      				buffer = 0,
-      				desc = "go to previous diagnostic",
-      			},
-      		},
-      		{
-      			key = "<leader>ik",
-      			action = vim.diagnostic.goto_next,
-      			options = {
-      				buffer = 0,
-      				desc = "go to next diagnostic",
-      			},
-      		},
-      		{
-      			key = "<leader>iq",
-      			action = vim.diagnostic.setqflist,
-      			options = {
-      				buffer = 0,
-      				desc = "diagnostics quickfix list",
-      			},
-      		},
-      		{
-      			key = "<leader>ir",
-      			action = vim.lsp.buf.rename,
-      			options = {
-      				buffer = 0,
-      				desc = "rename variable <S-R>",
-      			},
-      		},
-      		{
-      			key = "<leader>r",
-      			action = vim.lsp.buf.rename,
-      			options = {
-      				buffer = 0,
-      				desc = "rename variable",
-      			},
-      		},
-      		{
-      			key = "gd",
-      			action = vim.lsp.buf.definition,
-      			options = {
-      				buffer = 0,
-      				desc = "go to to definition",
-      			},
-      		},
-      		{
-      			key = "gi",
-      			action = vim.lsp.buf.implementation,
-      			options = {
-      				buffer = 0,
-      				desc = "go to implementation",
-      			},
-      		},
-      		{
-      			key = "gy",
-      			action = vim.lsp.buf.type_definition,
-      			options = {
-      				buffer = 0,
-      				desc = "go to type definition",
-      			},
-      		}
-      	}
-
-      	for _, bind in ipairs(lsp_keybinds) do
-      		vim.keymap.set("n", bind.key, bind.action, bind.options)
-      	end
-      end
 
       if wk_available then
       	wk.add({
