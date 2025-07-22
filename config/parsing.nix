@@ -38,7 +38,7 @@
       src = pkgs.fetchFromGitHub {
         owner = "pete3n";
         repo = "nix-prefetch.nvim";
-				rev = "4f32441c3a7f550ccb8cbd73cba8ab11aa32f8d1";
+        rev = "4f32441c3a7f550ccb8cbd73cba8ab11aa32f8d1";
         hash = "sha256-FpUYNdyn3YrbrAWdkyeE7Kl/ThmSKBNl1l2ePjznKRc=";
       };
     })

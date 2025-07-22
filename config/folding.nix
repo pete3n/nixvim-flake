@@ -6,27 +6,26 @@
     settings = {
       provider_selector = # lua
         ''
-					function(bufnr, filetype, buftype)
-						return { 'lsp', 'indent' }
-					end
+          function(bufnr, filetype, buftype)
+          	return { 'lsp', 'indent' }
+          end
         '';
     };
-    luaConfig.post =
-      # lua
+    luaConfig.post = # lua
       ''
-				local peek_fold = function()
-					local winid = require('ufo').peekFoldedLinesUnderCursor()
-					if not winid then
-						vim.lsp.buf.hover()
-					end
-				end
+        local peek_fold = function()
+        	local winid = require('ufo').peekFoldedLinesUnderCursor()
+        	if not winid then
+        		vim.lsp.buf.hover()
+        	end
+        end
 
-				if wk_available then
-					wk.add({
-						{ "z", group = "folding", icon = "󰅪"},
-						{ "<leader>z", group = "folding", proxy = "z", icon = "󰅪", };
-					})
-				end
+        if wk_available then
+        	wk.add({
+        		{ "z", group = "folding", icon = "󰅪" },
+        		{ "<leader>z", group = "folding", proxy = "z", icon = "󰅪", },
+        	})
+        end
       '';
   };
 

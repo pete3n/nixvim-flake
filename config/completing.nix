@@ -22,7 +22,8 @@
         mapping = {
           "<C-n>" = "cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert })";
           "<C-p>" = "cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert })";
-          "<C-y>" = "cmp.mapping (cmp.mapping.confirm { behavior = cmp.ConfirmBehavior.Insert, select = true }, {'i','c'})";
+          "<C-y>" =
+            "cmp.mapping (cmp.mapping.confirm { behavior = cmp.ConfirmBehavior.Insert, select = true }, {'i','c'})";
           "<C-e>" = "cmp.mapping.close()";
           "<CR>" = "cmp.mapping.confirm({ select = true })";
         };
@@ -51,9 +52,9 @@
           -- Extra options for cmp-cmdline setup
           cmp.setup.cmdline('/', {
           	mapping = cmp.mapping.preset.cmdline(),
-          		sources = {
-          			{ name = 'buffer' }
-          		}
+          	sources = {
+          		{ name = 'buffer' }
+          	}
           })
 
           cmp.setup.cmdline(":", {
@@ -70,22 +71,26 @@
           	}),
           })
 
-          if wk_available then -- Defined in keymapping.nix
-          	wk.add ({
-          		{"<leader>c", group = "completing", icon = "󰈼", mode = { "n", "c", "i" }, },
-          		{"<leader>ck", icon = "󰞘 ", desc = "expand or jump to next snippet (^ K)", 
-          				mode = { "n", "c", "i", }, },
-          		{"<leader>cj", icon = "󰞗 ", desc = "jump back (^ J)", mode = { "n", "c", "i" }, },
-          		{"<leader>cn", icon = " ", desc = "next completion (^ N)", mode = { "n", "c", "i" }, },
-          		{"<leader>cp", icon = " ", desc = "prev completion (^ P)", mode = { "n", "c", "i" }, },
-          		{"<leader>cy", icon = "󰿄 ", desc = "confirm completion (^ Y)", mode = { "n", "c", "i" }, },
-          		{"<leader>ce", icon = "󰜺 ", desc = "close completions (^ E)", mode = { "n", "c", "i" }, },
-          		{"<C-K>", icon = "󰞘 ", desc = "expand or jump to next snippet", mode = { "c", "i" }, },
-          		{"<C-J>", icon = "󰞗 ", desc = "jump back", mode = { "c", "i" }, },
-          		{"<C-N>", icon = " ", desc = "next completion", mode = { "c", "i" }, },
-          		{"<C-P>", icon = " ", desc = "prev completion", mode = { "c", "i" }, },
-          		{"<C-Y>", icon = "󰿄 ", desc = "confirm completion ", mode = { "c", "i" }, },
-          		{"<C-E>", icon = "󰜺 ", desc = "close completions", mode = { "c", "i" }, },
+          if wk_available then           -- Defined in keymapping.nix
+          	wk.add({
+          		{ "<leader>c", group = "completing", icon = "󰈼", mode = { "n", "c", "i" }, },
+          		{
+          			"<leader>ck",
+          			icon = "󰞘 ",
+          			desc = "expand or jump to next snippet (^ K)",
+          			mode = { "n", "c", "i", },
+          		},
+          		{ "<leader>cj", icon = "󰞗 ", desc = "jump back (^ J)", mode = { "n", "c", "i" }, },
+          		{ "<leader>cn", icon = " ", desc = "next completion (^ N)", mode = { "n", "c", "i" }, },
+          		{ "<leader>cp", icon = " ", desc = "prev completion (^ P)", mode = { "n", "c", "i" }, },
+          		{ "<leader>cy", icon = "󰿄 ", desc = "confirm completion (^ Y)", mode = { "n", "c", "i" }, },
+          		{ "<leader>ce", icon = "󰜺 ", desc = "close completions (^ E)", mode = { "n", "c", "i" }, },
+          		{ "<C-K>", icon = "󰞘 ", desc = "expand or jump to next snippet", mode = { "c", "i" }, },
+          		{ "<C-J>", icon = "󰞗 ", desc = "jump back", mode = { "c", "i" }, },
+          		{ "<C-N>", icon = " ", desc = "next completion", mode = { "c", "i" }, },
+          		{ "<C-P>", icon = " ", desc = "prev completion", mode = { "c", "i" }, },
+          		{ "<C-Y>", icon = "󰿄 ", desc = "confirm completion ", mode = { "c", "i" }, },
+          		{ "<C-E>", icon = "󰜺 ", desc = "close completions", mode = { "c", "i" }, },
           	})
           end
         '';
@@ -147,21 +152,21 @@
   ];
   extraConfigLuaPost =
     (
-      if builtins.elem pkgs.vimPlugins.ultimate-autopair-nvim config.extraPlugins then
-        # lua
+			# TODO: Ninjection bug, creates assignment closing ; on formatting
+      if builtins.elem pkgs.vimPlugins.ultimate-autopair-nvim config.extraPlugins then # lua
         ''
-					local ua = require("ultimate-autopair")
-					ua.init({
-						ua.extend_default({
-							-- Override default options – enable tabout
-							cmap = false, -- disable command-line autopairs
-							pair_cmap = false,
-						}),
-						{ profile = require("ultimate-autopair.experimental.cmpair").init },
-					})
+          local ua = require("ultimate-autopair")
+          ua.init({
+          	ua.extend_default({
+          		-- Override default options – enable tabout
+          		cmap = false,              -- disable command-line autopairs
+          		pair_cmap = false,
+          	}),
+          	{ profile = require("ultimate-autopair.experimental.cmpair").init },
+          })
         ''
       else
-        # lua 
+        # lua
         ''
           print("ultimate-autopair is required but was not included as a package. Check config.extraPlugins")
         ''
