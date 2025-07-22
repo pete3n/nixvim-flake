@@ -26,20 +26,31 @@
 
       forAllSystems = f: nixpkgs.lib.genAttrs systems (system: f system);
 
-      overlaysBySystem = forAllSystems (system: [
-        (final: prev: {
-          bashdb = prev.bashdb.overrideAttrs (oldAttrs: {
-            meta = oldAttrs.meta // {
-              platforms = final.lib.platforms.linux ++ final.lib.platforms.darwin;
-            };
-          });
-        })
+      overlaysBySystem = forAllSystems (
+        system:
+        [
+          (final: prev: {
+            bashdb = prev.bashdb.overrideAttrs (oldAttrs: {
+              meta = oldAttrs.meta // {
+                platforms = final.lib.platforms.linux ++ final.lib.platforms.darwin;
+              };
+            });
+          })
 
-        (final: prev: {
-          mbake = nixpkgs-unstable.legacyPackages.${system}.mbake;
-        })
-      ]);
+          (final: prev: {
+            mbake = nixpkgs-unstable.legacyPackages.${system}.mbake;
+          })
 
+        ]
+				# Fix for building rustfmt on Darwin
+        ++ nixpkgs.lib.optional (system == "aarch64-darwin" || system == "x86_64-darwin") (
+          final: prev: {
+            rustfmt = prev.rustfmt.overrideAttrs (old: {
+              RUSTFLAGS = "-C link-arg=-Wl,-headerpad_max_install_names";
+            });
+          }
+        )
+      );
     in
     {
       packages = forAllSystems (
