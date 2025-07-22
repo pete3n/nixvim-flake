@@ -314,7 +314,9 @@
 
             -- Nix LSP
             require("lspconfig").nixd.setup({
-            on_attach = function()
+            on_attach = function(client, bufnr)
+							-- Disable hover since nixd doesn't privde useful ctx info
+							client.server_capabilities.hoverProvider = false
             	set_cmn_lsp_keybinds()
             end,
             settings = {
