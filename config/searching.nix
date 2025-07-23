@@ -19,7 +19,9 @@ in
 
   extraPlugins =
     [
-      pkgs.vimPlugins.advanced-git-search-nvim
+			# TODO: Investigate failing require checks for .fzf.previewers.init 
+			# .fzf.pickers.init .fzf.pickers.utils
+			#pkgs.vimPlugins.advanced-git-search-nvim
       pkgs.vimPlugins.telescope-dap-nvim
       pkgs.vimPlugins.telescope-zoxide
     ]
@@ -56,7 +58,7 @@ in
         undo.enable = true;
       };
       enabledExtensions = [
-        "advanced_git_search"
+				#"advanced_git_search"
         "conventional_commits"
         "dap"
         "live_grep_args"
@@ -237,14 +239,14 @@ in
           local telescope = require("telescope")
 
           local telescope_extensions = {
-          	{
-          		ext = "advanced_git_search",
-          		key = "<leader>sG",
-          		icon = " ",
-          		desc = "git advanced search",
-          		action = "show_custom_functions",
-          		prompt = "Advanced Git: ${telescope_help}"
-          	},
+          	--{
+          	--	ext = "advanced_git_search",
+          	--	key = "<leader>sG",
+          	--	icon = " ",
+          	--	desc = "git advanced search",
+          	--	action = "show_custom_functions",
+          	--	prompt = "Advanced Git: ${telescope_help}"
+          	--},
           	{
           		ext = "conventional_commits",
           		key = "<leader>sC",
