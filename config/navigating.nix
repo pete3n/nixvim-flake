@@ -4,10 +4,83 @@
   plugins = {
     oil.enable = true;
     nvim-tree.enable = true;
+		flash.enable = true;
     harpoon.enable = true; # The name, is the harpoon-maker-agen
   };
 
   keymaps = lib.concatLists [
+		(lib.optionals config.plugins.flash.enable [
+			{
+				key = "s";
+				mode = [ "n" "x" "o" ];
+        action.__raw = # lua
+          ''
+						function()
+							require("flash").jump()
+						end
+					'';
+				options = {
+					silent = true;
+					desc = "Flash";
+				};
+			}
+			{
+				key = "S";
+				mode = [ "n" "x" "o" ];
+        action.__raw = # lua
+          ''
+						function()
+							require("flash").treesitter()
+						end
+					'';
+				options = {
+					silent = true;
+					desc = "Flash Treesitter";
+				};
+			}
+			{
+				key = "r";
+				mode = "o";
+        action.__raw = # lua
+          ''
+						function()
+							require("flash").remote()
+						end
+					'';
+				options = {
+					silent = true;
+					desc = "Remote Flash";
+				};
+			}
+			{
+				key = "R";
+				mode = [ "o" "x" ];
+        action.__raw = # lua
+          ''
+						function()
+							require("flash").treesitter_search()
+						end
+					'';
+				options = {
+					silent = true;
+					desc = "Treesitter Search";
+				};
+			}
+			{
+				key = "<C-s";
+				mode = "c";
+        action.__raw = # lua
+          ''
+						function()
+							require("flash").toggle()
+						end
+					'';
+				options = {
+					silent = true;
+					desc = "Toggle Flash Search";
+				};
+			}
+		])
     (lib.optionals config.plugins.oil.enable [
       {
         key = "<leader>nv";
@@ -234,6 +307,15 @@
       	-- Conditionall map nvim-tree icon
       	if pcall(require, "nvim-tree") then
       		table.insert(keymaps, { "<leader>nt", icon = " ", })
+      	end
+
+      	-- Conditionall map flash 
+      	if pcall(require, "flash") then
+      		table.insert(keymaps, { "s", mode = { "n", "x", "o" }, icon = "⚡", desc = "Flash" })
+      		table.insert(keymaps, { "S", mode = { "n", "x", "o" }, icon = "⚡🌳 ", desc = "Flash Treesitter" })
+      		table.insert(keymaps, { "r", mode = "o", icon = "🌐⚡ ", desc = "Remote Flash" })
+      		table.insert(keymaps, { "R", mode = { "o", "x" }, icon = "🌳🔎 ", desc = "Treesitter Search" })
+      		table.insert(keymaps, { "<C-s>", mode = "c", icon = "󰔡 ⚡ ", desc = "Toggle Flash" })
       	end
 
       	wk.add(keymaps)
