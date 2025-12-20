@@ -3,6 +3,18 @@
 {
   extraPackages = with pkgs; [ jetbrains-mono ];
 
+  extraPlugins = [
+    (pkgs.vimUtils.buildVimPlugin {
+      name = "nix-prefetch.nvim";
+      src = pkgs.fetchFromGitHub {
+        owner = "folke";
+        repo = "drop.nvim";
+        rev = "f27c147af59c41712dd3d513cb03f4fae7aec46d";
+        hash = "sha256-rIOivAUJ328nWnckCnwv+pNdxZUmBZJterxh1kjXm70=";
+      };
+    })
+  ];
+
   colorschemes.tokyonight = {
     enable = true;
     settings = {
@@ -12,8 +24,34 @@
   };
 
   plugins = {
+    web-devicons.enable = true;
+    snacks = {
+      enable = true;
+      settings = {
+        # TODO: dim keybinds
+        dim = {
+          enabled = true;
+        };
+        indent = {
+          enabled = true;
+          priority = 1;
+          char = "|";
+          only_scope = false;
+          only_current = false;
+          hl = "SnacksIndent";
+        };
+        # TODO: zen keybinds
+        zen = {
+          enabled = true;
+        };
+      };
+    };
 
     rainbow-delimiters.enable = true;
+
+    twilight = {
+      enable = true;
+    };
 
     notify = {
       enable = true;
@@ -69,7 +107,6 @@
         popupmenu = {
           enabled = true;
           kindIcons = true;
-          backend = "cmp";
         };
         extraOptions = {
           inc_rename.cmdline.format.IncRename = {
@@ -82,7 +119,7 @@
           local dismiss_noice = function()
           	require("noice").cmd("dismiss")
           end
-
+          
           local toggle_noice = function()
           	local noice_paused = false
           	if noice_paused then
@@ -97,11 +134,11 @@
           		vim.notify("Noice paused")
           	end
           end
-
+          
           local redisplay_last_noice = function()
           	vim.cmd("Noice last")
           end
-
+          
           if wk_available then
           	wk.add({
           		{ "<leader>e", group = "event notifications", icon = "󰍢 " },
@@ -110,46 +147,45 @@
           			dismiss_noice,
           			desc = "dismiss notification",
           			icon = "🔕",
-          			mode = { "n", "v", "o" }
+          			mode = { "n", "v", "o" },
           		},
           		{
           			"<leader>eh",
           			"<cmd>NoiceHistory<CR>",
           			desc = "notification history",
           			icon = "󰋚 ",
-          			mode = { "n", "v", "o" }
+          			mode = { "n", "v", "o" },
           		},
           		{
           			"<leader>em",
           			"<cmd>messages<CR>",
           			desc = "messages",
           			icon = "󰵅 ",
-          			mode = { "n", "v", "o" }
+          			mode = { "n", "v", "o" },
           		},
           		{
           			"<leader>et",
           			toggle_noice,
           			desc = "toggle notifications",
           			icon = "󰔡 ",
-          			mode = "n"
+          			mode = "n",
           		},
           		{
           			"<leader>er",
           			redisplay_last_noice,
           			desc = "re-display previous notification",
           			icon = "🔔",
-          			mode = { "n", "v", "o" }
+          			mode = { "n", "v", "o" },
           		},
           	})
           end
-
+          
           -- Noice recommended config
           require("noice").setup({
           	lsp = {
           		override = {
           			["vim.lsp.util.convert_input_to_markdown_lines"] = true,
           			["vim.lsp.util.stylize_markdown"] = true,
-          			["cmp.entry.get_documentation"] = true,  -- requires hrsh7th/nvim-cmp
           		},
           	},
           })
@@ -159,10 +195,23 @@
           	sections = {
           		lualine_x = {
           			{
+          				function()
+          					local mode = vim.fn.mode()
+          					if mode == "n" then
+          						return "<Space> for Keymaps"
+          					elseif mode == "i" or mode == "c" or mode == "R" or mode == "v" or mode == "V" or mode == "\22" then
+          						return "<Ctrl /> for Keymaps"
+          					else
+          						return ""
+          					end
+          				end,
+          				color = { fg = "#7aa2f7" },       -- Example: Soft blue color
+          			},
+          			{
           				require("noice").api.statusline.mode.get,
           				cond = require("noice").api.statusline.mode.has,
           				color = { fg = "#ff9e64" },
-          			}
+          			},
           		},
           	},
           })

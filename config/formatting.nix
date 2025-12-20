@@ -1,5 +1,14 @@
 # All configuration related formatting languages
-{ lib, pkgs, ... }:
+{
+  lib,
+  config,
+  pkgs,
+  ...
+}:
+let
+  ls = config.language_support;
+  inherit (lib) mkIf;
+in
 {
   extraPackages = with pkgs; [
     mbake # Makefile formatter - TODO: implement
@@ -64,121 +73,130 @@
             end
           '';
         notify_on_error = true;
-        formatters_by_ft = {
-          asm = [ "asmfmt" ];
-          c = [ "astyle" ];
-          cpp = [ "astyle" ];
-          css = [
-            "prettierd"
-            "prettier"
-          ];
-          cmake = [ "cmake-format" ];
-          go = [
-            "goimports"
-            "gofumpt"
-            "golines"
-          ];
-          html = [
-            "prettierd"
-            "prettier"
-          ];
-          javascript = [
-            "prettierd"
-            "prettier"
-          ];
-          javascriptreact = [ "prettier" ];
-          json = [ "prettier" ];
-          lua = [ "stylua" ];
-          markdown = [ "prettier" ];
-          nix = [ "nixfmt-rfc-style" ];
-          python = [
-            "isort"
-            "ruff_format"
-          ];
-          # rust = [ "rustfmt" ];
-          sh = [ "shfmt" ];
-          text = [ "par" ];
-          typescript = [
-            "prettierd"
-            "prettier"
-          ];
-          typescriptreact = [ "prettier" ];
-          yaml = [
-            "prettierd"
-            "prettier"
-          ];
-        };
-        formatters = {
-          asmfmt = {
-            command = "${lib.getExe pkgs.asmfmt}";
-            stdin = true;
-          };
-          astyle = {
-            command = "${lib.getExe pkgs.astyle}";
-          };
-
-          cmake-format = {
-            command = "${lib.getExe pkgs.cmake-format}";
-          };
-
-          gofumpt = {
-            command = "${lib.getExe pkgs.gofumpt}";
-          };
-
-          golines = {
-            command = "${lib.getExe' pkgs.golines "golines"}";
-          };
-
-          goimports = {
-            command = "${lib.getExe' pkgs.gotools "goimports"}";
-          };
-
-          isort = {
-            command = "${lib.getExe pkgs.isort}";
-          };
-
-          nixfmt-rfc-style = {
-            command = "${lib.getExe pkgs.nixfmt-rfc-style}";
-          };
-
-          par = {
-            command = "${lib.getExe pkgs.par}";
-            args = [ "80" ];
-            stdin = true;
-          };
-
-          prettier = {
-            command = "${lib.getExe pkgs.nodePackages.prettier}";
-          };
-
-          prettierd = {
-            command = "${lib.getExe pkgs.prettierd}";
-          };
-
-          ruff = {
-            command = "${lib.getExe pkgs.ruff}";
-          };
-
-          rustfmt = {
-            command = "${lib.getExe pkgs.rustfmt}";
-          };
-
-          shfmt = {
-            command = "${lib.getExe pkgs.shfmt}";
-          };
-
-          stylua = {
-            command = "${lib.getExe pkgs.stylua}";
-            args = [
-              "--search-parent-directories"
-              "--stdin-filepath"
-              "$FILENAME"
-              "--"
-              "-"
+        formatters_by_ft =
+          {
+            asm = [ "asmfmt" ];
+            c = [ "astyle" ];
+            cpp = [ "astyle" ];
+            css = [
+              "prettierd"
+              "prettier"
             ];
-            stdin = true;
-          };
-        };
+            cmake = [ "cmake-format" ];
+            go = [
+              "goimports"
+              "gofumpt"
+              "golines"
+            ];
+            html = [
+              "prettierd"
+              "prettier"
+            ];
+            javascript = [
+              "prettierd"
+              "prettier"
+            ];
+            javascriptreact = [ "prettier" ];
+            json = [ "prettier" ];
+            markdown = [ "prettier" ];
+            python = [
+              "isort"
+              "ruff_format"
+            ];
+            # rust = [ "rustfmt" ];
+            sh = [ "shfmt" ];
+            text = [ "par" ];
+            typescript = [
+              "prettierd"
+              "prettier"
+            ];
+            typescriptreact = [ "prettier" ];
+            yaml = [
+              "prettierd"
+              "prettier"
+            ];
+          }
+          // (mkIf ls.lua.enable {
+            lua = [ "stylua" ];
+          })
+          // (mkIf ls.nix.enable {
+            nix = [ "nixfmt-rfc-style" ];
+          });
+
+        formatters =
+          {
+            asmfmt = {
+              command = "${lib.getExe pkgs.asmfmt}";
+              stdin = true;
+            };
+            astyle = {
+              command = "${lib.getExe pkgs.astyle}";
+            };
+
+            cmake-format = {
+              command = "${lib.getExe pkgs.cmake-format}";
+            };
+
+            gofumpt = {
+              command = "${lib.getExe pkgs.gofumpt}";
+            };
+
+            golines = {
+              command = "${lib.getExe' pkgs.golines "golines"}";
+            };
+
+            goimports = {
+              command = "${lib.getExe' pkgs.gotools "goimports"}";
+            };
+
+            isort = {
+              command = "${lib.getExe pkgs.isort}";
+            };
+
+            par = {
+              command = "${lib.getExe pkgs.par}";
+              args = [ "80" ];
+              stdin = true;
+            };
+
+            prettier = {
+              command = "${lib.getExe pkgs.nodePackages.prettier}";
+            };
+
+            prettierd = {
+              command = "${lib.getExe pkgs.prettierd}";
+            };
+
+            ruff = {
+              command = "${lib.getExe pkgs.ruff}";
+            };
+
+            rustfmt = {
+              command = "${lib.getExe pkgs.rustfmt}";
+            };
+
+            shfmt = {
+              command = "${lib.getExe pkgs.shfmt}";
+            };
+          }
+          // (mkIf ls.lua.enable {
+            stylua = {
+              command = "${lib.getExe pkgs.stylua}";
+              args = [
+                "--search-parent-directories"
+                "--stdin-filepath"
+                "$FILENAME"
+                "--"
+                "-"
+              ];
+              stdin = true;
+            };
+          })
+          // (mkIf ls.nix.enable {
+            nixfmt-rfc-style = {
+              command = "${lib.getExe pkgs.nixfmt-rfc-style}";
+            };
+          });
       };
     };
     render-markdown.enable = true;

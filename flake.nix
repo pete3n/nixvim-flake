@@ -2,8 +2,8 @@
   description = "A cross-platform NixVim flake with package, dev-shell, and Docker image outputs";
 
   inputs = {
-    nixvim.url = "github:nix-community/nixvim/nixos-25.05";
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
+    nixvim.url = "github:nix-community/nixvim/nixos-25.11";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
   };
 

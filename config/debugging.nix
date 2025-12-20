@@ -6,18 +6,21 @@
   config,
   ...
 }:
+let
+  ls = config.language_support;
+in
 {
   extraPackages =
     (with pkgs; [
       bashdb
       delve
-      gcc14
+      libgcc
       go
-      lldb_19
+      lldb
       vscode-extensions.vadimcn.vscode-lldb
-      llvmPackages_19.bintools-unwrapped
-      python314Full
+      llvmPackages.bintools-unwrapped
     ])
+    ++ lib.optionals ls.python.enable ls.python.debugPkgs
     ++ (
       if pkgs.stdenv.isDarwin then
         [ ]
@@ -233,25 +236,25 @@
       local dap_deps = pcall(function()
       	return require("dap"), require("dapui")
       end)
-      
+
       if dap_deps then
       	local dap = require("dap")
       	local dapui = require("dapui")
-      
+
       	dap.set_log_level('DEBUG')
-      
+
       	dap.adapters.lldb = {
       		type = 'executable',
       		command = 'lldb-dap',
       		name = 'lldb'
       	}
-      
+
       	dap.adapters.gdb = {
       		type = "executable",
       		command = "gdb",
       		args = { "-i", "dap" }
       	}
-      
+
       	dap.listeners.before.attach.dapui_config = function()
       		dapui.open()
       	end
@@ -264,7 +267,7 @@
       	dap.listeners.before.event_exited.dapui_config = function()
       		dapui.close()
       	end
-      
+
       	dap.configurations.c = {
       		{
       			name = "Launch",
@@ -276,7 +279,7 @@
       			cwd = "''${workspaceFolder}",
       		},
       	}
-      
+
       	--dap.configurations.rust = {
       	--	{
       	--		name = "Launch (LLDB)",
@@ -289,7 +292,7 @@
       	--		stopOnEntry = false;
       	--	},
       	--}
-      
+
       	dap.configurations.zig = {
       		{
       			name = 'Launch',
@@ -307,7 +310,7 @@
       	if pcall(require, "telescope") then
       		local telescope = require("telescope")
       		local telescope_help = 'Keymaps <C-/> (Insert) or ? (Normal)';
-      
+
       		if pcall(telescope.load_extension, "dap") then
       			-- Unconditional searching group map
       			if wk_available then
@@ -315,7 +318,7 @@
       					{ "<leader>ds", group = "searching", icon = " " },
       				})
       			end
-      
+
       			local telescope_dap_function_keymaps = {
       				{
       					key = "<leader>dsb",
@@ -353,27 +356,27 @@
       					prompt = "DAP Variables: " .. telescope_help
       				},
       			}
-      
+
       			local function map_dap_functions(key, action, prompt, desc, icon)
       				if telescope.extensions.dap then
       					vim.keymap.set("n", key, function()
       						telescope.extensions.dap[action]({ prompt_title = prompt })
       					end, { desc = desc })
       				end
-      
+
       				if wk_available then
       					wk.add({
       						{ key, icon = icon, desc = desc },
       					})
       				end
       			end
-      
+
       			for _, func in ipairs(telescope_dap_function_keymaps) do
       				map_dap_functions(func.key, func.action, func.prompt, func.desc, func.icon)
       			end
       		end
       	end
-      
+
       	if wk_available then
       		wk.add({
       			{ "<leader>d", group = "debugging", icon = "󰃤 " },

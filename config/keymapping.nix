@@ -3,7 +3,96 @@
    	Function specific keymapping (completing, debugging, etc.)
    	is found in the associated configuration files
 */
-{ config, ... }:
+
+{ config, lib, ... }:
+# All conditional options for conditional keymaps are defined here.
+let
+  global_km = # lua
+    ''
+			local km = Snacks.keymap.set
+			km({ "i", "c", "x" }, "<C-_>", function()
+				require("which-key").show()
+			end, { desc = "Open Key Hints", silent = true })
+
+			km({ "n", "x" }, "j", "v:count == 0 ? 'gj' : 'j'",
+				{ desc = "Down", expr = true, silent = true })
+			km({ "n", "x" }, "<Down>", "v:count == 0 ? 'gj' : 'j'",
+				{ desc = "Down", expr = true, silent = true })
+			km({ "n", "x" }, "k", "v:count == 0 ? 'gk' : 'k'", { desc = "Up", expr = true, silent = true })
+			km({ "n", "x" }, "<Up>", "v:count == 0 ? 'gk' : 'k'", { desc = "Up", expr = true, silent = true })
+
+			km({ "n" }, "<leader><Tab><Tab>", ":tabnew<CR>", { desc = "New Tab" })
+			km({ "n" }, "<leader><Tab>d", ":tabclose<CR>", { desc = "Close Tab" })
+			km({ "n" }, "<leader><Tab>]", ":tabnext<CR>", { desc = "Next Tab" })
+			km({ "n" }, "<leader><Tab>[", ":tabprevious<CR>", { desc = "Previous Tab" })
+			km({ "n" }, "<leader><Tab>l", ":tablast<CR>", { desc = "Last Tab" })
+			km({ "n" }, "<leader><Tab>f", ":tabfirst<CR>", { desc = "First Tab" })
+			km({ "n" }, "<leader><Tab>o", ":tabonly<CR>", { desc = "Close Other Tabs" })
+
+			km({ "n", "v" }, "<leader>y", "\"+y", { desc = "Yank to System Clipboard" })
+			km({ "v" }, "J", ":m '>+1<CR>gv=gv", { desc = "Move Line Down" })
+			km({ "v" }, "K", ":m '>-2<CR>gv=gv", { desc = "Move Line Up" })
+			km({ "n" }, "J", "mzJ\`z", { desc = "Grab Next line" })
+			km({ "x" }, "<leader>p", "\"_dP", { desc = "Preserve Put" })
+			km({ "n" }, "Q", "<nop>", { desc = "(disabled)" })
+
+			-- LSP related keymaps
+			km("n", "<leader>ca", vim.lsp.buf.code_action, {
+				lsp = { method = "textDocument/codeAction" },
+				desc = "Code Action",
+			})
+			km("n", "<leader>ch", vim.lsp.buf.hover, {
+				lsp = { method = "textDocument/hover" },
+				desc = "Hover Info",
+			})
+			km({ "n" }, "<leader>cp", vim.diagnostic.goto_prev, {
+				desc = "Goto Prev Diagnostic",
+			})
+			km({ "n" }, "<leader>cn", vim.diagnostic.goto_next, {
+				desc = "Goto Next Diagnostic",
+			})
+			km({ "n" }, "<leader>cq", vim.diagnostic.setqflist, {
+				desc = "Set Diagnostic Quickfix List",
+			})
+			km("n", "<leader>cr", vim.lsp.buf.rename, {
+				lsp = { method = "textDocument/rename" },
+				desc = "Rename Variable",
+			})
+			km("n", "gd", vim.lsp.buf.definition, {
+				lsp = { method = "textDocument/definition" },
+				desc = "Go to definition",
+			})
+			km("n", "gi", vim.lsp.buf.implementation, {
+				lsp = { method = "textDocument/implementation" },
+				desc = "Go to implementation",
+			})
+			km("n", "gy", vim.lsp.buf.type_definition, {
+				lsp = { method = "textDocument/typeDefinition" },
+				desc = "Go to type definition",
+			})
+    '';
+  luasnipEnabled = config.plugins.luasnip.enable or false;
+  luasnip_km = # lua
+    ''
+      local ls = require("luasnip")
+
+      km({ "i", "s" }, "<C-k>", function()
+      	if ls.expand_or_jumpable() then
+      		ls.expand_or_jump()
+      	end
+      end, {
+      	desc = "expand or jump to next snippet",
+      })
+
+      km({ "i", "s" }, "<C-j>", function()
+      	if ls.jumpable(-1) then
+      		ls.jump(-1)
+      	end
+      end, {
+      	desc = "jump back",
+      })
+    '';
+in
 {
   /*
     	which-key is used project wide to create help-menu icons and entries for
@@ -18,23 +107,42 @@
     	Keymaps for insert and visual mode are also displayed as hints in the
     	normal mode menu.
   */
+  # Create define which-key as available for the rest of the config
+  extraConfigLuaPre = (
+    if config.plugins.which-key.enable then # lua
+      ''
+        local wk_available, wk = pcall(require, "which-key")
+      ''
+    # lua
+    else
+      ''
+        local wk_available = false
+      ''
+  );
+
   plugins = {
+    snacks = {
+      enable = true;
+      settings.keymap.enabled = true;
+      luaConfig.post = global_km + lib.optionalString luasnipEnabled luasnip_km;
+    };
+
     which-key = {
       enable = true;
       settings = {
         delay = 500;
-        spec = [
-          {
-            __unkeyed = "<C-R>";
-            mode = "n";
-            desc = "(insert mode) open registers";
-          }
-        ];
       };
       luaConfig.post = # lua
         ''
           wk.add({
-          	{ "<C-L>", icon = "󰞋 ", desc = "Help", "<cmd>help<CR>", },
+          	{ "j", icon = " ", desc = "Down", },
+          	{ "<Down>", icon = " ", desc = "Down", },
+          	{ "k", icon = " ", desc = "Up", },
+          	{ "<Down>", icon = " ", desc = "Up", },
+          	{ "<C-h>", icon = " 󰓩 ", desc = "Got to Left Window", },
+          	{ "<C-j>", icon = " 󰓩 ", desc = "Got to Lower Window", },
+          	{ "<C-k>", icon = " 󰓩 ", desc = "Got to Upper Window", },
+          	{ "<C-l>", icon = " 󰓩 ", desc = "Got to Right Window", },
           	{ "<leader>y", icon = "", desc = "yank to system clipboard ( + register)", },
           	{ "y", icon = " ", desc = "yank to \" register", },
           	{ "u", icon = "󰕌 ", desc = "undo", },
@@ -42,8 +150,6 @@
           	{ "J", icon = "󱞿 ", desc = "move line down", },
           	{ "<C-y>", icon = "", desc = "toggle verticle column", },
           	{ "h", icon = " ", desc = "Left", },
-          	{ "j", icon = " ", desc = "Down", },
-          	{ "k", icon = " ", desc = "Up", },
           	{ "l", icon = " ", desc = "Right", },
           	{ "_", icon = "󰞓 ", desc = "Start of Line (whitespace, with count)", },
           	{ "^", icon = "󰞓 ", desc = "Start of Line (whitespace, single-line)", },
@@ -57,21 +163,37 @@
           	{ "}", icon = "󰉸 ", desc = "Next empty line", },
 
           	-- Tab group
-          	{ "<Tab>", group = "tabs", icon = "󰓩 ", },
-          	{ "<leader><Tab>", group = "tabs", proxy = "<Tab>", },
-          	{ "<Tab>n", icon = "󰓩 ", desc = "new tab", },
-          	{ "<Tab>q", icon = "󰱝 ", desc = "close tab", },
-          	{ "<Tab>l", icon = " ", desc = "next tab (gt)", },
-          	{ "<Tab>h", icon = " ", desc = "prev tab (gT)", },
+          	{ "<leader><Tab>", group = "Tabs", icon = "󰓩 ", },
+          	{ "<leader><Tab>", group = "Tabs", proxy = "<Tab>", },
+          	{ "<leader><Tab><Tab>", icon = "󰓩 ", desc = "New Tab", },
+          	{ "<leader><Tab>d", icon = "󰱝 ", desc = "Close Tab", },
+          	{ "<leader><Tab>]", icon = " ", desc = "Next Tab (gt)", },
+          	{ "<leader><Tab>[", icon = " ", desc = "Prev Tab (gT)", },
+          	{ "<leader><Tab>f", icon = "󰞓 ", desc = "First Tab", },
+          	{ "<leader><Tab>l", icon = "󰞔 ", desc = "Last Tab", },
+          	{ "<leader><Tab>o", icon = "o󰱝 ", desc = "Close Other Tabs", },
 
           	-- Windows group - built-in
-          	{ "<leader>w", group = "windows", proxy = "<C-w>", icon = "󰖲 ", },
-
-          	{ "<leader>o", group = "options", icon = " ", },
+          	{ "<leader>w", group = "Windows", proxy = "<C-w>", icon = "󰖲 ", },
+          	{ "<leader>o", group = "Options", icon = " ", },
 
           	-- Global group
           	{ "g", group = "Global", icon = " ", },
           	{ "gg", icon = "󰞒 ", desc = "First Line", },
+
+						-- Code Actions Group
+						{ "<leader>c", group = "Code Actions", icon = " " },
+						{ "<leader>ca", icon = " ", desc = "Accept Code Action", },
+						{ "<leader>cn", icon = "󰮰 ", desc = "Next Diagnostic", },
+						{ "<leader>cp", icon = "󰮰 ", desc = "Prev Diagnostic", },
+						{ "<leader>cq", icon = "󰑮 ", desc = "Set Quickfix List", },
+						{ "<leader>cr", icon = "󰑕 ", desc = "Rename Variable", },
+						{ "<leader>cg", group = "Goto", icon = " " },
+						{ "<leader>cgd", "gd", desc = "Goto Definition (gd)" },
+						{ "<leader>cgD", "gD", desc = "Goto Declaration (gD)" },
+						{ "<leader>cgy", "gy", desc = "Goto T[y]pe Definition (gy)" },
+						{ "<leader>cgi", "gi", desc = "Goto Implementation (gi)" },
+						{ "<leader>cgi", "gr", desc = "References (gr)" },
           })
         '';
     };
@@ -85,165 +207,6 @@
         };
       };
     };
+
   };
-
-  keymaps = [
-    {
-      key = "<Tab>n";
-      mode = "n";
-      action = ":tabnew<CR>";
-      options = {
-        silent = true;
-        desc = "new tab";
-      };
-    }
-    {
-      key = "<Tab>q";
-      mode = "n";
-      action = ":close<CR>";
-      options = {
-        silent = true;
-        desc = "close tab";
-      };
-    }
-    {
-      key = "<Tab>l";
-      mode = "n";
-      action = ":tabnext<CR>";
-      options = {
-        silent = true;
-        desc = "next tab";
-      };
-    }
-    {
-      key = "<Tab>h";
-      mode = "n";
-      action = ":tabprevious<CR>";
-      options = {
-        silent = true;
-        desc = "previous tab";
-      };
-    }
-    {
-      key = "u";
-      mode = [
-        "n"
-        "v"
-      ];
-      action = ":undo<CR>";
-      options = {
-        silent = true;
-        desc = "undo";
-      };
-    }
-    {
-      key = "U";
-      mode = [
-        "n"
-        "v"
-      ];
-      action = ":redo<CR>";
-      options = {
-        silent = true;
-        desc = "redo";
-      };
-    }
-    {
-      key = "<leader>y";
-      mode = [
-        "n"
-        "v"
-      ];
-      action = "\"+y";
-      options = {
-        desc = "yank to system clipboard ( + register)";
-      };
-    }
-    {
-      key = "<C-y>";
-      mode = "n";
-      action = ":set cursorcolumn!<CR>";
-      options = {
-        silent = true;
-        desc = "toggle vertical column";
-      };
-    }
-    {
-      key = "J";
-      mode = "v";
-      action = ":m '>+1<CR>gv=gv";
-      options = {
-        silent = true;
-        desc = "move line down";
-      };
-    }
-    {
-      key = "K";
-      mode = "v";
-      action = ":m '<-2<CR>gv=gv";
-      options = {
-        silent = true;
-        desc = "move line up";
-      };
-    }
-    {
-      key = "J";
-      mode = "n";
-      action = "mzJ\`z";
-      options = {
-        silent = true;
-        desc = "grab next line";
-      };
-    }
-    # Disabled because of conflict with the which-key menu scrolling
-    #{
-    #  key = "<C-d>";
-    #  mode = "n";
-    #  action = "<C-d>zz"; # Scroll down and keep cursor in middle
-    #  options = {
-    #    silent = true;
-    #    noremap = true;
-    #  };
-    #}
-    #{
-    #  key = "<C-u>";
-    #  mode = "n";
-    #  action = "<C-u>zz"; # Scroll up and keep cursor in middle
-    #  options = {
-    #    silent = true;
-    #    noremap = true;
-    #  };
-    #}
-    {
-      key = "<leader>p";
-      mode = "x";
-      action = "\"_dP";
-      options = {
-        silent = true;
-        desc = "preserve put";
-      };
-    }
-    {
-      key = "Q";
-      mode = "n";
-      action = "<nop>";
-      options = {
-        silent = true;
-        desc = "(disabled)";
-      };
-    }
-  ];
-
-  # Create define which-key as available for the rest of the config
-  extraConfigLuaPre = (
-    if config.plugins.which-key.enable then # lua
-      ''
-        local wk_available, wk = pcall(require, "which-key")
-      ''
-    # lua
-    else
-      ''
-        local wk_available = false
-      ''
-  );
 }

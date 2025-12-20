@@ -1,135 +1,44 @@
 # All configuration related to LSPs
-{ pkgs, ... }:
 {
-  extraPackages = with pkgs; [
-    asm-lsp
-    bash-language-server
-    cargo
-    cmake-language-server
-    go
-    gopls
-    lua-language-server
-    marksman
-    nixd
-    ruff
-    rust-analyzer
-    rustc
-    superhtml
-    typescript
-    typescript-language-server
-    vscode-langservers-extracted
-    yaml-language-server
-    zig
-    zls
-  ];
+  lib,
+  config,
+  pkgs,
+  ...
+}:
+let
+  ls = config.language_support;
+  inherit (lib) mkIf;
+in
+{
+  extraPackages =
+    with pkgs;
+    [
+      asm-lsp
+      bash-language-server
+      cargo
+      cmake-language-server
+      go
+      gopls
+      marksman
+      ruff
+      rust-analyzer
+      rustc
+      superhtml
+      typescript
+      typescript-language-server
+      vscode-langservers-extracted
+      yaml-language-server
+      zig
+      zls
+    ]
+    ++ lib.optional ls.lua.enable lua-language-server
+    ++ lib.optional ls.nix.enable pkgs.nixd;
 
   extraPlugins = with pkgs.vimPlugins; [
     nvim-lspconfig
     typescript-tools-nvim
     webapi-vim
   ];
-
-  extraConfigLuaPre = # lua
-		''
-      function set_cmn_lsp_keybinds()
-      	local lsp_keybinds = {
-      		{
-      			key = "<leader>ia",
-      			mode = "n",
-      			action = vim.lsp.buf.code_action,
-      			options = {
-      				buffer = 0,
-      				desc = "code action",
-      			},
-      		},
-      		{
-      			key = "<leader>ii",
-      			mode = "n",
-      			action = vim.lsp.buf.hover,
-      			options = {
-      				buffer = 0,
-      				desc = "hover token info <S-K>",
-      			},
-      		},
-      		{
-      			key = "<leader>ij",
-      			mode = "n",
-      			action = vim.diagnostic.goto_prev,
-      			options = {
-      				buffer = 0,
-      				desc = "go to previous diagnostic",
-      			},
-      		},
-      		{
-      			key = "<leader>ik",
-      			mode = "n",
-      			action = vim.diagnostic.goto_next,
-      			options = {
-      				buffer = 0,
-      				desc = "go to next diagnostic",
-      			},
-      		},
-      		{
-      			key = "<leader>iq",
-      			mode = "n",
-      			action = vim.diagnostic.setqflist,
-      			options = {
-      				buffer = 0,
-      				desc = "diagnostics quickfix list",
-      			},
-      		},
-      		{
-      			key = "<leader>ir",
-      			mode = "n",
-      			action = vim.lsp.buf.rename,
-      			options = {
-      				buffer = 0,
-      				desc = "rename variable <S-R>",
-      			},
-      		},
-      		{
-      			key = "<leader>r",
-      			mode = "n",
-      			action = vim.lsp.buf.rename,
-      			options = {
-      				buffer = 0,
-      				desc = "rename variable",
-      			},
-      		},
-      		{
-      			key = "gd",
-      			mode = "n",
-      			action = vim.lsp.buf.definition,
-      			options = {
-      				buffer = 0,
-      				desc = "go to to definition",
-      			},
-      		},
-      		{
-      			key = "gi",
-      			mode = "n",
-      			action = vim.lsp.buf.implementation,
-      			options = {
-      				buffer = 0,
-      				desc = "go to implementation",
-      			},
-      		},
-      		{
-      			key = "gy",
-      			mode = "n",
-      			action = vim.lsp.buf.type_definition,
-      			options = {
-      				buffer = 0,
-      				desc = "go to type definition",
-      			},
-      		}
-      	}
-
-      	for _, bind in ipairs(lsp_keybinds) do
-      		vim.keymap.set("n", bind.key, bind.action, bind.options)
-      	end
-      end
-		'';
 
   diagnostic.settings = {
     virtual_lines = {
@@ -138,7 +47,148 @@
     virtual_text = false;
   };
 
+  lsp = {
+    servers = {
+      "*" = {
+        enable = true;
+        config = {
+          capabilities = {
+            textDocument = {
+              semanticTokens = {
+                multilineTokenSupport = true;
+              };
+            };
+          };
+          root_markers = [
+            ".git"
+          ];
+        };
+      };
+      # TODO: Fix this https://github.com/bergercookie/asm-lsp/issues/193
+      asm_lsp = {
+        enable = true;
+      };
+      bashls = {
+        enable = true;
+      };
+      clangd = {
+        enable = true;
+      };
+      cmake = {
+        enable = true;
+      };
+      cssls = {
+        enable = true;
+      };
+      eslint = {
+        enable = true;
+      };
+      gopls = {
+        enable = true;
+      };
+      jsonls = {
+        enable = true;
+      };
+      lua_ls = mkIf ls.lua.enable {
+        enable = true;
+        config = {
+          cmd = [
+            "lua-language-server"
+          ];
+          filetypes = [
+            "lua"
+          ];
+          root_markers = [
+            ".git"
+            "lua_ls_config.json"
+            "init.lua"
+          ];
+          settings = {
+            Lua = {
+              workspace = {
+                checkThirdParty = false;
+              };
+              telemetry = {
+                enable = false;
+              };
+              diagnostics = {
+                globals = [ "vim" ];
+              };
+            };
+          };
+        };
+      };
+      nixd = mkIf ls.nix.enable {
+        enable = true;
+        config = {
+          cmd = [ "nixd" ];
+          filetypes = [ "nix" ];
+          root_markers = [
+            "flake.nix"
+            "default.nix"
+            ".git"
+          ];
+
+          settings = {
+            nixd = {
+              nixpkgs = {
+                expr = # nix
+                  ''
+                    										import <nixpkgs> { }
+                    									'';
+              };
+              formatting = {
+                command = [ "nixfmt" ];
+              };
+              options = {
+                nixos = {
+                  expr = # nix
+                    ''
+                      											(builtins.getFlake ("git+file://" + toString ./.)).nixosConfigurations."framework16".options
+                      										'';
+                };
+                home_manager = {
+                  expr = # nix
+                    ''
+                      											(builtins.getFlake ("git+file://" + toString ./.)).homeConfigurations."pete@framework16".options
+                      										'';
+                };
+              };
+            };
+          };
+        };
+      };
+
+      ruff = {
+        enable = true;
+        config = {
+          filetypes = [ "python" ];
+        };
+      };
+      rust_analyzer = {
+        enable = true;
+        config = {
+          installCargo = true;
+          installRustc = true;
+        };
+      };
+      superhtml = {
+        enable = true;
+      };
+      ts_ls = {
+        enable = true;
+      };
+      yamlls = {
+        enable = true;
+      };
+      zls = {
+        enable = true;
+      };
+    };
+  };
+
   plugins = {
+    lspconfig.enable = true;
     rustaceanvim = {
       enable = true;
       settings.server = {
@@ -190,7 +240,6 @@
         };
       };
     };
-
     none-ls = {
       enable = true;
       sources = {
@@ -198,201 +247,14 @@
           checkmake.enable = true;
         };
       };
-      settings = {
-        on_attach = # lua
-          ''
-            function()
-            	set_cmn_lsp_keybinds()
-            end
-          '';
-      };
     };
-
     lazydev.enable = true;
 
-    lsp = {
-      servers = {
-        # TODO: Fix this https://github.com/bergercookie/asm-lsp/issues/193
-        asm_lsp.enable = true;
-        bashls.enable = true;
-        clangd.enable = true;
-        cmake.enable = true;
-        cssls.enable = true;
-        eslint.enable = true;
-        gopls.enable = true;
-        jsonls.enable = true;
-        lua_ls.enable = true;
-        nixd.enable = true;
-        ruff = {
-          enable = true;
-          filetypes = [ "python" ];
-        };
-
-        #rust_analyzer = {
-        #  enable = true;
-        #  installCargo = true;
-        #  installRustc = true;
-        #};
-        superhtml.enable = true;
-        ts_ls.enable = true;
-        yamlls.enable = true;
-        zls.enable = true;
-      };
-    };
   };
 
   extraConfigLuaPost = # lua
     ''
-      -- Common LSP key mappings
-      -- Extra nvim-lspconfig configuration
-      
-      if wk_available then
-      	wk.add({
-      		{ "<leader>i", group = "interpreting", icon = " " },
-      		{ "<leader>ia", icon = " ", desc = "accept code action", },
-      		{ "<leader>ik", icon = "󰮰 ", desc = "goto next diagnostic", },
-      		{ "<leader>ij", icon = "󰮰 ", desc = "goto prev diagnostic", },
-      		{ "<leader>iq", icon = "󰑮 ", desc = "populate quickfix list", },
-      		{ "<leader>ir", icon = "󰑕 ", desc = "rename variable <S-R>", },
-      		{ "<leader>ig", group = "goto", icon = " " },
-      		{ "<leader>igd", "gd", desc = "goto definition (gd)" },
-      		{ "<leader>igy", "gy", desc = "goto type definition (gy)" },
-      		{ "<leader>igi", "gi", desc = "goto implementation (gi)" },
-      	})
-      end
-      
-      local capabilities = require("cmp_nvim_lsp").default_capabilities(vim.lsp.protocol.make_client_capabilities())
-      capabilities.textDocument.completion.completionItem.snippetSupport = true
-      
-      -- Individual LSP configs
-      -- asm LSP
-      require("lspconfig").asm_lsp.setup({
-      	capabilities = capabilities,
-      	filetypes = { "asm" },
-      
-      	-- Fix for missing root dir
-      	-- Always assume PWD is project root
-      	root_dir = function(fname)
-      		return vim.loop.cwd()
-      	end,
-      	on_attach = function()
-      		set_cmn_lsp_keybinds()
-      	end,
-      })
-      
-      -- Bash LSP
-      require("lspconfig").bashls.setup({
-      	on_attach = function()
-      		set_cmn_lsp_keybinds()
-      	end,
-      })
-      
-      -- clang LSP
-      require("lspconfig").clangd.setup({
-      	on_attach = function()
-      		set_cmn_lsp_keybinds()
-      	end,
-      })
-      
-      -- cmake LSP
-      require("lspconfig").cmake.setup({
-      	on_attach = function()
-      		set_cmn_lsp_keybinds()
-      	end,
-      })
-      
-      -- CSS LSP
-      require("lspconfig").cssls.setup({
-      	on_attach = function()
-      		set_cmn_lsp_keybinds()
-      	end,
-      })
-      
-      -- golang lsp
-      require("lspconfig").gopls.setup({
-      	on_attach = function()
-      		set_cmn_lsp_keybinds()
-      	end,
-      })
-      
-      -- HTML lsp
-      require("lspconfig").superhtml.setup({
-      	on_attach = function()
-      		set_cmn_lsp_keybinds()
-      	end,
-      })
-      
-      -- JSON lsp
-      require("lspconfig").jsonls.setup({
-      	on_attach = function()
-      		set_cmn_lsp_keybinds()
-      	end,
-      })
-      
-      -- Lua LSP
-      require("lspconfig").lua_ls.setup({
-      	on_attach = function(client, bufnr)
-      		set_cmn_lsp_keybinds(client, bufnr)
-      	end,
-      })
-      -- Markdown LSP
-      require("lspconfig").marksman.setup({
-      	on_attach = function()
-      		set_cmn_lsp_keybinds()
-      	end,
-      })
-      
-      -- Nix LSP
-      require("lspconfig").nixd.setup({
-      	on_attach = function(client, bufnr)
-      		-- Disable hover since nixd doesn't privde useful ctx info
-      		client.server_capabilities.hoverProvider = false
-      		set_cmn_lsp_keybinds()
-      	end,
-      	settings = {
-      		nixd = {
-      			formatting = {
-      				command = { "nixfmt" },
-      			},
-      		},
-      	},
-      })
-      
-      -- Ruff
-      require("lspconfig").ruff.setup({
-      	on_attach = function()
-      		set_cmn_lsp_keybinds()
-      	end,
-      })
-      
-      -- Rust LSP
-      --require("lspconfig").rust_analyzer.setup({
-      --root_dir = function(fname)
-      --	return vim.loop.cwd()
-      --end,
-      --settings = {
-      --	['rust_analyzer'] = {
-      --		cargo = {
-      --			allFeatures = true,
-      --		},
-      --	},
-      --},
-      --on_attach = function()
-      --	set_cmn_lsp_keybinds()
-      --end,
-      --})
-      
-      -- Typescript/Javascript LSP
-      require("lspconfig").ts_ls.setup({
-      	on_attach = function()
-      		set_cmn_lsp_keybinds()
-      	end,
-      })
-      
       require("typescript-tools").setup {
-      	on_attach = function()
-      		set_cmn_lsp_keybinds()
-      	end,
       	settings = {
       		-- spawn additional tsserver instance to calculate diagnostics on it
       		separate_diagnostic_server = true,
@@ -437,18 +299,5 @@
       		}
       	},
       }
-      
-      -- YAML LSP
-      require("lspconfig").yamlls.setup({
-      	on_attach = function()
-      		set_cmn_lsp_keybinds()
-      	end,
-      })
-      -- Zig LSP
-      require("lspconfig").zls.setup({
-      	on_attach = function()
-      		set_cmn_lsp_keybinds()
-      	end,
-      })
     '';
 }

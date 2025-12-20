@@ -1,49 +1,59 @@
 # All configuration related to parsing languages (Treesitter)
 # TODO: Separate keymaps from wk dependency
-{ pkgs, ... }:
 {
-  extraPackages = with pkgs; [
-    nix-prefetch-git
-    jq
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+let
+  ls = config.language_support;
+in
+{
+  extraPackages = lib.optionals ls.nix.enable [
+    pkgs.jq
+    pkgs.nix-prefetch-git
   ];
 
-  extraPlugins = [
-    (pkgs.vimUtils.buildVimPlugin {
-      pname = "ninjection";
-      version = "unstable-2025-06-18";
+  extraPlugins =
+    [
+      (pkgs.vimUtils.buildVimPlugin {
+        pname = "ninjection";
+        version = "unstable-2025-06-18";
 
-      src = pkgs.fetchFromGitHub {
-        owner = "pete3n";
-        repo = "ninjection.nvim";
-        rev = "39698030f2b89127245aed8826405dccc478277e";
-        hash = "sha256-ytXqqEP6xlnDOwPPhQxHQSjd1lC1vJsarRrTd0dj2cQ=";
-      };
+        src = pkgs.fetchFromGitHub {
+          owner = "pete3n";
+          repo = "ninjection.nvim";
+          rev = "39698030f2b89127245aed8826405dccc478277e";
+          hash = "sha256-ytXqqEP6xlnDOwPPhQxHQSjd1lC1vJsarRrTd0dj2cQ=";
+        };
 
-      dependencies = [
-        pkgs.vimPlugins.nvim-lspconfig
-        pkgs.vimPlugins.nvim-treesitter
-      ];
+        dependencies = [
+          pkgs.vimPlugins.nvim-lspconfig
+          pkgs.vimPlugins.nvim-treesitter
+        ];
 
-      #nvimRequireCheck = [ "ninjection" ];
+        #nvimRequireCheck = [ "ninjection" ];
 
-      meta = {
-        description = "Edit injected languages with Treesitter and LSP support";
-        homepage = "https://github.com/pete3n/ninjection.nvim";
-        license = pkgs.lib.licenses.mit;
-      };
-    })
+        meta = {
+          description = "Edit injected languages with Treesitter and LSP support";
+          homepage = "https://github.com/pete3n/ninjection.nvim";
+          license = pkgs.lib.licenses.mit;
+        };
+      })
 
-    (pkgs.vimUtils.buildVimPlugin {
-      name = "nix-prefetch.nvim";
-      src = pkgs.fetchFromGitHub {
-        owner = "pete3n";
-        repo = "nix-prefetch.nvim";
-        rev = "4f32441c3a7f550ccb8cbd73cba8ab11aa32f8d1";
-        hash = "sha256-FpUYNdyn3YrbrAWdkyeE7Kl/ThmSKBNl1l2ePjznKRc=";
-      };
-    })
-
-  ];
+    ]
+    ++ lib.optional ls.nix.enable (
+      pkgs.vimUtils.buildVimPlugin {
+        name = "nix-prefetch.nvim";
+        src = pkgs.fetchFromGitHub {
+          owner = "pete3n";
+          repo = "nix-prefetch.nvim";
+          rev = "4f32441c3a7f550ccb8cbd73cba8ab11aa32f8d1";
+          hash = "sha256-FpUYNdyn3YrbrAWdkyeE7Kl/ThmSKBNl1l2ePjznKRc=";
+        };
+      }
+    );
 
   plugins = {
     treesitter = {
@@ -179,202 +189,205 @@
 
     treesitter-textobjects = {
       enable = true;
-      select = {
-        enable = true;
-        lookahead = true;
-        keymaps = {
-          "a=" = {
-            query = "@assignment.outer";
-            desc = "select around outer part of an [=] assignment";
+      settings = {
+        select = {
+          enable = true;
+          lookahead = true;
+          keymaps = {
+            "a=" = {
+              query = "@assignment.outer";
+              desc = "select around outer part of an [=] assignment";
+            };
+            "i=" = {
+              query = "@assignment.inner";
+              desc = "select inner part of an [=] assignment";
+            };
+            "l=" = {
+              query = "@assignment.lhs";
+              desc = "select left hand side of an [=] assignment";
+            };
+            "r=" = {
+              query = "@assignment.rhs";
+              desc = "select [r]ight hand side of an [=] assignment";
+            };
+            "aa" = {
+              query = "@parameter.outer";
+              desc = "select around the outer part of a parameter";
+            };
+            "ia" = {
+              query = "@parameter.inner";
+              desc = "select the inner part of a parameter";
+            };
+            "ai" = {
+              query = "@conditional.outer";
+              desc = "select around the outer part of a conditional";
+            };
+            "ii" = {
+              query = "@conditional.inner";
+              desc = "select the inner part of a conditional";
+            };
+            "al" = {
+              query = "@loop.outer";
+              desc = "select around the outer part of a loop";
+            };
+            "il" = {
+              query = "@loop.inner";
+              desc = "select the inner part of a loop";
+            };
+            "af" = {
+              query = "@call.outer";
+              desc = "select around the outer part of a function call";
+            };
+            "if" = {
+              query = "@call.inner";
+              desc = "select the inner part of a function call";
+            };
+            "am" = {
+              query = "@function.outer";
+              desc = "select around the outer part of method or function";
+            };
+            "im" = {
+              query = "@function.inner";
+              desc = "select the inner part of a method or function";
+            };
+            "ac" = {
+              query = "@class.outer";
+              desc = "select around the outer part of a class";
+            };
+            "ic" = {
+              query = "@class.inner";
+              desc = "select the inner part of a class";
+            };
           };
-          "i=" = {
-            query = "@assignment.inner";
-            desc = "select inner part of an [=] assignment";
+        };
+
+        swap = {
+          enable = true;
+          swapNext = {
+            "<leader>ppi" = "@parameter.inner";
+            "<leader>ppo" = "@parameter.outer";
+            "<leader>pfi" = "@function.innter";
+            "<leader>pfo" = "@function.outer";
           };
-          "l=" = {
-            query = "@assignment.lhs";
-            desc = "select left hand side of an [=] assignment";
+          swapPrevious = {
+            "<leader>ppI" = "@parameter.inner";
+            "<leader>ppO" = "@parameter.outer";
+            "<leader>pfI" = "@function.innter";
+            "<leader>pfO" = "@function.outer";
           };
-          "r=" = {
-            query = "@assignment.rhs";
-            desc = "select [r]ight hand side of an [=] assignment";
+        };
+
+        move = {
+          enable = true;
+          set_jumps = true;
+          gotoNextStart = {
+            "]F" = {
+              query = "@call.outer";
+              desc = "next function call start";
+            };
+            "]M" = {
+              query = "@function.outer";
+              desc = "next method or function def start";
+            };
+            "]C" = {
+              query = "@class.outer";
+              desc = "next class start";
+            };
+            "]I" = {
+              query = "@conditional.outer";
+              desc = "next conditional start";
+            };
+            "]L" = {
+              query = "@loop.outer";
+              desc = "next loop start";
+            };
           };
-          "aa" = {
-            query = "@parameter.outer";
-            desc = "select around the outer part of a parameter";
+
+          gotoPreviousStart = {
+            "[F" = {
+              query = "@call.outer";
+              desc = "prev function call start";
+            };
+            "[M" = {
+              query = "@function.outer";
+              desc = "prev method or function def start";
+            };
+            "[C" = {
+              query = "@class.outer";
+              desc = "prev class start";
+            };
+            "[I" = {
+              query = "@conditional.outer";
+              desc = "prev conditional start";
+            };
+            "[L" = {
+              query = "@loop.outer";
+              desc = "prev loop start";
+            };
           };
-          "ia" = {
-            query = "@parameter.inner";
-            desc = "select the inner part of a parameter";
+
+          gotoNextEnd = {
+            "]f" = {
+              query = "@call.outer";
+              desc = "next function call end";
+            };
+            "]m" = {
+              query = "@function.outer";
+              desc = "next method or function def end";
+            };
+            "]c" = {
+              query = "@class.outer";
+              desc = "next class end";
+            };
+            "]i" = {
+              query = "@conditional.outer";
+              desc = "next conditional end";
+            };
+            "]l" = {
+              query = "@loop.outer";
+              desc = "next loop end";
+            };
           };
-          "ai" = {
-            query = "@conditional.outer";
-            desc = "select around the outer part of a conditional";
-          };
-          "ii" = {
-            query = "@conditional.inner";
-            desc = "select the inner part of a conditional";
-          };
-          "al" = {
-            query = "@loop.outer";
-            desc = "select around the outer part of a loop";
-          };
-          "il" = {
-            query = "@loop.inner";
-            desc = "select the inner part of a loop";
-          };
-          "af" = {
-            query = "@call.outer";
-            desc = "select around the outer part of a function call";
-          };
-          "if" = {
-            query = "@call.inner";
-            desc = "select the inner part of a function call";
-          };
-          "am" = {
-            query = "@function.outer";
-            desc = "select around the outer part of method or function";
-          };
-          "im" = {
-            query = "@function.inner";
-            desc = "select the inner part of a method or function";
-          };
-          "ac" = {
-            query = "@class.outer";
-            desc = "select around the outer part of a class";
-          };
-          "ic" = {
-            query = "@class.inner";
-            desc = "select the inner part of a class";
+
+          gotoPreviousEnd = {
+            "[f" = {
+              query = "@call.outer";
+              desc = "prev function call end";
+            };
+            "[m" = {
+              query = "@function.outer";
+              desc = "prev method or function def end";
+            };
+            "[c" = {
+              query = "@class.outer";
+              desc = "prev class end";
+            };
+            "[i" = {
+              query = "@conditional.outer";
+              desc = "prev conditional end";
+            };
+            "[l" = {
+              query = "@loop.outer";
+              desc = "prev loop end";
+            };
           };
         };
       };
 
-      swap = {
-        enable = true;
-        swapNext = {
-          "<leader>ppi" = "@parameter.inner";
-          "<leader>ppo" = "@parameter.outer";
-          "<leader>pfi" = "@function.innter";
-          "<leader>pfo" = "@function.outer";
-        };
-        swapPrevious = {
-          "<leader>ppI" = "@parameter.inner";
-          "<leader>ppO" = "@parameter.outer";
-          "<leader>pfI" = "@function.innter";
-          "<leader>pfO" = "@function.outer";
-        };
-      };
-
-      move = {
-        enable = true;
-        setJumps = true;
-        gotoNextStart = {
-          "]F" = {
-            query = "@call.outer";
-            desc = "next function call start";
-          };
-          "]M" = {
-            query = "@function.outer";
-            desc = "next method or function def start";
-          };
-          "]C" = {
-            query = "@class.outer";
-            desc = "next class start";
-          };
-          "]I" = {
-            query = "@conditional.outer";
-            desc = "next conditional start";
-          };
-          "]L" = {
-            query = "@loop.outer";
-            desc = "next loop start";
-          };
-        };
-
-        gotoPreviousStart = {
-          "[F" = {
-            query = "@call.outer";
-            desc = "prev function call start";
-          };
-          "[M" = {
-            query = "@function.outer";
-            desc = "prev method or function def start";
-          };
-          "[C" = {
-            query = "@class.outer";
-            desc = "prev class start";
-          };
-          "[I" = {
-            query = "@conditional.outer";
-            desc = "prev conditional start";
-          };
-          "[L" = {
-            query = "@loop.outer";
-            desc = "prev loop start";
-          };
-        };
-
-        gotoNextEnd = {
-          "]f" = {
-            query = "@call.outer";
-            desc = "next function call end";
-          };
-          "]m" = {
-            query = "@function.outer";
-            desc = "next method or function def end";
-          };
-          "]c" = {
-            query = "@class.outer";
-            desc = "next class end";
-          };
-          "]i" = {
-            query = "@conditional.outer";
-            desc = "next conditional end";
-          };
-          "]l" = {
-            query = "@loop.outer";
-            desc = "next loop end";
-          };
-        };
-
-        gotoPreviousEnd = {
-          "[f" = {
-            query = "@call.outer";
-            desc = "prev function call end";
-          };
-          "[m" = {
-            query = "@function.outer";
-            desc = "prev method or function def end";
-          };
-          "[c" = {
-            query = "@class.outer";
-            desc = "prev class end";
-          };
-          "[i" = {
-            query = "@conditional.outer";
-            desc = "prev conditional end";
-          };
-          "[l" = {
-            query = "@loop.outer";
-            desc = "prev loop end";
-          };
-        };
-
-      };
     };
-
     treesitter-refactor = {
       enable = true;
-      highlightCurrentScope.enable = false;
-      highlightDefinitions.enable = true;
-      navigation = {
-        enable = true;
-      };
-      smartRename = {
-        enable = true;
-        keymaps = {
-          smartRename = "grr";
+      settings = {
+        highlightCurrentScope.enable = false;
+        highlightDefinitions.enable = true;
+        navigation = {
+          enable = true;
+        };
+        smartRename = {
+          enable = true;
+          keymaps = {
+            smartRename = "grr";
+          };
         };
       };
     };

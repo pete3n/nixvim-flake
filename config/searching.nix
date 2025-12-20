@@ -47,7 +47,7 @@ in
     ];
 
   plugins = {
-    web-devicons.enable = true;
+		todo-comments.enable = true;
     telescope = {
       enable = true;
       extensions = {
@@ -58,7 +58,6 @@ in
         undo.enable = true;
       };
       enabledExtensions = [
-				#"advanced_git_search"
         "conventional_commits"
         "dap"
         "live_grep_args"
