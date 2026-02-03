@@ -36,6 +36,8 @@ let
 			km({ "x" }, "<leader>p", "\"_dP", { desc = "Preserve Put" })
 			km({ "n" }, "Q", "<nop>", { desc = "(disabled)" })
 
+			km({ "n" }, "<leader>wz", ":lua Snacks.zen()<CR>", { desc = "Zen Mode" })
+
 			-- LSP related keymaps
 			km("n", "<leader>ca", vim.lsp.buf.code_action, {
 				lsp = { method = "textDocument/codeAction" },
@@ -175,6 +177,7 @@ in
 
           	-- Windows group - built-in
           	{ "<leader>w", group = "Windows", proxy = "<C-w>", icon = "󰖲 ", },
+						{ "<leader>wz", icon = "Z", },
           	{ "<leader>o", group = "Options", icon = " ", },
 
           	-- Global group
