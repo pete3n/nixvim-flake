@@ -143,7 +143,7 @@ in
           local context = require("treesitter-context.context")
           local render = require("treesitter-context.render")
 
-          _G.ts_context_display = true
+          _G.ts_context_display = false -- Default to off
 
           local original_get = context.get
           context.get = function(bufnr, winid)
