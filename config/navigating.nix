@@ -149,7 +149,7 @@
                   function()
                     local v = vim.version()
                     local v_msg = string.format("Neovim %d.%d.%d\n", v.major, v.minor, v.patch)
-										local uganda = string.format("\nHelp poor children in Uganda!\ntype help: Kuwasha<enter>	for more information\n")
+										local uganda = string.format("\nHelp poor children in Uganda!\ntype :help Kuwasha<enter>	for more information\n")
 										local bram = string.format("RIP Bram Moolenaar 1961-2023")
 										local msg = v_msg .. uganda .. bram
                     return { footer = msg, padding = 1 }
