@@ -375,7 +375,7 @@ in
 
     };
     treesitter-refactor = {
-      enable = true;
+      enable = true; #TODO: Workaround for: https://github.com/nix-community/nixvim/issues/4188
       settings = {
         highlightCurrentScope.enable = false;
         highlightDefinitions.enable = true;

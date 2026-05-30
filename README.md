@@ -4,13 +4,9 @@ This is a Nix flake configuration for Neovim built with the [Nixvim project](htt
 It is fully configured with LSPs, linters, formatters, debuggers, styling, and
 popular navigation plugins.
 
-# Breaking Changes
-
-The branch structure is changing to: - main (Nixos-unstable) - maintained - nixos-24.11 (Current stable) - maintained - nixos-23.11 (Previous stable) - unmaintained
-
 Please update your references accordingly
 
-## Status: Currently dogfooding nixos-24.11 and unstable
+## Status: Currently dogfooding nixos-26.05 and unstable
 
 ## Setup
 
