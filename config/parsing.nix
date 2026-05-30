@@ -15,44 +15,43 @@ in
     pkgs.nix-prefetch-git
   ];
 
-  extraPlugins =
-    [
-      (pkgs.vimUtils.buildVimPlugin {
-        pname = "ninjection";
-        version = "unstable-2025-06-18";
+  extraPlugins = [
+    (pkgs.vimUtils.buildVimPlugin {
+      pname = "ninjection";
+      version = "unstable-2025-06-18";
 
-        src = pkgs.fetchFromGitHub {
-          owner = "pete3n";
-          repo = "ninjection.nvim";
-          rev = "39698030f2b89127245aed8826405dccc478277e";
-          hash = "sha256-ytXqqEP6xlnDOwPPhQxHQSjd1lC1vJsarRrTd0dj2cQ=";
-        };
+      src = pkgs.fetchFromGitHub {
+        owner = "pete3n";
+        repo = "ninjection.nvim";
+        rev = "39698030f2b89127245aed8826405dccc478277e";
+        hash = "sha256-ytXqqEP6xlnDOwPPhQxHQSjd1lC1vJsarRrTd0dj2cQ=";
+      };
 
-        dependencies = [
-          pkgs.vimPlugins.nvim-lspconfig
-        ];
+      dependencies = [
+        pkgs.vimPlugins.nvim-lspconfig
+      ];
 
-        #nvimRequireCheck = [ "ninjection" ];
+      #nvimRequireCheck = [ "ninjection" ];
 
-        meta = {
-          description = "Edit injected languages with Treesitter and LSP support";
-          homepage = "https://github.com/pete3n/ninjection.nvim";
-          license = pkgs.lib.licenses.mit;
-        };
-      })
+      meta = {
+        description = "Edit injected languages with Treesitter and LSP support";
+        homepage = "https://github.com/pete3n/ninjection.nvim";
+        license = pkgs.lib.licenses.mit;
+      };
+    })
 
-    ]
-    ++ lib.optional ls.nix.enable (
-      pkgs.vimUtils.buildVimPlugin {
-        name = "nix-prefetch.nvim";
-        src = pkgs.fetchFromGitHub {
-          owner = "pete3n";
-          repo = "nix-prefetch.nvim";
-          rev = "4f32441c3a7f550ccb8cbd73cba8ab11aa32f8d1";
-          hash = "sha256-FpUYNdyn3YrbrAWdkyeE7Kl/ThmSKBNl1l2ePjznKRc=";
-        };
-      }
-    );
+  ]
+  ++ lib.optional ls.nix.enable (
+    pkgs.vimUtils.buildVimPlugin {
+      name = "nix-prefetch.nvim";
+      src = pkgs.fetchFromGitHub {
+        owner = "pete3n";
+        repo = "nix-prefetch.nvim";
+        rev = "4f32441c3a7f550ccb8cbd73cba8ab11aa32f8d1";
+        hash = "sha256-FpUYNdyn3YrbrAWdkyeE7Kl/ThmSKBNl1l2ePjznKRc=";
+      };
+    }
+  );
 
   plugins = {
     treesitter = {
@@ -374,22 +373,22 @@ in
       };
 
     };
-    treesitter-refactor = {
-      enable = true; #TODO: Workaround for: https://github.com/nix-community/nixvim/issues/4188
-      settings = {
-        highlightCurrentScope.enable = false;
-        highlightDefinitions.enable = true;
-        navigation = {
-          enable = true;
-        };
-        smartRename = {
-          enable = true;
-          keymaps = {
-            smartRename = "grr";
-          };
-        };
-      };
-    };
+    #treesitter-refactor = {
+    #  enable = true; #TODO: Workaround for: https://github.com/nix-community/nixvim/issues/4188
+    #  settings = {
+    #    highlightCurrentScope.enable = false;
+    #    highlightDefinitions.enable = true;
+    #    navigation = {
+    #      enable = true;
+    #    };
+    #    smartRename = {
+    #      enable = true;
+    #      keymaps = {
+    #        smartRename = "grr";
+    #      };
+    #    };
+    #  };
+    #};
   };
   extraConfigLuaPost = # lua
     ''
