@@ -4,6 +4,8 @@
    	is found in the associated configuration files
 */
 
+#TODO: clear quickfix list- :call setqflist([], 'r')
+
 { config, lib, ... }:
 # All conditional options for conditional keymaps are defined here.
 let
