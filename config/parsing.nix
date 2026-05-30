@@ -30,7 +30,6 @@ in
 
         dependencies = [
           pkgs.vimPlugins.nvim-lspconfig
-          pkgs.vimPlugins.nvim-treesitter
         ];
 
         #nvimRequireCheck = [ "ninjection" ];
