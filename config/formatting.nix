@@ -120,7 +120,7 @@ in
             lua = [ "stylua" ];
           })
           // (mkIf ls.nix.enable {
-            nix = [ "nixfmt-rfc-style" ];
+            nix = [ "nixfmt" ];
           });
 
         formatters =
@@ -193,8 +193,8 @@ in
             };
           })
           // (mkIf ls.nix.enable {
-            nixfmt-rfc-style = {
-              command = "${lib.getExe pkgs.nixfmt-rfc-style}";
+            nixfmt = {
+              command = "${lib.getExe pkgs.nixfmt}";
             };
           });
       };

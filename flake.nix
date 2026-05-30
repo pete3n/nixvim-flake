@@ -149,6 +149,6 @@
         }
       );
 
-      formatter = forAllSystems (system: (import nixpkgs { inherit system; }).nixfmt-rfc-style);
+      formatter = forAllSystems (system: (import nixpkgs { inherit system; }).nixfmt);
     };
 }
