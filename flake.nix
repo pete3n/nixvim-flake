@@ -74,7 +74,7 @@
         // pkgs.lib.optionalAttrs isLinux {
           dockerImage = pkgs.dockerTools.buildImage {
             name = "nixvim-dev-container";
-            tag = "v25.05";
+            tag = "v26.05";
             copyToRoot = pkgs.buildEnv {
               name = "nixvim-docker-root";
               paths = [
@@ -108,7 +108,7 @@
         in
         {
           default = pkgs.mkShell {
-            name = "Nixvim 25.05 dev-shell";
+            name = "Nixvim 26.05 dev-shell";
 
             buildInputs = with pkgs; [
               lua-language-server
