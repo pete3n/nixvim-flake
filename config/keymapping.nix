@@ -11,69 +11,92 @@
 let
   global_km = # lua
     ''
-			local km = Snacks.keymap.set
-			km({ "i", "c", "x" }, "<C-_>", function()
-				require("which-key").show()
-			end, { desc = "Open Key Hints", silent = true })
+      local km = Snacks.keymap.set
+      km({ "i", "c", "x" }, "<C-_>", function()
+      	require("which-key").show()
+      end, { desc = "Open Key Hints", silent = true })
 
-			km({ "n", "x" }, "j", "v:count == 0 ? 'gj' : 'j'",
-				{ desc = "Down", expr = true, silent = true })
-			km({ "n", "x" }, "<Down>", "v:count == 0 ? 'gj' : 'j'",
-				{ desc = "Down", expr = true, silent = true })
-			km({ "n", "x" }, "k", "v:count == 0 ? 'gk' : 'k'", { desc = "Up", expr = true, silent = true })
-			km({ "n", "x" }, "<Up>", "v:count == 0 ? 'gk' : 'k'", { desc = "Up", expr = true, silent = true })
+      km({ "n", "x" }, "j", "v:count == 0 ? 'gj' : 'j'",
+      	{ desc = "Down", expr = true, silent = true })
+      km({ "n", "x" }, "<Down>", "v:count == 0 ? 'gj' : 'j'",
+      	{ desc = "Down", expr = true, silent = true })
+      km({ "n", "x" }, "k", "v:count == 0 ? 'gk' : 'k'", { desc = "Up", expr = true, silent = true })
+      km({ "n", "x" }, "<Up>", "v:count == 0 ? 'gk' : 'k'", { desc = "Up", expr = true, silent = true })
 
-			km({ "n" }, "<leader><Tab><Tab>", ":tabnew<CR>", { desc = "New Tab" })
-			km({ "n" }, "<leader><Tab>d", ":tabclose<CR>", { desc = "Close Tab" })
-			km({ "n" }, "<leader><Tab>]", ":tabnext<CR>", { desc = "Next Tab" })
-			km({ "n" }, "<leader><Tab>[", ":tabprevious<CR>", { desc = "Previous Tab" })
-			km({ "n" }, "<leader><Tab>l", ":tablast<CR>", { desc = "Last Tab" })
-			km({ "n" }, "<leader><Tab>f", ":tabfirst<CR>", { desc = "First Tab" })
-			km({ "n" }, "<leader><Tab>o", ":tabonly<CR>", { desc = "Close Other Tabs" })
+      km({ "n" }, "<leader><Tab><Tab>", ":tabnew<CR>", { desc = "New Tab" })
+      km({ "n" }, "<leader><Tab>d", ":tabclose<CR>", { desc = "Close Tab" })
+      km({ "n" }, "<leader><Tab>]", ":tabnext<CR>", { desc = "Next Tab" })
+      km({ "n" }, "<leader><Tab>[", ":tabprevious<CR>", { desc = "Previous Tab" })
+      km({ "n" }, "<leader><Tab>l", ":tablast<CR>", { desc = "Last Tab" })
+      km({ "n" }, "<leader><Tab>f", ":tabfirst<CR>", { desc = "First Tab" })
+      km({ "n" }, "<leader><Tab>o", ":tabonly<CR>", { desc = "Close Other Tabs" })
 
-			km({ "n", "v" }, "<leader>y", "\"+y", { desc = "Yank to System Clipboard" })
-			km({ "v" }, "J", ":m '>+1<CR>gv=gv", { desc = "Move Line Down" })
-			km({ "v" }, "K", ":m '>-2<CR>gv=gv", { desc = "Move Line Up" })
-			km({ "n" }, "J", "mzJ\`z", { desc = "Grab Next line" })
-			km({ "x" }, "<leader>p", "\"_dP", { desc = "Preserve Put" })
-			km({ "n" }, "Q", "<nop>", { desc = "(disabled)" })
+      km({ "n", "v" }, "<leader>y", "\"+y", { desc = "Yank to System Clipboard" })
+      km({ "v" }, "J", ":m '>+1<CR>gv=gv", { desc = "Move Line Down" })
+      km({ "v" }, "K", ":m '>-2<CR>gv=gv", { desc = "Move Line Up" })
+      km({ "n" }, "J", "mzJ\`z", { desc = "Grab Next line" })
+      km({ "x" }, "<leader>p", "\"_dP", { desc = "Preserve Put" })
+      km({ "n" }, "Q", "<nop>", { desc = "(disabled)" })
 
-			km({ "n" }, "<leader>wz", ":lua Snacks.zen()<CR>", { desc = "Zen Mode" })
+      km({ "n" }, "<leader>wz", ":lua Snacks.zen()<CR>", { desc = "Zen Mode" })
 
-			-- LSP related keymaps
-			km("n", "<leader>ca", vim.lsp.buf.code_action, {
-				lsp = { method = "textDocument/codeAction" },
-				desc = "Code Action",
-			})
-			km("n", "<leader>ch", vim.lsp.buf.hover, {
-				lsp = { method = "textDocument/hover" },
-				desc = "Hover Info",
-			})
-			km({ "n" }, "<leader>cp", vim.diagnostic.goto_prev, {
-				desc = "Goto Prev Diagnostic",
-			})
-			km({ "n" }, "<leader>cn", vim.diagnostic.goto_next, {
-				desc = "Goto Next Diagnostic",
-			})
-			km({ "n" }, "<leader>cq", vim.diagnostic.setqflist, {
-				desc = "Set Diagnostic Quickfix List",
-			})
-			km("n", "<leader>cr", vim.lsp.buf.rename, {
-				lsp = { method = "textDocument/rename" },
-				desc = "Rename Variable",
-			})
-			km("n", "gd", vim.lsp.buf.definition, {
-				lsp = { method = "textDocument/definition" },
-				desc = "Go to definition",
-			})
-			km("n", "gi", vim.lsp.buf.implementation, {
-				lsp = { method = "textDocument/implementation" },
-				desc = "Go to implementation",
-			})
-			km("n", "gy", vim.lsp.buf.type_definition, {
-				lsp = { method = "textDocument/typeDefinition" },
-				desc = "Go to type definition",
-			})
+      -- Toggle scrollbind across all windows in the current tab
+      local function toggle_scrollbind()
+      	local wins = vim.api.nvim_tabpage_list_wins(0)
+
+      	-- Check if any window has scrollbind enabled
+      	local any_bound = false
+      	for _, win in ipairs(wins) do
+      		if vim.wo[win].scrollbind then
+      			any_bound = true
+      			break
+      		end
+      	end
+
+      	-- Toggle all windows to the opposite state
+      	for _, win in ipairs(wins) do
+      		vim.wo[win].scrollbind = not any_bound
+      	end
+
+      	vim.notify(any_bound and "Scrollbind disabled" or "Scrollbind enabled")
+      end
+
+      km({ "n" }, "<leader>wS", toggle_scrollbind, { desc = "Scrollbind toggle" })
+
+      -- LSP related keymaps
+      km("n", "<leader>ca", vim.lsp.buf.code_action, {
+      	lsp = { method = "textDocument/codeAction" },
+      	desc = "Code Action",
+      })
+      km("n", "<leader>ch", vim.lsp.buf.hover, {
+      	lsp = { method = "textDocument/hover" },
+      	desc = "Hover Info",
+      })
+      km({ "n" }, "<leader>cp", vim.diagnostic.goto_prev, {
+      	desc = "Goto Prev Diagnostic",
+      })
+      km({ "n" }, "<leader>cn", vim.diagnostic.goto_next, {
+      	desc = "Goto Next Diagnostic",
+      })
+      km({ "n" }, "<leader>cq", vim.diagnostic.setqflist, {
+      	desc = "Set Diagnostic Quickfix List",
+      })
+      km("n", "<leader>cr", vim.lsp.buf.rename, {
+      	lsp = { method = "textDocument/rename" },
+      	desc = "Rename Variable",
+      })
+      km("n", "gd", vim.lsp.buf.definition, {
+      	lsp = { method = "textDocument/definition" },
+      	desc = "Go to definition",
+      })
+      km("n", "gi", vim.lsp.buf.implementation, {
+      	lsp = { method = "textDocument/implementation" },
+      	desc = "Go to implementation",
+      })
+      km("n", "gy", vim.lsp.buf.type_definition, {
+      	lsp = { method = "textDocument/typeDefinition" },
+      	desc = "Go to type definition",
+      })
     '';
   luasnipEnabled = config.plugins.luasnip.enable or false;
   luasnip_km = # lua
@@ -179,26 +202,27 @@ in
 
           	-- Windows group - built-in
           	{ "<leader>w", group = "Windows", proxy = "<C-w>", icon = "󰖲 ", },
-						{ "<leader>wz", icon = "Z", },
+          	{ "<leader>wz", icon = "Z", },
+          	{ "<leader>wS", icon = "S", },
           	{ "<leader>o", group = "Options", icon = " ", },
 
           	-- Global group
           	{ "g", group = "Global", icon = " ", },
           	{ "gg", icon = "󰞒 ", desc = "First Line", },
 
-						-- Code Actions Group
-						{ "<leader>c", group = "Code Actions", icon = " " },
-						{ "<leader>ca", icon = " ", desc = "Accept Code Action", },
-						{ "<leader>cn", icon = "󰮰 ", desc = "Next Diagnostic", },
-						{ "<leader>cp", icon = "󰮰 ", desc = "Prev Diagnostic", },
-						{ "<leader>cq", icon = "󰑮 ", desc = "Set Quickfix List", },
-						{ "<leader>cr", icon = "󰑕 ", desc = "Rename Variable", },
-						{ "<leader>cg", group = "Goto", icon = " " },
-						{ "<leader>cgd", "gd", desc = "Goto Definition (gd)" },
-						{ "<leader>cgD", "gD", desc = "Goto Declaration (gD)" },
-						{ "<leader>cgy", "gy", desc = "Goto T[y]pe Definition (gy)" },
-						{ "<leader>cgi", "gi", desc = "Goto Implementation (gi)" },
-						{ "<leader>cgi", "gr", desc = "References (gr)" },
+          	-- Code Actions Group
+          	{ "<leader>c", group = "Code Actions", icon = " " },
+          	{ "<leader>ca", icon = " ", desc = "Accept Code Action", },
+          	{ "<leader>cn", icon = "󰮰 ", desc = "Next Diagnostic", },
+          	{ "<leader>cp", icon = "󰮰 ", desc = "Prev Diagnostic", },
+          	{ "<leader>cq", icon = "󰑮 ", desc = "Set Quickfix List", },
+          	{ "<leader>cr", icon = "󰑕 ", desc = "Rename Variable", },
+          	{ "<leader>cg", group = "Goto", icon = " " },
+          	{ "<leader>cgd", "gd", desc = "Goto Definition (gd)" },
+          	{ "<leader>cgD", "gD", desc = "Goto Declaration (gD)" },
+          	{ "<leader>cgy", "gy", desc = "Goto T[y]pe Definition (gy)" },
+          	{ "<leader>cgi", "gi", desc = "Goto Implementation (gi)" },
+          	{ "<leader>cgi", "gr", desc = "References (gr)" },
           })
         '';
     };
