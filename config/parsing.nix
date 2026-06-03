@@ -19,13 +19,13 @@ in
   extraPlugins = [
     (pkgs.vimUtils.buildVimPlugin {
       pname = "ninjection";
-      version = "unstable-2025-06-18";
+      version = "unstable-2026-06-03";
 
       src = pkgs.fetchFromGitHub {
         owner = "pete3n";
         repo = "ninjection.nvim";
-        rev = "39698030f2b89127245aed8826405dccc478277e";
-        hash = "sha256-ytXqqEP6xlnDOwPPhQxHQSjd1lC1vJsarRrTd0dj2cQ=";
+        rev = "b9a7edee02f4319228791bc30ba92e94ee15aee0";
+        hash = "sha256-+NghexUWfRsTLqpWTncXvmZMrFzB6xzHg65tcf8iiVI=";
       };
 
       dependencies = [
@@ -48,8 +48,8 @@ in
       src = pkgs.fetchFromGitHub {
         owner = "pete3n";
         repo = "nix-prefetch.nvim";
-        rev = "4f32441c3a7f550ccb8cbd73cba8ab11aa32f8d1";
-        hash = "sha256-FpUYNdyn3YrbrAWdkyeE7Kl/ThmSKBNl1l2ePjznKRc=";
+        rev = "da3ac5dee22738335473721cca201b10d97f852a";
+        hash = "sha256-qSUJLFVAUyuvqMx4FqUfLjjcpfGpSRaPh923uLvWEzs=";
       };
     }
   );
