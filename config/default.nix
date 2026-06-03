@@ -2,7 +2,7 @@
 { ... }:
 {
   imports = [
-		./modules/languages.nix
+    ./modules/languages.nix
     ./completing.nix
     ./debugging.nix
     ./editing.nix
@@ -17,15 +17,15 @@
     ./styling.nix
   ];
 
-	language_support = {
-		lua.enable = true;
-		nix.enable = true;
-		python = {
-			enable = true;
-			versions = [ "3.14" ];
-		};
+  language_support = {
+    lua.enable = true;
+    nix.enable = true;
+    python = {
+      enable = true;
+      versions = [ "3.14" ];
+    };
 
-	};
+  };
 
   globals = {
     mapleader = " ";
