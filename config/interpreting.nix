@@ -134,8 +134,8 @@ in
               nixpkgs = {
                 expr = # nix
                   ''
-                    										import <nixpkgs> { }
-                    									'';
+                    import <nixpkgs> { }
+                  '';
               };
               formatting = {
                 command = [ "nixfmt" ];
@@ -144,14 +144,14 @@ in
                 nixos = {
                   expr = # nix
                     ''
-                      											(builtins.getFlake ("git+file://" + toString ./.)).nixosConfigurations."framework16".options
-                      										'';
+                      (builtins.getFlake ("git+file://" + toString ./.)).nixosConfigurations."framework16".options
+                    '';
                 };
                 home_manager = {
                   expr = # nix
                     ''
-                      											(builtins.getFlake ("git+file://" + toString ./.)).homeConfigurations."pete@framework16".options
-                      										'';
+                      (builtins.getFlake ("git+file://" + toString ./.)).homeConfigurations."pete@framework16".options
+                    '';
                 };
               };
             };
