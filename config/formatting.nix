@@ -123,57 +123,56 @@ in
             nix = [ "nixfmt" ];
           });
 
-        formatters =
-          {
-            asmfmt = {
-              command = "${lib.getExe pkgs.asmfmt}";
-              stdin = true;
-            };
-            astyle = {
-              command = "${lib.getExe pkgs.astyle}";
-            };
+        formatters = {
+          asmfmt = {
+            command = "${lib.getExe pkgs.asmfmt}";
+            stdin = true;
+          };
+          astyle = {
+            command = "${lib.getExe pkgs.astyle}";
+          };
 
-            cmake-format = {
-              command = "${lib.getExe pkgs.cmake-format}";
-            };
+          cmake-format = {
+            command = "${lib.getExe pkgs.cmake-format}";
+          };
 
-            gofumpt = {
-              command = "${lib.getExe pkgs.gofumpt}";
-            };
+          gofumpt = {
+            command = "${lib.getExe pkgs.gofumpt}";
+          };
 
-            golines = {
-              command = "${lib.getExe' pkgs.golines "golines"}";
-            };
+          golines = {
+            command = "${lib.getExe' pkgs.golines "golines"}";
+          };
 
-            goimports = {
-              command = "${lib.getExe' pkgs.gotools "goimports"}";
-            };
+          goimports = {
+            command = "${lib.getExe' pkgs.gotools "goimports"}";
+          };
 
-            isort = {
-              command = "${lib.getExe pkgs.isort}";
-            };
+          isort = {
+            command = "${lib.getExe pkgs.isort}";
+          };
 
-            par = {
-              command = "${lib.getExe pkgs.par}";
-              args = [ "80" ];
-              stdin = true;
-            };
+          par = {
+            command = "${lib.getExe pkgs.par}";
+            args = [ "80" ];
+            stdin = true;
+          };
 
-            prettier = {
-              command = "${lib.getExe pkgs.nodePackages.prettier}";
-            };
+          prettier = {
+            command = "${lib.getExe pkgs.nodePackages.prettier}";
+          };
 
-            prettierd = {
-              command = "${lib.getExe pkgs.prettierd}";
-            };
+          prettierd = {
+            command = "${lib.getExe pkgs.prettierd}";
+          };
 
-            ruff = {
-              command = "${lib.getExe pkgs.ruff}";
-            };
+          ruff = {
+            command = "${lib.getExe pkgs.ruff}";
+          };
 
-            rustfmt = {
-              command = "${lib.getExe pkgs.rustfmt}";
-            };
+          rustfmt = {
+            command = "${lib.getExe pkgs.rustfmt}";
+          };
 
             shfmt = {
               command = "${lib.getExe pkgs.shfmt}";
