@@ -106,54 +106,54 @@
 
   extraConfigLuaPost = lib.concatStringsSep "\n" [
     # lua
-      ''
-        if wk_available then
-        	local keymaps = {}
-        
-        	-- Unconditional git group mapping
-        	table.insert(keymaps, { "<leader>g", group = "git", icon = " ", })
-        
-        	-- Conditional mappings
-        	if pcall(require, "diffview") then
-        		table.insert(keymaps, { "<leader>gd", icon = " ", desc = "diffview", })
-        	end
-        
-        	if pcall(require, "fugitive") then
-        		table.insert(keymaps, { "<leader>gf", icon = " ", desc = "git fugitive", })
-        	end
-        
-        	if pcall(require, "neogit") then
-        		table.insert(keymaps, { "<leader>gn", icon = "󰊢 ", desc = "neogit", })
-        	end
-        
-        	if pcall(require, "telescope.builtin.git_status") then
-        		table.insert(keymaps, { "<leader>gs", icon = " ", desc = "status", })
-        	end
-        
-        	if pcall(require, "telescope.builtin.git_branches") then
-        		table.insert(keymaps, { "<leader>gb", icon = " ", desc = "branches", })
-        	end
-        
-        	if pcall(telescope.load_extension, "advanced_git_search") then
-        		table.insert(keymaps, { "<leader>ga", icon = " ", desc = "advanced search", })
-        	end
-        
-        	wk.add(keymaps)
-        end
-      ''
+    ''
+      if wk_available then
+      	local keymaps = {}
+
+      	-- Unconditional git group mapping
+      	table.insert(keymaps, { "<leader>g", group = "git", icon = " ", })
+
+      	-- Conditional mappings
+      	if pcall(require, "diffview") then
+      		table.insert(keymaps, { "<leader>gd", icon = " ", desc = "diffview", })
+      	end
+
+      	if pcall(require, "fugitive") then
+      		table.insert(keymaps, { "<leader>gf", icon = " ", desc = "git fugitive", })
+      	end
+
+      	if pcall(require, "neogit") then
+      		table.insert(keymaps, { "<leader>gn", icon = "󰊢 ", desc = "neogit", })
+      	end
+
+      	if pcall(require, "telescope.builtin.git_status") then
+      		table.insert(keymaps, { "<leader>gs", icon = " ", desc = "status", })
+      	end
+
+      	if pcall(require, "telescope.builtin.git_branches") then
+      		table.insert(keymaps, { "<leader>gb", icon = " ", desc = "branches", })
+      	end
+
+      	if pcall(telescope.load_extension, "advanced_git_search") then
+      		table.insert(keymaps, { "<leader>ga", icon = " ", desc = "advanced search", })
+      	end
+
+      	wk.add(keymaps)
+      end
+    ''
     (
       if config.plugins.fugitive.enable then
         # lua
-          ''
-            -- Remove fugitive overlap mapping
-            local function rm_fugitive_keymap_overlap()
-            	if vim.fn.mapcheck("y<C-G>", "n") ~= "" then
-            		vim.keymap.del("n", "y<C-G>")
-            	end
-            end
-            
-            vim.schedule(rm_fugitive_keymap_overlap)
-          ''
+        ''
+          -- Remove fugitive overlap mapping
+          local function rm_fugitive_keymap_overlap()
+          	if vim.fn.mapcheck("y<C-G>", "n") ~= "" then
+          		vim.keymap.del("n", "y<C-G>")
+          	end
+          end
+
+          vim.schedule(rm_fugitive_keymap_overlap)
+        ''
       else
         ""
     )
