@@ -173,28 +173,28 @@ in
             command = "${lib.getExe pkgs.rustfmt}";
           };
 
-            shfmt = {
-              command = "${lib.getExe pkgs.shfmt}";
-            };
-          }
-          // (mkIf ls.lua.enable {
-            stylua = {
-              command = "${lib.getExe pkgs.stylua}";
-              args = [
-                "--search-parent-directories"
-                "--stdin-filepath"
-                "$FILENAME"
-                "--"
-                "-"
-              ];
-              stdin = true;
-            };
-          })
-          // (mkIf ls.nix.enable {
-            nixfmt = {
-              command = "${lib.getExe pkgs.nixfmt}";
-            };
-          });
+          shfmt = {
+            command = "${lib.getExe pkgs.shfmt}";
+          };
+        }
+        // (mkIf ls.lua.enable {
+          stylua = {
+            command = "${lib.getExe pkgs.stylua}";
+            args = [
+              "--search-parent-directories"
+              "--stdin-filepath"
+              "$FILENAME"
+              "--"
+              "-"
+            ];
+            stdin = true;
+          };
+        })
+        // (mkIf ls.nix.enable {
+          nixfmt = {
+            command = "${lib.getExe pkgs.nixfmt}";
+          };
+        });
       };
     };
     render-markdown.enable = true;
