@@ -13,6 +13,7 @@ in
   extraPackages = lib.optionals ls.nix.enable [
     pkgs.jq
     pkgs.nix-prefetch-git
+    pkgs.tree-sitter
   ];
 
   extraPlugins = [
@@ -58,7 +59,7 @@ in
       enable = true;
       settings = {
         highlight.enable = true;
-        auto_install = true;
+        auto_install = false;
         indent.enable = true;
         incremental_selection = {
           enable = true;
@@ -373,8 +374,9 @@ in
       };
 
     };
+    #TODO: disabled for: https://github.com/nix-community/nixvim/issues/4188
     #treesitter-refactor = {
-    #  enable = true; #TODO: Workaround for: https://github.com/nix-community/nixvim/issues/4188
+    #  enable = true;
     #  settings = {
     #    highlightCurrentScope.enable = false;
     #    highlightDefinitions.enable = true;
