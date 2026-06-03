@@ -56,23 +56,23 @@ in
       settings = {
         check_ts = true;
       };
-			luaConfig.post = #lua 
-			  ''
-			    local npairs = require("nvim-autopairs")
-			    local Rule = require("nvim-autopairs.rule")
-			    -- Auto terminate Nix assigments with ;			
-			    npairs.add_rules({
-			    	Rule("= {", " };", "nix")
-			    			:use_key("{"),
-			    	Rule("={", "};", "nix")
-			    			:use_key("{"),
-			    
-			    	Rule("= [", " ];", "nix")
-			    			:use_key("["),
-			    	Rule("=[", "];", "nix")
-			    			:use_key("["),
-			    })
-			  '';
+      luaConfig.post = # lua
+        ''
+          local npairs = require("nvim-autopairs")
+          local Rule = require("nvim-autopairs.rule")
+          -- Auto terminate Nix assigments with ;			
+          npairs.add_rules({
+          	Rule("= {", " };", "nix")
+          			:use_key("{"),
+          	Rule("={", "};", "nix")
+          			:use_key("{"),
+
+          	Rule("= [", " ];", "nix")
+          			:use_key("["),
+          	Rule("=[", "];", "nix")
+          			:use_key("["),
+          })
+        '';
     };
     vim-dadbod-completion.enable = config.plugins.vim-dadbod.enable; # Dependency
     vim-dadbod-ui.enable = config.plugins.vim-dadbod.enable; # Dependency
