@@ -15,7 +15,7 @@ in
       clang-tools
       eslint_d
       golangci-lint
-			#nodePackages.jsonlint # TODO: Find replacment
+      #nodePackages.jsonlint # TODO: Find replacment
       markdownlint-cli
       ruff
       shellcheck
@@ -27,29 +27,28 @@ in
   plugins = {
     lint = {
       enable = true;
-      lintersByFt =
-        {
-          c = [ "clangtidy" ];
-          cpp = [ "clangtidy" ];
-          css = [ "eslint_d" ];
-          go = [ "golangcilint" ];
-          javascript = [ "eslint_d" ];
-          javascriptreact = [ "eslint_d" ];
-					# json = [ "jsonlint" ];
-          markdownlint = [ "markdownlint" ];
+      lintersByFt = {
+        c = [ "clangtidy" ];
+        cpp = [ "clangtidy" ];
+        css = [ "eslint_d" ];
+        go = [ "golangcilint" ];
+        javascript = [ "eslint_d" ];
+        javascriptreact = [ "eslint_d" ];
+        # json = [ "jsonlint" ];
+        markdownlint = [ "markdownlint" ];
 
-          python = [ "ruff" ];
-          sh = [ "shellcheck" ];
-          typescript = [ "eslint_d" ];
-          typescriptreact = [ "eslint_d" ];
-          yaml = [ "yamllint" ];
-        }
-        // lib.optionalAttrs ls.lua.enable {
-          lua = [ "luacheck" ];
-        }
-        // lib.optionalAttrs ls.nix.enable {
-          nix = [ "nix" ];
-        };
+        python = [ "ruff" ];
+        sh = [ "shellcheck" ];
+        typescript = [ "eslint_d" ];
+        typescriptreact = [ "eslint_d" ];
+        yaml = [ "yamllint" ];
+      }
+      // lib.optionalAttrs ls.lua.enable {
+        lua = [ "luacheck" ];
+      }
+      // lib.optionalAttrs ls.nix.enable {
+        nix = [ "nix" ];
+      };
     };
     trouble = {
       enable = true;
