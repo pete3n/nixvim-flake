@@ -42,7 +42,7 @@
           })
 
         ]
-				# Fix for building rustfmt on Darwin
+        # Fix for building rustfmt on Darwin
         ++ nixpkgs.lib.optional (system == "aarch64-darwin" || system == "x86_64-darwin") (
           final: prev: {
             rustfmt = prev.rustfmt.overrideAttrs (old: {
