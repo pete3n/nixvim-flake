@@ -73,55 +73,54 @@ in
             end
           '';
         notify_on_error = true;
-        formatters_by_ft =
-          {
-            asm = [ "asmfmt" ];
-            c = [ "astyle" ];
-            cpp = [ "astyle" ];
-            css = [
-              "prettierd"
-              "prettier"
-            ];
-            cmake = [ "cmake-format" ];
-            go = [
-              "goimports"
-              "gofumpt"
-              "golines"
-            ];
-            html = [
-              "prettierd"
-              "prettier"
-            ];
-            javascript = [
-              "prettierd"
-              "prettier"
-            ];
-            javascriptreact = [ "prettier" ];
-            json = [ "prettier" ];
-            markdown = [ "prettier" ];
-            python = [
-              "isort"
-              "ruff_format"
-            ];
-            # rust = [ "rustfmt" ];
-            sh = [ "shfmt" ];
-            text = [ "par" ];
-            typescript = [
-              "prettierd"
-              "prettier"
-            ];
-            typescriptreact = [ "prettier" ];
-            yaml = [
-              "prettierd"
-              "prettier"
-            ];
-          }
-          // (mkIf ls.lua.enable {
-            lua = [ "stylua" ];
-          })
-          // (mkIf ls.nix.enable {
-            nix = [ "nixfmt" ];
-          });
+        formatters_by_ft = {
+          asm = [ "asmfmt" ];
+          c = [ "astyle" ];
+          cpp = [ "astyle" ];
+          css = [
+            "prettierd"
+            "prettier"
+          ];
+          cmake = [ "cmake-format" ];
+          go = [
+            "goimports"
+            "gofumpt"
+            "golines"
+          ];
+          html = [
+            "prettierd"
+            "prettier"
+          ];
+          javascript = [
+            "prettierd"
+            "prettier"
+          ];
+          javascriptreact = [ "prettier" ];
+          json = [ "prettier" ];
+          markdown = [ "prettier" ];
+          python = [
+            "isort"
+            "ruff_format"
+          ];
+          # rust = [ "rustfmt" ];
+          sh = [ "shfmt" ];
+          text = [ "par" ];
+          typescript = [
+            "prettierd"
+            "prettier"
+          ];
+          typescriptreact = [ "prettier" ];
+          yaml = [
+            "prettierd"
+            "prettier"
+          ];
+        }
+        // (mkIf ls.lua.enable {
+          lua = [ "stylua" ];
+        })
+        // (mkIf ls.nix.enable {
+          nix = [ "nixfmt" ];
+        });
 
         formatters = {
           asmfmt = {
