@@ -119,7 +119,7 @@
           local dismiss_noice = function()
           	require("noice").cmd("dismiss")
           end
-          
+
           local toggle_noice = function()
           	local noice_paused = false
           	if noice_paused then
@@ -134,11 +134,11 @@
           		vim.notify("Noice paused")
           	end
           end
-          
+
           local redisplay_last_noice = function()
           	vim.cmd("Noice last")
           end
-          
+
           if wk_available then
           	wk.add({
           		{ "<leader>e", group = "event notifications", icon = "󰍢 " },
@@ -179,7 +179,7 @@
           		},
           	})
           end
-          
+
           -- Noice recommended config
           require("noice").setup({
           	lsp = {
