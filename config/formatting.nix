@@ -298,6 +298,7 @@ in
       		{ "<leader>ft", icon = "󰔡 ", desc = "toggle format on-save" },
       		{ "<leader>fT", icon = "󰔡 ", desc = "toggle format on-save globally" },
       		{ "<leader>fr", icon = " ", desc = "render markdown toggle", },
+      		{ "<leader>fw", icon = "󰈈 ", desc = "whitespace show" },
       	})
       end
     '';

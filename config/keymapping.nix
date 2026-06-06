@@ -38,6 +38,12 @@ let
       km({ "x" }, "<leader>p", "\"_dP", { desc = "Preserve Put" })
       km({ "n" }, "Q", "<nop>", { desc = "(disabled)" })
 
+      km({ "n" }, "<leader>fw", function()
+      	local show = not vim.opt.list:get()
+      	vim.opt.list = show
+      	vim.notify(show and "Whitespace shown" or "Whitespace hidden")
+      end, { desc = "Whitespace show" })
+
       km({ "n" }, "<leader>wz", ":lua Snacks.zen()<CR>", { desc = "Zen Mode" })
 
       -- Toggle scrollbind across all windows in the current tab
